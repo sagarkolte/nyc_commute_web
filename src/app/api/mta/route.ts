@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const routeId = searchParams.get('routeId');
     const stopId = searchParams.get('stopId');
     const direction = searchParams.get('direction'); // 'N' or 'S', or 'East'/'West' for LIRR?
-    const clientApiKey = request.headers.get('x-mta-api-key');
+    const clientApiKey = request.headers.get('x-mta-api-key') || undefined;
 
     if (!routeId || !stopId) {
         return NextResponse.json({ error: 'Missing required params' }, { status: 400 });
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
         routeId === 'PATH' ||
         ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
 
-    let effectiveKey = clientApiKey;
+    let effectiveKey: string | undefined = clientApiKey;
     if (isSubwayOrRail) {
         effectiveKey = undefined;
     }
