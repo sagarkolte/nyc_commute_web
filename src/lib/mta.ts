@@ -161,19 +161,25 @@ export const MtaService = {
             throw new Error(`No feed URL found for route: ${routeId}`);
         }
 
-        const headers: Record<string, string> = {};
+        const headers: Record<string, string> = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        };
         if (apiKey) {
             headers['x-api-key'] = apiKey;
         }
 
         try {
+            console.log(`[MTA] Fetching GTFS feed from ${url}`);
             const response = await fetch(url, { cache: 'no-store', headers });
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                // console.error(`[MTA] HTTP error ${response.status}: ${errorText}`);
+                throw new Error(`HTTP error! status: ${response.status} - ${errorText.substring(0, 100)}`);
             }
             const buffer = await response.arrayBuffer();
             // @ts-ignore
             const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
+            // console.log(`[MTA] Parsed ${feed.entity.length} entities from feed`);
             return { type: 'gtfs', data: feed };
         } catch (error) {
             console.error('Error fetching/parsing GTFS feed:', error);
