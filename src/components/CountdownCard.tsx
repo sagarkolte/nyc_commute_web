@@ -18,6 +18,7 @@ const COLORS: Record<string, string> = {
 export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDelete: () => void }) => {
     const [arrivals, setArrivals] = useState<Arrival[]>([]);
     const [loading, setLoading] = useState(true);
+    const [debugInfo, setDebugInfo] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
 
     const fetchArrivals = async () => {
@@ -37,6 +38,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const data = await res.json();
             if (data.arrivals) {
                 setArrivals(data.arrivals);
+                setDebugInfo(data.debug);
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
@@ -90,7 +92,12 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 ) : error ? (
                     <div className="error" style={{ fontSize: '10px', color: 'red', lineHeight: 1.2, maxWidth: '80px', overflow: 'hidden' }}>{error}</div>
                 ) : arrivals.length === 0 ? (
-                    <div className="empty">No info</div>
+                    <div className="empty" style={{ fontSize: '9px', lineHeight: 1.2, color: '#666' }}>
+                        No Info<br />
+                        {debugInfo ? (
+                            <>E:{debugInfo.feedEntityCount} R:{debugInfo.routeIdMatchCount} S:{debugInfo.stopMatchCount}</>
+                        ) : '.'}
+                    </div>
                 ) : (
                     arrivals.map((arrival, i) => (
                         <div key={i} className="arrival-item">

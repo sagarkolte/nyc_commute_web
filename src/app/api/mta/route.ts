@@ -34,23 +34,27 @@ export async function GET(request: Request) {
         const now = Date.now() / 1000;
         const arrivals: any[] = [];
 
+        // Debug stats
+        let routeIdMatchCount = 0;
+        let stopMatchCount = 0;
+        let afterNowCount = 0;
+        const feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
+
         if (feedResponse.type === 'siri') {
-            // SIRI JSON handling
+            // ... (keep siri logic, maybe add stats if needed, but assuming GTFS for subway)
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
             if (delivery?.MonitoredStopVisit) {
                 delivery.MonitoredStopVisit.forEach((visit: any) => {
                     const journey = visit.MonitoredVehicleJourney;
+                    // ... existing logic ...
                     const call = journey?.MonitoredCall;
                     if (!call) return;
-
-                    // Parse time (ISO string)
                     const expectedTime = call.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
                     const aimedTime = call.AimedArrivalTime ? new Date(call.AimedArrivalTime).getTime() / 1000 : null;
                     const arrivalTime = expectedTime || aimedTime;
-
                     if (arrivalTime && arrivalTime > now) {
                         arrivals.push({
-                            routeId: journey.LineRef || routeId, // LineRef usually "MTA NYCT_M15"
+                            routeId: journey.LineRef || routeId,
                             time: arrivalTime,
                             minutesUntil: Math.floor((arrivalTime - now) / 60)
                         });
@@ -58,30 +62,35 @@ export async function GET(request: Request) {
                 });
             }
         } else {
-            // GTFS handling (Subway / LIRR support)
+            // GTFS handling
             const feed = feedResponse.data;
             const targetStopId = (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`;
 
             feed.entity.forEach((entity: any) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
-                    // LIRR/MNR/PATH filter or standard filter
-                    if (routeId !== 'PATH' && !routeId.startsWith('LIRR') && !routeId.startsWith('MNR') && entity.tripUpdate.trip.routeId !== routeId) return;
+                    // Check Route ID
+                    const entityRouteId = entity.tripUpdate.trip.routeId;
+                    const isRail = routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
+                    const routeMatches = (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? true : entityRouteId === routeId;
 
-                    entity.tripUpdate.stopTimeUpdate.forEach((stopUpdate: any) => {
-                        const isRail = routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
-                        const stopMatch = isRail ? stopUpdate.stopId === stopId : stopUpdate.stopId === targetStopId;
-
-                        if (stopMatch) {
-                            const arrivalTime = stopUpdate.arrival?.time?.low || stopUpdate.departure?.time?.low;
-                            if (arrivalTime && arrivalTime > now) {
-                                arrivals.push({
-                                    routeId: entity.tripUpdate.trip.routeId,
-                                    time: arrivalTime,
-                                    minutesUntil: Math.floor((arrivalTime - now) / 60)
-                                });
+                    if (routeMatches) {
+                        routeIdMatchCount++;
+                        entity.tripUpdate.stopTimeUpdate.forEach((stopUpdate: any) => {
+                            const stopMatch = isRail ? stopUpdate.stopId === stopId : stopUpdate.stopId === targetStopId;
+                            if (stopMatch) {
+                                stopMatchCount++;
+                                const arrivalTime = stopUpdate.arrival?.time?.low || stopUpdate.departure?.time?.low;
+                                if (arrivalTime && arrivalTime > now) {
+                                    afterNowCount++;
+                                    arrivals.push({
+                                        routeId: entityRouteId,
+                                        time: arrivalTime,
+                                        minutesUntil: Math.floor((arrivalTime - now) / 60)
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         }
@@ -89,7 +98,17 @@ export async function GET(request: Request) {
         // Sort by time
         arrivals.sort((a, b) => a.time - b.time);
 
-        return NextResponse.json({ arrivals: arrivals.slice(0, 3) });
+        return NextResponse.json({
+            arrivals: arrivals.slice(0, 3),
+            debug: {
+                feedEntityCount,
+                routeIdMatchCount,
+                stopMatchCount,
+                afterNowCount,
+                serverTime: now,
+                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`
+            }
+        });
     } catch (error) {
         console.error('[API] Error in MTA route:', error);
         return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
