@@ -161,7 +161,7 @@ export const MtaService = {
             throw new Error(`No feed URL found for route: ${routeId}`);
         }
 
-        const headers: HeadersInit = {};
+        const headers: Record<string, string> = {};
         if (apiKey) {
             headers['x-api-key'] = apiKey;
         }

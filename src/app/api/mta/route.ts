@@ -7,18 +7,18 @@ export async function GET(request: Request) {
     const stopId = searchParams.get('stopId');
     const direction = searchParams.get('direction'); // 'N' or 'S', or 'East'/'West' for LIRR?
     const clientApiKey = request.headers.get('x-mta-api-key');
-    const serverMtaKey = process.env.MTA_API_KEY;
 
-    // Determine if this is a Subway/Rail route that needs the primary MTA Key (api.mta.info)
+    // Bus feeds still require a key (using the client key)
+    // Subway/Rail feeds (GTFS-RT) are now public and require NO key.
+    // We explicitly pass undefined for them to ensure no invalid key header is sent.
+
     const isSubwayOrRail = routeId.startsWith('LIRR') ||
         routeId.startsWith('MNR') ||
         ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
 
-    // Prefer server-side MTA_API_KEY for Subway/Rail, fallback to client key (which might be the Bus Key)
-    // For Bus, we use the client key passed from the frontend (NEXT_PUBLIC_MTA_BUS_API_KEY)
     let effectiveKey = clientApiKey;
-    if (isSubwayOrRail && serverMtaKey) {
-        effectiveKey = serverMtaKey;
+    if (isSubwayOrRail) {
+        effectiveKey = undefined;
     }
 
     if (!routeId || !stopId) {
