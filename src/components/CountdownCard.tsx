@@ -18,7 +18,7 @@ const COLORS: Record<string, string> = {
 export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDelete: () => void }) => {
     const [arrivals, setArrivals] = useState<Arrival[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchArrivals = async () => {
         try {
@@ -30,14 +30,20 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const res = await fetch(`/api/mta?routeId=${tuple.routeId}&stopId=${tuple.stopId}&direction=${tuple.direction}`, {
                 headers
             });
-            if (!res.ok) throw new Error('Failed');
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(`Status ${res.status}: ${txt}`);
+            }
             const data = await res.json();
             if (data.arrivals) {
                 setArrivals(data.arrivals);
-                setError(false);
+                setError(null);
+            } else if (data.error) {
+                throw new Error(data.error);
             }
-        } catch {
-            setError(true);
+        } catch (e: any) {
+            console.error(e);
+            setError(e.message || 'Unknown Error');
         } finally {
             setLoading(false);
         }
@@ -82,7 +88,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 {loading && arrivals.length === 0 ? (
                     <div className="loading">Loading...</div>
                 ) : error ? (
-                    <div className="error">Error</div>
+                    <div className="error" style={{ fontSize: '10px', color: 'red', lineHeight: 1.2, maxWidth: '80px', overflow: 'hidden' }}>{error}</div>
                 ) : arrivals.length === 0 ? (
                     <div className="empty">No info</div>
                 ) : (
