@@ -104,46 +104,49 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 12px;
+          gap: 10px;
           min-height: 80px;
         }
         .card-header {
            display: flex;
            align-items: center;
            flex: 1;
-           min-width: 0; /* Crucial for text truncation in flex child */
+           min-width: 0;
         }
         .badge {
-          min-width: 36px;
-          height: 36px;
-          padding: 0 8px;
-          border-radius: 18px;
+          min-width: 32px;
+          height: 32px;
+          padding: 0 6px;
+          border-radius: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: bold;
-          font-size: 14px;
-          margin-right: 12px;
+          font-size: 12px;
+          margin-right: 10px;
           color: white;
           white-space: nowrap;
           flex-shrink: 0;
         }
         .info {
           flex: 1;
-          min-width: 0; /* Crucial for truncation */
-          margin-right: 8px;
+          min-width: 0;
+          margin-right: 4px;
         }
         .info h3 { 
           margin: 0; 
-          font-size: 15px; 
+          font-size: 14px; 
           font-weight: 600;
-          white-space: nowrap;
+          line-height: 1.2;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
           overflow: hidden;
-          text-overflow: ellipsis;
+          white-space: normal;
         }
         .info p { 
           margin: 2px 0 0; 
-          font-size: 12px; 
+          font-size: 11px; 
           color: var(--text-muted);
           white-space: nowrap;
           overflow: hidden;
@@ -151,16 +154,16 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         }
         .arrivals { 
           display: flex; 
-          gap: 12px; 
+          gap: 8px; 
           flex-shrink: 0; 
           text-align: right;
         }
-        .arrival-item { display: flex; flex-direction: column; align-items: center; width: 32px; }
-        .min { font-size: 20px; font-weight: bold; line-height: 1.2; }
-        .label { font-size: 10px; color: var(--text-muted); }
+        .arrival-item { display: flex; flex-direction: column; align-items: center; width: 28px; }
+        .min { font-size: 18px; font-weight: bold; line-height: 1.2; }
+        .label { font-size: 9px; color: var(--text-muted); }
         .delete-btn { 
             background: none; 
-            padding: 8px; 
+            padding: 4px; 
             flex-shrink: 0;
             opacity: 0.5;
         }
