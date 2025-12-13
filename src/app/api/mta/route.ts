@@ -8,6 +8,10 @@ export async function GET(request: Request) {
     const direction = searchParams.get('direction'); // 'N' or 'S', or 'East'/'West' for LIRR?
     const clientApiKey = request.headers.get('x-mta-api-key');
 
+    if (!routeId || !stopId) {
+        return NextResponse.json({ error: 'Missing required params' }, { status: 400 });
+    }
+
     // Bus feeds still require a key (using the client key)
     // Subway/Rail feeds (GTFS-RT) are now public and require NO key.
     // We explicitly pass undefined for them to ensure no invalid key header is sent.
@@ -20,10 +24,6 @@ export async function GET(request: Request) {
     let effectiveKey = clientApiKey;
     if (isSubwayOrRail) {
         effectiveKey = undefined;
-    }
-
-    if (!routeId || !stopId) {
-        return NextResponse.json({ error: 'Missing required params' }, { status: 400 });
     }
 
     try {
