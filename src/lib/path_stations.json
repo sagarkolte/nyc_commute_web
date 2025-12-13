@@ -1,0 +1,93 @@
+[
+    {
+        "id": "26722",
+        "name": "14th Street",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26723",
+        "name": "23rd Street",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26724",
+        "name": "33rd Street",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26725",
+        "name": "9th Street",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26726",
+        "name": "Christopher Street",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26727",
+        "name": "Exchange Place",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26728",
+        "name": "Grove Street",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26729",
+        "name": "Harrison",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26730",
+        "name": "Hoboken",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26731",
+        "name": "Journal Square",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26732",
+        "name": "Newport",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26733",
+        "name": "Newark",
+        "lines": [
+            "PATH"
+        ]
+    },
+    {
+        "id": "26734",
+        "name": "World Trade Center",
+        "lines": [
+            "PATH"
+        ]
+    }
+]

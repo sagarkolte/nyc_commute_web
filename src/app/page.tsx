@@ -1,66 +1,67 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Plus, Settings as SettingsIcon } from 'lucide-react';
+import { CommuteTuple } from '@/types';
+import { CommuteStorage } from '@/lib/storage';
+import { CountdownCard } from '@/components/CountdownCard';
 
 export default function Home() {
+  const [tuples, setTuples] = useState<CommuteTuple[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setTuples(CommuteStorage.getTuples());
+    setMounted(true);
+  }, []);
+
+  const handleDelete = (id: string) => {
+    if (confirm('Delete this route?')) {
+      CommuteStorage.removeTuple(id);
+      setTuples(CommuteStorage.getTuples());
+    }
+  };
+
+  if (!mounted) return null;
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="container">
+      <header style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>My Commute</h1>
+        <Link href="/settings">
+          <SettingsIcon color="#888" size={24} />
+        </Link>
+      </header>
+
+      {tuples.length === 0 ? (
+        <div style={{ textAlign: 'center', marginTop: 100, color: '#666' }}>
+          <p>No routes added yet.</p>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      ) : (
+        tuples.map(t => (
+          <CountdownCard key={t.id} tuple={t} onDelete={() => handleDelete(t.id)} />
+        ))
+      )}
+
+      <Link href="/add" className="fab">
+        <Plus color="white" size={32} />
+      </Link>
+
+      <style jsx>{`
+        .fab {
+          position: fixed;
+          bottom: 32px;
+          right: 24px;
+          width: 56px; height: 56px;
+          border-radius: 28px;
+          background: var(--primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+      `}</style>
+    </main>
   );
 }
