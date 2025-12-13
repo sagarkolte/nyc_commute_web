@@ -38,6 +38,7 @@ export async function GET(request: Request) {
         let routeIdMatchCount = 0;
         let stopMatchCount = 0;
         let afterNowCount = 0;
+        let lastArrivalTime: number | null = null;
         const feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
         const sampleRoutes = new Set<string>();
         const sampleStops = new Set<string>();
@@ -68,6 +69,14 @@ export async function GET(request: Request) {
             const feed = feedResponse.data;
             const targetStopId = (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`;
 
+            const getTime = (t: any) => {
+                if (t === null || t === undefined) return null;
+                if (typeof t === 'number') return t;
+                if (t && typeof t.low === 'number') return t.low;
+                if (typeof t === 'string') return parseInt(t, 10);
+                return null;
+            };
+
             feed.entity.forEach((entity: any) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
                     // Check Route ID
@@ -86,7 +95,9 @@ export async function GET(request: Request) {
                             const stopMatch = isRail ? stopUpdate.stopId === stopId : stopUpdate.stopId === targetStopId;
                             if (stopMatch) {
                                 stopMatchCount++;
-                                const arrivalTime = stopUpdate.arrival?.time?.low || stopUpdate.departure?.time?.low;
+                                const arrivalTime = getTime(stopUpdate.arrival?.time) || getTime(stopUpdate.departure?.time);
+                                if (arrivalTime) lastArrivalTime = arrivalTime;
+
                                 if (arrivalTime && arrivalTime > now) {
                                     afterNowCount++;
                                     arrivals.push({
@@ -113,6 +124,7 @@ export async function GET(request: Request) {
                 stopMatchCount,
                 afterNowCount,
                 serverTime: now,
+                lastArrivalTime,
                 targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`,
                 sampleRoutes: Array.from(sampleRoutes).slice(0, 10),
                 sampleStops: Array.from(sampleStops)

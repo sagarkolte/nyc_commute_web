@@ -97,6 +97,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         {debugInfo ? (
                             <div style={{ marginTop: '2px', fontSize: '8px', color: '#888' }}>
                                 E:{debugInfo.feedEntityCount} R:{debugInfo.routeIdMatchCount} S:{debugInfo.stopMatchCount}<br />
+                                T:{debugInfo.serverTime} A:{debugInfo.lastArrivalTime}<br />
                                 Routes: {debugInfo.sampleRoutes?.join(', ')}
                             </div>
                         ) : '.'}
