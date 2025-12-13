@@ -99,38 +99,71 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         .card {
           background: var(--card-bg);
           border-radius: 12px;
-          padding: 16px;
+          padding: 12px;
           margin-bottom: 12px;
           display: flex;
           align-items: center;
           justify-content: space-between;
+          gap: 12px;
+          min-height: 80px;
         }
         .card-header {
            display: flex;
            align-items: center;
            flex: 1;
+           min-width: 0; /* Crucial for text truncation in flex child */
         }
         .badge {
           min-width: 36px;
           height: 36px;
-          padding: 0 8px; /* Horizontal padding for long text */
-          border-radius: 18px; /* Pill shape */
+          padding: 0 8px;
+          border-radius: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: bold;
-          font-size: 14px; /* Slightly smaller font for better fit */
+          font-size: 14px;
           margin-right: 12px;
           color: white;
           white-space: nowrap;
+          flex-shrink: 0;
         }
-        .info h3 { margin: 0; font-size: 16px; font-weight: 600; }
-        .info p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
-        .arrivals { display: flex; gap: 12px; }
-        .arrival-item { display: flex; flex-direction: column; align-items: center; }
-        .min { font-size: 24px; font-weight: bold; }
+        .info {
+          flex: 1;
+          min-width: 0; /* Crucial for truncation */
+          margin-right: 8px;
+        }
+        .info h3 { 
+          margin: 0; 
+          font-size: 15px; 
+          font-weight: 600;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .info p { 
+          margin: 2px 0 0; 
+          font-size: 12px; 
+          color: var(--text-muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .arrivals { 
+          display: flex; 
+          gap: 12px; 
+          flex-shrink: 0; 
+          text-align: right;
+        }
+        .arrival-item { display: flex; flex-direction: column; align-items: center; width: 32px; }
+        .min { font-size: 20px; font-weight: bold; line-height: 1.2; }
         .label { font-size: 10px; color: var(--text-muted); }
-        .delete-btn { background: none; margin-left: auto; padding: 8px; }
+        .delete-btn { 
+            background: none; 
+            padding: 8px; 
+            flex-shrink: 0;
+            opacity: 0.5;
+        }
       `}</style>
         </div>
     );
