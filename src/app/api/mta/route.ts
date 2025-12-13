@@ -6,7 +6,20 @@ export async function GET(request: Request) {
     const routeId = searchParams.get('routeId');
     const stopId = searchParams.get('stopId');
     const direction = searchParams.get('direction'); // 'N' or 'S', or 'East'/'West' for LIRR?
-    const apiKey = request.headers.get('x-mta-api-key') || undefined;
+    const clientApiKey = request.headers.get('x-mta-api-key');
+    const serverMtaKey = process.env.MTA_API_KEY;
+
+    // Determine if this is a Subway/Rail route that needs the primary MTA Key (api.mta.info)
+    const isSubwayOrRail = routeId.startsWith('LIRR') ||
+        routeId.startsWith('MNR') ||
+        ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
+
+    // Prefer server-side MTA_API_KEY for Subway/Rail, fallback to client key (which might be the Bus Key)
+    // For Bus, we use the client key passed from the frontend (NEXT_PUBLIC_MTA_BUS_API_KEY)
+    let effectiveKey = clientApiKey;
+    if (isSubwayOrRail && serverMtaKey) {
+        effectiveKey = serverMtaKey;
+    }
 
     if (!routeId || !stopId) {
         return NextResponse.json({ error: 'Missing required params' }, { status: 400 });
@@ -15,7 +28,7 @@ export async function GET(request: Request) {
     try {
         const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId));
         console.log(`[API] Fetching feed for routeId=${routeId} stopId=${stopId} type=${feedRouteId}`);
-        const feedResponse = await MtaService.fetchFeed(feedRouteId, apiKey, stopId);
+        const feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId);
 
         const now = Date.now() / 1000;
         const arrivals: any[] = [];
