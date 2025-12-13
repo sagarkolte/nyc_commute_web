@@ -14,6 +14,7 @@ export async function GET(request: Request) {
 
     const isSubwayOrRail = routeId.startsWith('LIRR') ||
         routeId.startsWith('MNR') ||
+        routeId === 'PATH' ||
         ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
 
     let effectiveKey = clientApiKey;
