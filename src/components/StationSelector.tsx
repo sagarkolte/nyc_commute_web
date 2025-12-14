@@ -20,13 +20,15 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
     const [busStops, setBusStops] = useState<Station[]>([]);
     const [loading, setLoading] = useState(false);
     const [hasKey, setHasKey] = useState(false);
+    const [lockedRoute, setLockedRoute] = useState<string | null>(null);
 
     useEffect(() => {
         setHasKey(!!CommuteStorage.getApiKey());
     }, []);
 
     useEffect(() => {
-        if (mode === 'bus' && search.length > 2) {
+        // Only fetch from API if we are NOT locked on a route
+        if (mode === 'bus' && !lockedRoute && search.length > 2) {
             const apiKey = CommuteStorage.getApiKey();
             // Server will handle auth if apiKey is missing
 
@@ -52,7 +54,20 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
 
             return () => clearTimeout(delayDebounceFn);
         }
-    }, [mode, search]);
+    }, [mode, search, lockedRoute]);
+
+    const handleLock = () => {
+        if (search.trim().length > 0) {
+            setLockedRoute(search.trim());
+            setSearch(''); // Clear search to allow filtering
+        }
+    };
+
+    const handleUnlock = () => {
+        setLockedRoute(null);
+        setSearch('');
+        setBusStops([]); // Clear stops to restart
+    };
 
     const filtered = useMemo(() => {
         let data: any[] = [];
@@ -66,16 +81,19 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else if (mode === 'mnr') {
             data = mnrStations;
-            // ... (keep rest)
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else if (mode === 'path') {
             data = pathStations;
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else {
-            // Bus: returning fetched stops
+            // Bus: 
+            if (lockedRoute) {
+                // Filter the already-fetched stops by the new search term (stop name)
+                return busStops.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            }
             return busStops;
         }
-    }, [mode, line, search, busStops]);
+    }, [mode, line, search, busStops, lockedRoute]);
 
     return (
         <div className="selector">
@@ -84,17 +102,29 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
                 <h2>Select {mode === 'lirr' ? 'LIRR Station' : (mode === 'mnr' ? 'Metro-North Station' : (mode === 'path' ? 'PATH Station' : `${line} Station`))}</h2>
             </div>
 
-            <input
-                type="text"
-                placeholder="Search station..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="search-input"
-                autoFocus
-            />
+            {mode === 'bus' && lockedRoute && (
+                <div className="locked-header">
+                    <span>Route: <strong>{lockedRoute}</strong></span>
+                    <button onClick={handleUnlock} className="unlock-btn">Change</button>
+                </div>
+            )}
+
+            <div className="search-container">
+                <input
+                    type="text"
+                    placeholder={mode === 'bus' ? (lockedRoute ? "Filter stops (e.g. Chelsea)" : "Search Route (e.g. M23)") : "Search station..."}
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="search-input"
+                    autoFocus
+                />
+                {mode === 'bus' && !lockedRoute && busStops.length > 0 && (
+                    <button onClick={handleLock} className="lock-btn">Lock Route</button>
+                )}
+            </div>
 
             <div className="list">
-                {mode === 'bus' && search.length < 3 && (
+                {mode === 'bus' && !lockedRoute && search.length < 3 && (
                     <div style={{ padding: 16, color: '#888' }}>
                         Enter at least 3 characters of a Route Name (e.g. "M15") to search.
                     </div>
@@ -106,10 +136,10 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
                     // Start of fix for Bus Route selection
                     let bestRoute: string | undefined;
                     if (mode === 'bus' && s.lines) {
-                        // Attempt to find the route that matches the user's search query (e.g. "M23" inside "MTA NYCT_M23+")
-                        // If multiple match, or none, fallback to the first one.
-                        // We strip special characters from search to better match IDs possibly
-                        const cleanSearch = search.trim().toLowerCase();
+                        // Use lockedRoute if available, otherwise search
+                        // This ensures we pick the ID matching the Route, not the Stop filter
+                        const targetQuery = lockedRoute || search;
+                        const cleanSearch = targetQuery.trim().toLowerCase();
                         bestRoute = s.lines.find(l => l.toLowerCase().includes(cleanSearch));
                         if (!bestRoute) bestRoute = s.lines[0];
                     }
@@ -128,6 +158,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         .header { display: flex; align-items: center; margin-bottom: 16px; }
         .back-btn { background: none; color: var(--primary); font-size: 16px; margin-right: 16px; }
         h2 { margin: 0; font-size: 20px; }
+        .search-container { display: flex; gap: 8px; margin-bottom: 16px; }
         .search-input {
           width: 100%;
           padding: 12px;
@@ -136,7 +167,34 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
           background: var(--card-bg);
           color: white;
           font-size: 16px;
-          margin-bottom: 16px;
+          flex: 1;
+        }
+        .lock-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .locked-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #333;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .unlock-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
         }
         .list { flex: 1; overflow-y: auto; }
         .item {
