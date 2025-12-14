@@ -28,7 +28,10 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const headers: HeadersInit = {};
             if (apiKey) headers['x-mta-api-key'] = apiKey;
 
-            const res = await fetch(`/api/mta?_t=${Date.now()}&routeId=${tuple.routeId}&stopId=${tuple.stopId}&direction=${tuple.direction}`, {
+            const routeId = encodeURIComponent(tuple.routeId);
+            const stopId = encodeURIComponent(tuple.stopId);
+            const direction = encodeURIComponent(tuple.direction);
+            const res = await fetch(`/api/mta?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}`, {
                 headers
             });
             if (!res.ok) {
@@ -38,7 +41,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const data = await res.json();
             if (data.arrivals) {
                 setArrivals(data.arrivals);
-                setDebugInfo(data.debugInfo ?? data.debug);
+                setDebugInfo(null); // Clear debug info for production
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
@@ -98,14 +101,8 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 ) : error ? (
                     <div className="error" style={{ fontSize: '10px', color: 'red', lineHeight: 1.2, maxWidth: '80px', overflow: 'hidden' }}>{error}</div>
                 ) : arrivals.length === 0 ? (
-                    <div className="empty" style={{ fontSize: '9px', lineHeight: 1.2, color: '#666' }}>
-                        No Info<br />
-                        {debugInfo ? (
-                            <div style={{ marginTop: '2px', fontSize: '8px', color: '#888', wordBreak: 'break-all' }}>
-                                E:{debugInfo.feedEntityCount} R:{debugInfo.routeIdMatchCount}<br />
-                                Trace:{debugInfo.debugRaw}
-                            </div>
-                        ) : '.'}
+                    <div className="empty" style={{ fontSize: '11px', lineHeight: 1.2, color: '#666' }}>
+                        No Info
                     </div>
                 ) : (
                     arrivals.map((arrival, i) => (
