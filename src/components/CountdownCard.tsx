@@ -98,13 +98,8 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 ) : error ? (
                     <div className="error" style={{ fontSize: '10px', color: 'red', lineHeight: 1.2, maxWidth: '80px', overflow: 'hidden' }}>{error}</div>
                 ) : arrivals.length === 0 ? (
-                    <div className="empty" style={{ fontSize: '9px', lineHeight: 1.2, color: '#666' }}>
-                        No Info<br />
-                        {debugInfo ? (
-                            <div style={{ marginTop: '2px', fontSize: '8px', color: '#888' }}>
-                                E:{debugInfo.feedEntityCount} R:{debugInfo.routeIdMatchCount} S:{debugInfo.stopMatchCount}
-                            </div>
-                        ) : '.'}
+                    <div className="empty" style={{ fontSize: '11px', lineHeight: 1.2, color: '#666' }}>
+                        No Info
                     </div>
                 ) : (
                     arrivals.map((arrival, i) => (
