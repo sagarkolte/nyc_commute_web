@@ -113,7 +113,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             // Bus: 
             if (lockedRoute) {
                 // Filter by route AND (name OR headsign OR direction)
-                const q = search.toLowerCase();
+                const q = search.toLowerCase().trim();
                 return busStops
                     .filter(s => s.lines.includes(lockedRoute))
                     .filter(s => {
@@ -144,7 +144,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             <div className="search-container">
                 <input
                     type="text"
-                    placeholder={mode === 'bus' ? (lockedRoute ? "Filter stops (e.g. Chelsea)" : "Search Route (e.g. M23)") : "Search station..."}
+                    placeholder={mode === 'bus' ? (lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)") : "Search station..."}
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     className="search-input"
