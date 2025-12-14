@@ -56,18 +56,42 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         }
     }, [mode, search, lockedRoute]);
 
-    const handleLock = () => {
-        if (search.trim().length > 0) {
-            setLockedRoute(search.trim());
-            setSearch(''); // Clear search to allow filtering
-        }
-    };
-
     const handleUnlock = () => {
         setLockedRoute(null);
-        setSearch('');
+        setSearch(''); // Clear search to allow finding new route
         setBusStops([]); // Clear stops to restart
     };
+
+    const uniqueRoutes = useMemo(() => {
+        if (mode !== 'bus' || lockedRoute) return [];
+        // Extract unique routes from fetched stops
+        const routesMap = new Map<string, number>();
+        busStops.forEach(s => {
+            s.lines.forEach(id => {
+                // Only include the route matching the search query closely?
+                // Or just show all? The API "search-for-route" usually returns relevant stops.
+                // We show all lines associated with these stops.
+                // But we should prioritize the one matching the query.
+                // Filter: Only show matches to query?
+                if (!id) return;
+                const count = routesMap.get(id) || 0;
+                routesMap.set(id, count + 1);
+            });
+        });
+
+        // Convert to array and sort by relevance (exact match first, then length)
+        return Array.from(routesMap.entries())
+            .map(([id, count]) => ({ id, count }))
+            .filter(r => r.id.toLowerCase().includes(search.toLowerCase().trim())) // Only show relevant routes
+            .sort((a, b) => {
+                const q = search.toLowerCase().trim();
+                const aName = a.id.toLowerCase();
+                const bName = b.id.toLowerCase();
+                if (aName === q) return -1;
+                if (bName === q) return 1;
+                return aName.length - bName.length;
+            });
+    }, [busStops, lockedRoute, search, mode]);
 
     const filtered = useMemo(() => {
         let data: any[] = [];
@@ -89,9 +113,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             // Bus: 
             if (lockedRoute) {
                 // Filter the already-fetched stops by the new search term (stop name)
-                return busStops.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+                return busStops
+                    .filter(s => s.lines.includes(lockedRoute))
+                    .filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
             }
-            return busStops;
+            return []; // When not locked, we use uniqueRoutes instead
         }
     }, [mode, line, search, busStops, lockedRoute]);
 
@@ -104,7 +130,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
 
             {mode === 'bus' && lockedRoute && (
                 <div className="locked-header">
-                    <span>Route: <strong>{lockedRoute}</strong></span>
+                    <span>Route: <strong>{lockedRoute.replace('MTA NYCT_', '').replace('+', '')}</strong></span>
                     <button onClick={handleUnlock} className="unlock-btn">Change</button>
                 </div>
             )}
@@ -118,39 +144,40 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
                     className="search-input"
                     autoFocus
                 />
-                {mode === 'bus' && !lockedRoute && busStops.length > 0 && (
-                    <button onClick={handleLock} className="lock-btn">Lock Route</button>
-                )}
             </div>
 
             <div className="list">
-                {mode === 'bus' && !lockedRoute && search.length < 3 && (
-                    <div style={{ padding: 16, color: '#888' }}>
-                        Enter at least 3 characters of a Route Name (e.g. "M15") to search.
-                    </div>
+                {mode === 'bus' && !lockedRoute ? (
+                    <>
+                        {search.length < 3 && (
+                            <div style={{ padding: 16, color: '#888' }}>
+                                Enter Route Name (e.g. "M23")
+                            </div>
+                        )}
+                        {loading && <div style={{ padding: 16 }}>Searching Routes...</div>}
+                        {uniqueRoutes.map(route => (
+                            <button
+                                key={route.id}
+                                className="item icon-item"
+                                onClick={() => {
+                                    setLockedRoute(route.id);
+                                    setSearch('');
+                                }}
+                            >
+                                <span className="route-icon">{route.id.replace('MTA NYCT_', '').replace('+', '')}</span>
+                                <span className="route-count">{route.count} stops</span>
+                            </button>
+                        ))}
+                    </>
+                ) : (
+                    filtered.map(s => {
+                        return (
+                            <button key={s.id} className="item" onClick={() => onSelect(s as Station, mode === 'bus' ? lockedRoute! : undefined)}>
+                                {mode === 'bus' ? `${s.name} ${s.headsign ? `(${s.headsign})` : `(${s.direction || 'Bus'})`}` : s.name}
+                            </button>
+                        );
+                    })
                 )}
-                {mode === 'bus' && loading && <div style={{ padding: 16 }}>Searching...</div>}
-
-
-                {filtered.map(s => {
-                    // Start of fix for Bus Route selection
-                    let bestRoute: string | undefined;
-                    if (mode === 'bus' && s.lines) {
-                        // Use lockedRoute if available, otherwise search
-                        // This ensures we pick the ID matching the Route, not the Stop filter
-                        const targetQuery = lockedRoute || search;
-                        const cleanSearch = targetQuery.trim().toLowerCase();
-                        bestRoute = s.lines.find(l => l.toLowerCase().includes(cleanSearch));
-                        if (!bestRoute) bestRoute = s.lines[0];
-                    }
-                    // End of fix
-
-                    return (
-                        <button key={s.id} className="item" onClick={() => onSelect(s as Station, mode === 'bus' ? bestRoute : undefined)}>
-                            {mode === 'bus' ? `${s.name} ${s.headsign ? `(${s.headsign})` : `(${s.direction || 'Bus'})`}` : s.name}
-                        </button>
-                    );
-                })}
             </div>
 
             <style jsx>{`
@@ -169,15 +196,6 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
           font-size: 16px;
           flex: 1;
         }
-        .lock-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
         .locked-header {
             display: flex;
             justify-content: space-between;
@@ -195,6 +213,22 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
+        }
+        .route-icon {
+            background: #444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        .route-count {
+            color: #888;
+            font-size: 14px;
+        }
+        .icon-item {
+            display: flex;
+            align-items: center;
         }
         .list { flex: 1; overflow-y: auto; }
         .item {
