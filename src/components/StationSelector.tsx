@@ -112,10 +112,16 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         } else {
             // Bus: 
             if (lockedRoute) {
-                // Filter the already-fetched stops by the new search term (stop name)
+                // Filter by route AND (name OR headsign OR direction)
+                const q = search.toLowerCase();
                 return busStops
                     .filter(s => s.lines.includes(lockedRoute))
-                    .filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+                    .filter(s => {
+                        const nameMatch = s.name.toLowerCase().includes(q);
+                        const headsignMatch = s.headsign?.toLowerCase().includes(q);
+                        const directionMatch = s.direction?.toLowerCase().includes(q);
+                        return nameMatch || headsignMatch || directionMatch;
+                    });
             }
             return []; // When not locked, we use uniqueRoutes instead
         }
