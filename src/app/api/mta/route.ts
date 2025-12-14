@@ -150,13 +150,15 @@ export async function GET(request: Request) {
 
         return NextResponse.json({
             arrivals: arrivals.slice(0, 3),
-            debug: {
+            debugInfo: {
                 feedEntityCount,
                 routeIdMatchCount,
                 stopMatchCount,
                 afterNowCount,
                 serverTime: now,
-                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`
+                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`,
+                firstLineRef,
+                debugRaw
             }
         });
     } catch (error) {
