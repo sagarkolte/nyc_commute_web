@@ -38,10 +38,7 @@ export async function GET(request: Request) {
         let routeIdMatchCount = 0;
         let stopMatchCount = 0;
         let afterNowCount = 0;
-        let lastArrivalTime: number | null = null;
         const feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
-        const sampleRoutes = new Set<string>();
-        const sampleStops = new Set<string>();
 
         if (feedResponse.type === 'siri') {
             // ... (keep siri logic, maybe add stats if needed, but assuming GTFS for subway)
@@ -81,7 +78,6 @@ export async function GET(request: Request) {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
                     // Check Route ID
                     const entityRouteId = entity.tripUpdate.trip.routeId;
-                    if (entityRouteId) sampleRoutes.add(entityRouteId);
 
                     const isRail = routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
                     const routeMatches = (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? true : entityRouteId === routeId;
@@ -89,14 +85,10 @@ export async function GET(request: Request) {
                     if (routeMatches) {
                         routeIdMatchCount++;
                         entity.tripUpdate.stopTimeUpdate.forEach((stopUpdate: any) => {
-                            if (stopUpdate.stopId) {
-                                if (sampleStops.size < 5) sampleStops.add(stopUpdate.stopId);
-                            }
                             const stopMatch = isRail ? stopUpdate.stopId === stopId : stopUpdate.stopId === targetStopId;
                             if (stopMatch) {
                                 stopMatchCount++;
                                 const arrivalTime = getTime(stopUpdate.arrival?.time) || getTime(stopUpdate.departure?.time);
-                                if (arrivalTime) lastArrivalTime = arrivalTime;
 
                                 if (arrivalTime && arrivalTime > now) {
                                     afterNowCount++;
@@ -124,10 +116,7 @@ export async function GET(request: Request) {
                 stopMatchCount,
                 afterNowCount,
                 serverTime: now,
-                lastArrivalTime,
-                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`,
-                sampleRoutes: Array.from(sampleRoutes).slice(0, 10),
-                sampleStops: Array.from(sampleStops)
+                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`
             }
         });
     } catch (error) {
