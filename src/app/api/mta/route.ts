@@ -41,15 +41,24 @@ export async function GET(request: Request) {
         let afterNowCount = 0;
         let feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
         let firstLineRef = ''; // Declare firstLineRef here
-        let debugRaw = '';
+        let debugRaw = 'Init;';
 
         if (feedResponse.type === 'siri') {
+            debugRaw += 'Type=Siri;';
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
             console.log(`[BusDebug] Request: routeId=${routeId} stopId=${stopId} now=${now}`);
             if (delivery?.MonitoredStopVisit) {
                 feedEntityCount = delivery.MonitoredStopVisit.length;
+                debugRaw += `Visits=${feedEntityCount};`;
                 delivery.MonitoredStopVisit.forEach((visit: any, idx: number) => {
-                    if (idx === 0) debugRaw = JSON.stringify(visit).substring(0, 150); // Capture raw JSON
+                    if (idx === 0) {
+                        debugRaw += `V0Keys=${Object.keys(visit).join(',')};`;
+                        if (visit.MonitoredVehicleJourney) {
+                            debugRaw += `JourneyFound;LineRef=${visit.MonitoredVehicleJourney.LineRef};`;
+                        } else {
+                            debugRaw += `NoJourney;`;
+                        }
+                    }
 
                     const journey = visit.MonitoredVehicleJourney;
                     const lineRef = journey?.LineRef || '';
@@ -65,6 +74,10 @@ export async function GET(request: Request) {
                         pubName === routeId ||
                         (routeId.length > 3 && lineRef.includes(routeId)) ||
                         (lineRef.length > 3 && routeId.includes(lineRef));
+
+                    if (idx === 0) {
+                        debugRaw += `Match=${isMatch};Ref=${lineRef};Req=${routeId};`;
+                    }
 
                     const call = journey?.MonitoredCall;
                     const expectedTime = call?.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
