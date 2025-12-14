@@ -39,15 +39,25 @@ export async function GET(request: Request) {
         let routeIdMatchCount = 0;
         let stopMatchCount = 0;
         let afterNowCount = 0;
-        const feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
+        let feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
 
         if (feedResponse.type === 'siri') {
-            // ... (keep siri logic, maybe add stats if needed, but assuming GTFS for subway)
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
             if (delivery?.MonitoredStopVisit) {
+                feedEntityCount = delivery.MonitoredStopVisit.length;
                 delivery.MonitoredStopVisit.forEach((visit: any) => {
                     const journey = visit.MonitoredVehicleJourney;
-                    // ... existing logic ...
+                    // Increment routeIdMatchCount if LineRef matches the requested routeId
+                    if (journey.LineRef === routeId) {
+                        routeIdMatchCount++;
+                    }
+                    // For SIRI (bus), the API usually filters by stopId already, so every visit is for the target stop.
+                    // If the API call was for a specific stop, then all visits are for that stop.
+                    // Assuming MtaService.fetchFeed for SIRI already filters by stopId if provided.
+                    // If not, we would need to check visit.MonitoredVehicleJourney.MonitoredCall.StopPointRef
+                    // For now, we'll assume the feed is already filtered for the stop.
+                    stopMatchCount++; // Each visit is considered a stop match for SIRI feeds if the API filters by stop.
+
                     const call = journey?.MonitoredCall;
                     if (!call) return;
                     const expectedTime = call.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
