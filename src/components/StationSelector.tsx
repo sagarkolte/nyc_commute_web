@@ -28,13 +28,16 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
     useEffect(() => {
         if (mode === 'bus' && search.length > 2) {
             const apiKey = CommuteStorage.getApiKey();
-            if (!apiKey) return;
+            // Server will handle auth if apiKey is missing
 
             const delayDebounceFn = setTimeout(async () => {
                 setLoading(true);
                 try {
+                    const headers: any = {};
+                    if (apiKey) headers['x-mta-api-key'] = apiKey;
+
                     const res = await fetch(`/api/mta/bus-stops?q=${search}`, {
-                        headers: { 'x-mta-api-key': apiKey }
+                        headers
                     });
                     const data = await res.json();
                     if (data.stops) {
@@ -63,6 +66,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else if (mode === 'mnr') {
             data = mnrStations;
+            // ... (keep rest)
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else if (mode === 'path') {
             data = pathStations;
@@ -90,17 +94,13 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             />
 
             <div className="list">
-                {mode === 'bus' && !hasKey && (
-                    <div style={{ padding: 16, color: 'orange' }}>
-                        Please set your MTA Bus Time API Key in Settings to search for bus stops.
-                    </div>
-                )}
-                {mode === 'bus' && hasKey && search.length < 3 && (
+                {mode === 'bus' && search.length < 3 && (
                     <div style={{ padding: 16, color: '#888' }}>
                         Enter at least 3 characters of a Route Name (e.g. "M15") to search.
                     </div>
                 )}
                 {mode === 'bus' && loading && <div style={{ padding: 16 }}>Searching...</div>}
+
 
                 {filtered.map(s => (
                     <button key={s.id} className="item" onClick={() => onSelect(s as Station, mode === 'bus' ? (s.lines && s.lines[0]) : undefined)}>
