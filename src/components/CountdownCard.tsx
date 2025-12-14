@@ -28,7 +28,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const headers: HeadersInit = {};
             if (apiKey) headers['x-mta-api-key'] = apiKey;
 
-            const res = await fetch(`/api/mta?routeId=${tuple.routeId}&stopId=${tuple.stopId}&direction=${tuple.direction}`, {
+            const res = await fetch(`/api/mta?_t=${Date.now()}&routeId=${tuple.routeId}&stopId=${tuple.stopId}&direction=${tuple.direction}`, {
                 headers
             });
             if (!res.ok) {
@@ -38,7 +38,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const data = await res.json();
             if (data.arrivals) {
                 setArrivals(data.arrivals);
-                setDebugInfo(data.debug);
+                setDebugInfo(data.debugInfo ?? data.debug);
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
@@ -103,7 +103,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         {debugInfo ? (
                             <div style={{ marginTop: '2px', fontSize: '8px', color: '#888', wordBreak: 'break-all' }}>
                                 E:{debugInfo.feedEntityCount} R:{debugInfo.routeIdMatchCount}<br />
-                                Raw:{debugInfo.debugRaw}
+                                Trace:{debugInfo.debugRaw}
                             </div>
                         ) : '.'}
                     </div>
