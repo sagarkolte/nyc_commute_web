@@ -43,6 +43,7 @@ export async function GET(request: Request) {
 
         if (feedResponse.type === 'siri') {
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
+            console.log(`[BusDebug] Request: routeId=${routeId} stopId=${stopId} now=${now}`);
             if (delivery?.MonitoredStopVisit) {
                 feedEntityCount = delivery.MonitoredStopVisit.length;
                 delivery.MonitoredStopVisit.forEach((visit: any) => {
@@ -60,14 +61,18 @@ export async function GET(request: Request) {
                         (routeId.length > 3 && lineRef.includes(routeId)) ||
                         (lineRef.length > 3 && routeId.includes(lineRef));
 
+                    const call = journey?.MonitoredCall;
+                    const expectedTime = call?.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
+                    const aimedTime = call?.AimedArrivalTime ? new Date(call.AimedArrivalTime).getTime() / 1000 : null;
+                    const arrivalTime = expectedTime || aimedTime;
+                    const diff = arrivalTime ? arrivalTime - now : 'N/A';
+
+                    console.log(`[BusDebug] Visit: LineRef=${lineRef} Pub=${pubName} Match=${isMatch} Time=${arrivalTime} Diff=${diff}`);
+
                     if (isMatch) {
                         routeIdMatchCount++;
 
-                        const call = journey?.MonitoredCall;
                         if (!call) return;
-                        const expectedTime = call.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
-                        const aimedTime = call.AimedArrivalTime ? new Date(call.AimedArrivalTime).getTime() / 1000 : null;
-                        const arrivalTime = expectedTime || aimedTime;
                         if (arrivalTime && arrivalTime > now) {
                             arrivals.push({
                                 routeId: journey.LineRef || routeId,
