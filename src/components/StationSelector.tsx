@@ -102,11 +102,25 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
                 {mode === 'bus' && loading && <div style={{ padding: 16 }}>Searching...</div>}
 
 
-                {filtered.map(s => (
-                    <button key={s.id} className="item" onClick={() => onSelect(s as Station, mode === 'bus' ? (s.lines && s.lines[0]) : undefined)}>
-                        {mode === 'bus' ? `${s.name} ${s.headsign ? `(${s.headsign})` : `(${s.direction || 'Bus'})`}` : s.name}
-                    </button>
-                ))}
+                {filtered.map(s => {
+                    // Start of fix for Bus Route selection
+                    let bestRoute: string | undefined;
+                    if (mode === 'bus' && s.lines) {
+                        // Attempt to find the route that matches the user's search query (e.g. "M23" inside "MTA NYCT_M23+")
+                        // If multiple match, or none, fallback to the first one.
+                        // We strip special characters from search to better match IDs possibly
+                        const cleanSearch = search.trim().toLowerCase();
+                        bestRoute = s.lines.find(l => l.toLowerCase().includes(cleanSearch));
+                        if (!bestRoute) bestRoute = s.lines[0];
+                    }
+                    // End of fix
+
+                    return (
+                        <button key={s.id} className="item" onClick={() => onSelect(s as Station, mode === 'bus' ? bestRoute : undefined)}>
+                            {mode === 'bus' ? `${s.name} ${s.headsign ? `(${s.headsign})` : `(${s.direction || 'Bus'})`}` : s.name}
+                        </button>
+                    );
+                })}
             </div>
 
             <style jsx>{`
