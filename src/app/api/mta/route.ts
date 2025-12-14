@@ -40,16 +40,18 @@ export async function GET(request: Request) {
         let stopMatchCount = 0;
         let afterNowCount = 0;
         let feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
+        let firstLineRef = ''; // Declare firstLineRef here
 
         if (feedResponse.type === 'siri') {
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
             console.log(`[BusDebug] Request: routeId=${routeId} stopId=${stopId} now=${now}`);
             if (delivery?.MonitoredStopVisit) {
                 feedEntityCount = delivery.MonitoredStopVisit.length;
-                delivery.MonitoredStopVisit.forEach((visit: any) => {
+                delivery.MonitoredStopVisit.forEach((visit: any, idx: number) => {
                     const journey = visit.MonitoredVehicleJourney;
                     const lineRef = journey.LineRef || '';
                     const pubName = journey.PublishedLineName || '';
+                    if (idx === 0) firstLineRef = lineRef; // Capture first lineRef for debug
 
                     // Robust matching: Check exact ID, Published Name, or if one is a substring of the other (for ID variations)
                     // This handles cases like "M23-SBS" vs "MTA NYCT_M23+" if the user saved a short name,
