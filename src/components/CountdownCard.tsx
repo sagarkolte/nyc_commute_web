@@ -101,9 +101,9 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     <div className="empty" style={{ fontSize: '9px', lineHeight: 1.2, color: '#666' }}>
                         No Info<br />
                         {debugInfo ? (
-                            <div style={{ marginTop: '2px', fontSize: '8px', color: '#888' }}>
+                            <div style={{ marginTop: '2px', fontSize: '8px', color: '#888', wordBreak: 'break-all' }}>
                                 E:{debugInfo.feedEntityCount} R:{debugInfo.routeIdMatchCount}<br />
-                                Rx:{debugInfo.firstLineRef ? debugInfo.firstLineRef.split('_').pop() : 'None'}
+                                Raw:{debugInfo.debugRaw}
                             </div>
                         ) : '.'}
                     </div>

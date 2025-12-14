@@ -41,6 +41,7 @@ export async function GET(request: Request) {
         let afterNowCount = 0;
         let feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
         let firstLineRef = ''; // Declare firstLineRef here
+        let debugRaw = '';
 
         if (feedResponse.type === 'siri') {
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
@@ -48,9 +49,11 @@ export async function GET(request: Request) {
             if (delivery?.MonitoredStopVisit) {
                 feedEntityCount = delivery.MonitoredStopVisit.length;
                 delivery.MonitoredStopVisit.forEach((visit: any, idx: number) => {
+                    if (idx === 0) debugRaw = JSON.stringify(visit).substring(0, 150); // Capture raw JSON
+
                     const journey = visit.MonitoredVehicleJourney;
-                    const lineRef = journey.LineRef || '';
-                    const pubName = journey.PublishedLineName || '';
+                    const lineRef = journey?.LineRef || '';
+                    const pubName = journey?.PublishedLineName || '';
                     if (idx === 0) firstLineRef = lineRef; // Capture first lineRef for debug
 
                     // Robust matching: Check exact ID, Published Name, or if one is a substring of the other (for ID variations)
