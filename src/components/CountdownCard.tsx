@@ -63,7 +63,13 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     const formatRouteId = (id: string) => {
         return id.replace('MTA NYCT_', '')
             .replace('MTABC_', '')
-            .replace('+', '-SBS'); // Common convention for SBS
+            .replace('+', '-SBS');
+    };
+
+    const toTitleCase = (str: string) => {
+        return str.replace(/\w\S*/g, (txt) => {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
     };
 
     return (
@@ -73,9 +79,9 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     {formatRouteId(tuple.routeId)}
                 </div>
                 <div className="info">
-                    <h3>{tuple.label}</h3>
+                    <h3>{toTitleCase(tuple.label)}</h3>
                     <p>
-                        {tuple.destinationName ? tuple.destinationName :
+                        {tuple.destinationName ? toTitleCase(tuple.destinationName) :
                             tuple.direction === 'N' ? 'Uptown / North' :
                                 tuple.direction === 'S' ? 'Downtown / South' :
                                     `Direction: ${tuple.direction}`}
@@ -127,18 +133,19 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
            align-items: center;
            flex: 1;
            min-width: 0;
+           padding-right: 8px;
         }
         .badge {
           min-width: 32px;
           height: 32px;
-          padding: 0 6px;
+          padding: 0 8px;
           border-radius: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: bold;
-          font-size: 12px;
-          margin-right: 10px;
+          font-size: 11px;
+          margin-right: 12px;
           color: white;
           white-space: nowrap;
           flex-shrink: 0;
