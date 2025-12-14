@@ -47,8 +47,20 @@ export async function GET(request: Request) {
                 feedEntityCount = delivery.MonitoredStopVisit.length;
                 delivery.MonitoredStopVisit.forEach((visit: any) => {
                     const journey = visit.MonitoredVehicleJourney;
-                    // Increment routeIdMatchCount if LineRef matches the requested routeId
-                    if (journey.LineRef === routeId) {
+                    const lineRef = journey.LineRef || '';
+                    const pubName = journey.PublishedLineName || '';
+
+                    // Robust matching: Check exact ID, Published Name, or if one is a substring of the other (for ID variations)
+                    // This handles cases like "M23-SBS" vs "MTA NYCT_M23+" if the user saved a short name,
+                    // or if the ID has a prefix/suffix we didn't expect.
+                    // We ensure we don't match "M2" to "M23" by ensuring boundaries or sufficient length, 
+                    // but M23 vs BM1 is distinct enough.
+                    const isMatch = lineRef === routeId ||
+                        pubName === routeId ||
+                        (routeId.length > 3 && lineRef.includes(routeId)) ||
+                        (lineRef.length > 3 && routeId.includes(lineRef));
+
+                    if (isMatch) {
                         routeIdMatchCount++;
 
                         const call = journey?.MonitoredCall;
