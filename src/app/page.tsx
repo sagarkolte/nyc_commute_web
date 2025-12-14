@@ -29,8 +29,11 @@ export default function Home() {
   return (
     <main className="container">
       <header style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Image src="/logo.png" width={32} height={32} alt="Transit Pulse" style={{ borderRadius: 8 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: '#333', padding: '6px', borderRadius: '8px' }}>
+            <TrainFront color="#e0e0e0" size={20} />
+            <Activity color="#EE352E" size={20} style={{ marginLeft: -4 }} />
+          </div>
           <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Transit Pulse</h1>
         </div>
         <Link href="/settings">
