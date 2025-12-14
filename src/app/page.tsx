@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, Settings as SettingsIcon } from 'lucide-react';
 import { CommuteTuple } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
@@ -28,7 +29,10 @@ export default function Home() {
   return (
     <main className="container">
       <header style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>My Commute</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Image src="/logo.png" width={32} height={32} alt="Transit Pulse" style={{ borderRadius: 8 }} />
+          <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Transit Pulse</h1>
+        </div>
         <Link href="/settings">
           <SettingsIcon color="#888" size={24} />
         </Link>

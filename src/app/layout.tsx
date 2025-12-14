@@ -14,9 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NYC Commute Tracker",
-  description: "Real-time NYC transit dashboard for iPhone.",
+  title: "Transit Pulse",
+  description: "Real-time NYC transit beat.",
   manifest: "/manifest.json",
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

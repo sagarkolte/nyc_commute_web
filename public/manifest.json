@@ -1,7 +1,7 @@
 {
-    "name": "NYC Commute Tracker",
-    "short_name": "NYC Commute",
-    "description": "Real-time NYC transit dashboard for iPhone.",
+    "name": "Transit Pulse",
+    "short_name": "Transit Pulse",
+    "description": "Real-time NYC transit beat.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#000000",
