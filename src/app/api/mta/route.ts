@@ -50,25 +50,19 @@ export async function GET(request: Request) {
                     // Increment routeIdMatchCount if LineRef matches the requested routeId
                     if (journey.LineRef === routeId) {
                         routeIdMatchCount++;
-                    }
-                    // For SIRI (bus), the API usually filters by stopId already, so every visit is for the target stop.
-                    // If the API call was for a specific stop, then all visits are for that stop.
-                    // Assuming MtaService.fetchFeed for SIRI already filters by stopId if provided.
-                    // If not, we would need to check visit.MonitoredVehicleJourney.MonitoredCall.StopPointRef
-                    // For now, we'll assume the feed is already filtered for the stop.
-                    stopMatchCount++; // Each visit is considered a stop match for SIRI feeds if the API filters by stop.
 
-                    const call = journey?.MonitoredCall;
-                    if (!call) return;
-                    const expectedTime = call.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
-                    const aimedTime = call.AimedArrivalTime ? new Date(call.AimedArrivalTime).getTime() / 1000 : null;
-                    const arrivalTime = expectedTime || aimedTime;
-                    if (arrivalTime && arrivalTime > now) {
-                        arrivals.push({
-                            routeId: journey.LineRef || routeId,
-                            time: arrivalTime,
-                            minutesUntil: Math.floor((arrivalTime - now) / 60)
-                        });
+                        const call = journey?.MonitoredCall;
+                        if (!call) return;
+                        const expectedTime = call.ExpectedArrivalTime ? new Date(call.ExpectedArrivalTime).getTime() / 1000 : null;
+                        const aimedTime = call.AimedArrivalTime ? new Date(call.AimedArrivalTime).getTime() / 1000 : null;
+                        const arrivalTime = expectedTime || aimedTime;
+                        if (arrivalTime && arrivalTime > now) {
+                            arrivals.push({
+                                routeId: journey.LineRef || routeId,
+                                time: arrivalTime,
+                                minutesUntil: Math.floor((arrivalTime - now) / 60)
+                            });
+                        }
                     }
                 });
             }
