@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Plus, Settings as SettingsIcon, TrainFront, Activity } from 'lucide-react';
+import Image from 'next/image';
+import { Plus, Settings as SettingsIcon } from 'lucide-react';
 import { CommuteTuple } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { CountdownCard } from '@/components/CountdownCard';
