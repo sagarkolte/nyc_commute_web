@@ -62,8 +62,8 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         return () => clearInterval(interval);
     }, []);
 
-    const lineColor = COLORS[tuple.routeId] || (tuple.mode === 'mnr' ? '#0039A6' : '#999'); // MNR default Blue
-    const isDeptureBoard = tuple.mode === 'mnr' && tuple.destinationStopId;
+    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') ? '#0039A6' : '#999'); // MNR default Blue
+    const isDeptureBoard = tuple.routeId.startsWith('MNR') && !!tuple.destinationStopId;
 
     const formatTime = (ts: number) => {
         return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
