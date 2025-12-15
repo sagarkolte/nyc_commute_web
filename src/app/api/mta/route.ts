@@ -149,11 +149,16 @@ export async function GET(request: Request) {
 
                         if (originUpdate) {
                             stopMatchCount++;
-                            // DEBUG: Hunt for Track
-                            if (routeId.startsWith('MNR') && stopMatchCount <= 2) {
-                                console.log('MNR RAW UPDATE:', JSON.stringify(originUpdate, null, 2));
-                                console.log('MNR Keys:', Object.keys(originUpdate));
-                                if (originUpdate.departure) console.log('MNR Dep Keys:', Object.keys(originUpdate.departure));
+                            // DEBUG: Hunt for Track (Write to file)
+                            if (routeId.startsWith('MNR') && stopMatchCount <= 1) {
+                                try {
+                                    const fs = require('fs');
+                                    const path = require('path');
+                                    const logPath = path.join(process.cwd(), 'public', 'mnr_debug.json');
+                                    fs.writeFileSync(logPath, JSON.stringify(originUpdate, null, 2));
+                                } catch (e) {
+                                    console.error('Failed to write debug log', e);
+                                }
                             }
                             const arrivalTime = getTime(originUpdate.arrival?.time) || getTime(originUpdate.departure?.time);
 
