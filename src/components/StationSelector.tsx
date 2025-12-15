@@ -309,4 +309,3 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         </div>
     );
 };
-```
