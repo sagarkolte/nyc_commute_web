@@ -147,38 +147,6 @@ export async function GET(request: Request) {
                             originUpdate = updates.find((u: any) => isRail ? u.stopId === stopId : u.stopId === targetStopId);
                         }
 
-                        // DEBUG LOGGING for MNR
-                        if (routeId.startsWith('MNR')) {
-                            const stopIds = entity.tripUpdate.stopTimeUpdate.map((u: any) => u.stopId).join(', ');
-
-                            // Try to find Headsign
-                            let headsign = entity.tripUpdate.trip.tripHeadsign;
-                            if (!headsign) {
-                                const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
-                                if (lastUpdate) {
-                                    // MNR Stop IDs might map to names
-                                    const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
-                                    if (st) {
-                                        headsign = st.name;
-                                    } else {
-                                        console.log(`[MNR Debug] Destination fallback failed. Last Stop ID: ${lastUpdate.stopId}`);
-                                    }
-                                }
-                            }
-
-                            console.log(`[MNR Debug] Trip=${entityRouteId} Headsign=${headsign} Stops=${stopIds}`);
-
-                            // Log originUpdate structure to find TRACK info
-                            if (originUpdate) {
-                                // Check for extensions (NYCT or MNR specific?)
-                                // We only log if we haven't seen it yet to avoid spam?
-                                // Actually just log one example.
-                                if (stopMatchCount === 0) { // Log on first match
-                                    console.log(`[MNR Track Debug] Entity JSON:`, JSON.stringify(entity.tripUpdate, null, 2));
-                                }
-                            }
-                        }
-
                         if (originUpdate) {
                             stopMatchCount++;
                             const arrivalTime = getTime(originUpdate.arrival?.time) || getTime(originUpdate.departure?.time);
@@ -190,12 +158,6 @@ export async function GET(request: Request) {
                                 let track = 'TBD';
                                 const departure = originUpdate.departure || originUpdate.arrival;
                                 const ext = (departure as any)?.['extension'];
-
-                                // DEBUG EXTENSIONS
-                                if (routeId.startsWith('MNR')) {
-                                    console.log(`[MNR Ext Debug] Keys:`, Object.keys(ext || {}).join(', '));
-                                    if (ext) console.log(`[MNR Ext Dump]`, JSON.stringify(ext));
-                                }
 
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;

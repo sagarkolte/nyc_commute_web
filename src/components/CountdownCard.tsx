@@ -95,7 +95,6 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     <div className="board-row header-row">
                         <div className="col-time">TIME</div>
                         <div className="col-dest">DESTINATION</div>
-                        <div className="col-track">TRK</div>
                     </div>
                     {loading && arrivals.length === 0 ? (
                         <div className="board-msg">Loading...</div>
@@ -108,7 +107,6 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                             <div key={i} className="board-row">
                                 <div className="col-time">{formatTime(arr.time)}</div>
                                 <div className="col-dest">{toTitleCase(arr.destination || 'Unknown')}</div>
-                                <div className="col-track">{arr.track || '-'}</div>
                             </div>
                         ))
                     )}
@@ -159,9 +157,8 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         padding-bottom: 2px;
                         font-size: 12px;
                     }
-                    .col-time { width: 60px; color: #FCCC0A; text-align: left; }
+                    .col-time { width: 70px; color: #FCCC0A; text-align: left; }
                     .col-dest { flex: 1; color: #FCCC0A; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;}
-                    .col-track { width: 30px; color: #FCCC0A; text-align: right; }
                     .board-msg { color: #666; font-family: monospace; text-align: center; padding: 10px; font-size: 12px; }
                  `}</style>
             </div>
