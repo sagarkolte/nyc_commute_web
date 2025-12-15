@@ -25,9 +25,7 @@ export async function GET(request: Request) {
         ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
 
     let effectiveKey: string | undefined = clientApiKey || serverApiKey;
-    if (isSubwayOrRail) {
-        effectiveKey = undefined;
-    }
+    // Keep key for all feeds just in case (MTA Portal often requires it for improved limits/access)
 
     try {
         const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId));
