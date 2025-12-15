@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MtaService } from '@/lib/mta';
+import mnrStations from '@/lib/mnr_stations.json';
 
 export const dynamic = 'force-dynamic';
 
