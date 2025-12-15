@@ -126,6 +126,12 @@ export async function GET(request: Request) {
                     if (routeMatches) {
                         routeIdMatchCount++;
 
+                        // DEBUG LOGGING for MNR
+                        if (routeId.startsWith('MNR')) {
+                            const stopIds = entity.tripUpdate.stopTimeUpdate.map((u: any) => u.stopId).join(', ');
+                            console.log(`[MNR Debug] Trip=${entityRouteId} Stops=${stopIds}`);
+                        }
+
                         const updates = entity.tripUpdate.stopTimeUpdate;
                         let originUpdate: any = null;
 
