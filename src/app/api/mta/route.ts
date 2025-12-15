@@ -154,13 +154,15 @@ export async function GET(request: Request) {
                             // Try to find Headsign
                             let headsign = entity.tripUpdate.trip.tripHeadsign;
                             if (!headsign) {
-                                // Fallback: Last stop in the update list?
-                                // Or Last stop of the trip (GTFS)? We only have updates.
                                 const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
                                 if (lastUpdate) {
                                     // MNR Stop IDs might map to names
                                     const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
-                                    if (st) headsign = st.name;
+                                    if (st) {
+                                        headsign = st.name;
+                                    } else {
+                                        console.log(`[MNR Debug] Destination fallback failed. Last Stop ID: ${lastUpdate.stopId}`);
+                                    }
                                 }
                             }
 
@@ -172,7 +174,7 @@ export async function GET(request: Request) {
                                 // We only log if we haven't seen it yet to avoid spam?
                                 // Actually just log one example.
                                 if (stopMatchCount === 0) { // Log on first match
-                                    console.log(`[MNR Track Debug] OriginUpdate:`, JSON.stringify(originUpdate, null, 2));
+                                    console.log(`[MNR Track Debug] Entity JSON:`, JSON.stringify(entity.tripUpdate, null, 2));
                                 }
                             }
                         }
@@ -186,9 +188,11 @@ export async function GET(request: Request) {
 
                                 // Extract Track with Fallback
                                 let track = 'TBD';
-                                // Proposed path for MNR track?
-                                // Often: stopUpdate.departure.extension?.nyctStopAssignment?.track
-                                // But bindings might verify. Let's parse manually if needed or wait for debug log to confirm.
+                                // Try NyctStopAssignment if available (common for MTA)
+                                // We can't type check easily without generated types, but we can try inspecting the extensions object if it exists in JSON
+                                // const ext = originUpdate?.departure?.extension;
+                                // Check if 'track' is in any key of 'extension'.
+                                // Just rely on the JSON log for now. "Please paste the JSON blob".
 
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;
