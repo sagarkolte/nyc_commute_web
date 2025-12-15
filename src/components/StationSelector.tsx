@@ -154,7 +154,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         if (mode === 'mnr') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
-        return mode === 'lirr' ? 'LIRR Station' : (mode === 'mnr' ? 'Metro-North Station' : (mode === 'path' ? 'PATH Station' : `${line} Station`));
+        return mode === 'lirr' ? 'LIRR Station' : (mode === 'path' ? 'PATH Station' : `${line} Station`);
     };
 
     const getPlaceholder = () => {
