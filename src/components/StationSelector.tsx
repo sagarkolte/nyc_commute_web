@@ -11,7 +11,7 @@ import pathStations from '@/lib/path_stations.json';
 interface Props {
     mode: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path';
     line: string;
-    onSelect: (station: Station, routeId?: string) => void;
+    onSelect: (station: Station, routeId?: string, destStation?: Station) => void;
     onBack: () => void;
 }
 
@@ -21,6 +21,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
     const [loading, setLoading] = useState(false);
     const [hasKey, setHasKey] = useState(false);
     const [lockedRoute, setLockedRoute] = useState<string | null>(null);
+    const [originStation, setOriginStation] = useState<Station | null>(null);
 
     useEffect(() => {
         setHasKey(!!CommuteStorage.getApiKey());
@@ -60,6 +61,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         setLockedRoute(null);
         setSearch(''); // Clear search to allow finding new route
         setBusStops([]); // Clear stops to restart
+    };
+
+    const handleMNRReset = () => {
+        setOriginStation(null);
+        setSearch('');
     };
 
     const uniqueRoutes = useMemo(() => {
@@ -105,7 +111,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else if (mode === 'mnr') {
             data = mnrStations;
-            return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            if (originStation) {
+                return res.filter(s => s.id !== originStation.id);
+            }
+            return res;
         } else if (mode === 'path') {
             data = pathStations;
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
@@ -125,14 +135,51 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             }
             return []; // When not locked, we use uniqueRoutes instead
         }
-    }, [mode, line, search, busStops, lockedRoute]);
+    }, [mode, line, search, busStops, lockedRoute, originStation]);
+
+    const handleSelect = (s: Station, routeId?: string) => {
+        if (mode === 'mnr') {
+            if (!originStation) {
+                setOriginStation(s);
+                setSearch('');
+            } else {
+                onSelect(originStation, undefined, s);
+            }
+        } else {
+            onSelect(s, routeId);
+        }
+    };
+
+    const getTitle = () => {
+        if (mode === 'mnr') {
+            return originStation ? 'Select Arrival Station' : 'Select Departure Station';
+        }
+        return mode === 'lirr' ? 'LIRR Station' : (mode === 'mnr' ? 'Metro-North Station' : (mode === 'path' ? 'PATH Station' : `${line} Station`));
+    };
+
+    const getPlaceholder = () => {
+        if (mode === 'bus') {
+            return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
+        }
+        if (mode === 'mnr' && originStation) {
+            return "Select Arrival Station...";
+        }
+        return "Search station...";
+    };
 
     return (
         <div className="selector">
             <div className="header">
                 <button onClick={onBack} className="back-btn">← Back</button>
-                <h2>Select {mode === 'lirr' ? 'LIRR Station' : (mode === 'mnr' ? 'Metro-North Station' : (mode === 'path' ? 'PATH Station' : `${line} Station`))}</h2>
+                <h2>{getTitle()}</h2>
             </div>
+
+            {mode === 'mnr' && originStation && (
+                <div className="locked-header">
+                    <span>From: <strong>{originStation.name}</strong></span>
+                    <button onClick={handleMNRReset} className="unlock-btn">Change</button>
+                </div>
+            )}
 
             {mode === 'bus' && lockedRoute && (
                 <div className="locked-header">
@@ -144,7 +191,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
             <div className="search-container">
                 <input
                     type="text"
-                    placeholder={mode === 'bus' ? (lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)") : "Search station..."}
+                    placeholder={getPlaceholder()}
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     className="search-input"
@@ -177,8 +224,16 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
                     </>
                 ) : (
                     filtered.map(s => {
+                        let bestRoute: string | undefined;
+                        if (mode === 'bus' && s.lines) {
+                            const targetQuery = lockedRoute || search;
+                            const cleanSearch = targetQuery.trim().toLowerCase();
+                            bestRoute = s.lines.find(l => l.toLowerCase().includes(cleanSearch));
+                            if (!bestRoute) bestRoute = s.lines[0];
+                        }
+
                         return (
-                            <button key={s.id} className="item" onClick={() => onSelect(s as Station, mode === 'bus' ? lockedRoute! : undefined)}>
+                            <button key={s.id} className="item" onClick={() => handleSelect(s as Station, mode === 'bus' ? bestRoute : undefined)}>
                                 {mode === 'bus' ? `${s.name} ${s.headsign ? `(${s.headsign})` : `(${s.direction || 'Bus'})`}` : s.name}
                             </button>
                         );
@@ -243,11 +298,15 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
           padding: 16px;
           text-align: left;
           background: none;
+          border: none;
           border-bottom: 1px solid var(--border);
           color: white;
           font-size: 16px;
+          cursor: pointer;
         }
+        .item:hover { background: #222; }
       `}</style>
         </div>
     );
 };
+```

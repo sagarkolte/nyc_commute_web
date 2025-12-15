@@ -31,7 +31,9 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const routeId = encodeURIComponent(tuple.routeId);
             const stopId = encodeURIComponent(tuple.stopId);
             const direction = encodeURIComponent(tuple.direction);
-            const res = await fetch(`/api/mta?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}`, {
+            const destStopId = tuple.destinationStopId ? encodeURIComponent(tuple.destinationStopId) : '';
+
+            const res = await fetch(`/api/mta?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}&destStopId=${destStopId}`, {
                 headers
             });
             if (!res.ok) {
@@ -41,7 +43,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const data = await res.json();
             if (data.arrivals) {
                 setArrivals(data.arrivals);
-                setDebugInfo(null); // Clear debug info for production
+                setDebugInfo(null);
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
@@ -60,9 +62,15 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         return () => clearInterval(interval);
     }, []);
 
-    const lineColor = COLORS[tuple.routeId] || '#999';
+    const lineColor = COLORS[tuple.routeId] || (tuple.mode === 'mnr' ? '#0039A6' : '#999'); // MNR default Blue
+    const isDeptureBoard = tuple.mode === 'mnr' && tuple.destinationStopId;
 
-    // Helper to format route display name
+    const formatTime = (ts: number) => {
+        return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
+    };
+
+    // ... helpers ...
+
     const formatRouteId = (id: string) => {
         return id.replace('MTA NYCT_', '')
             .replace('MTABC_', '')
@@ -74,6 +82,91 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     };
+
+    if (isDeptureBoard) {
+        return (
+            <div className="card board-card">
+                <div className="board-header">
+                    <span className="board-title">{toTitleCase(tuple.label)}</span>
+                    <button className="delete-btn-board" onClick={onDelete}><Trash2 size={14} color="#aaa" /></button>
+                </div>
+
+                <div className="board-grid">
+                    <div className="board-row header-row">
+                        <div className="col-time">TIME</div>
+                        <div className="col-dest">DESTINATION</div>
+                        <div className="col-track">TRK</div>
+                    </div>
+                    {loading && arrivals.length === 0 ? (
+                        <div className="board-msg">Loading...</div>
+                    ) : error ? (
+                        <div className="board-msg error">{error}</div>
+                    ) : arrivals.length === 0 ? (
+                        <div className="board-msg">No Trains Found</div>
+                    ) : (
+                        arrivals.map((arr, i) => (
+                            <div key={i} className="board-row">
+                                <div className="col-time">{formatTime(arr.time)}</div>
+                                <div className="col-dest">{toTitleCase(arr.destination || 'Unknown')}</div>
+                                <div className="col-track">{arr.track || '-'}</div>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                <style jsx>{`
+                    .board-card {
+                        background: #000;
+                        border: 1px solid #333;
+                        border-left: 6px solid #C41230; /* MNR Red? or Default Blue */
+                        flex-direction: column;
+                        align-items: stretch;
+                        padding: 0;
+                        overflow: hidden;
+                    }
+                    .board-header {
+                        padding: 8px 12px;
+                        background: #222;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 1px solid #333;
+                    }
+                    .board-title {
+                        font-family: monospace;
+                        color: #FCCC0A; /* Gold */
+                        font-weight: bold;
+                        font-size: 14px;
+                    }
+                    .delete-btn-board { background:none; border:none; cursor: pointer; }
+                    .board-grid {
+                        padding: 8px;
+                        display: flex;
+                        flex-direction: column;
+                        font-family: monospace;
+                    }
+                    .board-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 4px;
+                        font-size: 14px;
+                    }
+                    .header-row {
+                        color: #C41230; /* Red headers */
+                        font-weight: bold;
+                        border-bottom: 1px solid #333;
+                        margin-bottom: 8px;
+                        padding-bottom: 2px;
+                        font-size: 12px;
+                    }
+                    .col-time { width: 60px; color: #FCCC0A; text-align: left; }
+                    .col-dest { flex: 1; color: #FCCC0A; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;}
+                    .col-track { width: 30px; color: #FCCC0A; text-align: right; }
+                    .board-msg { color: #666; font-family: monospace; text-align: center; padding: 10px; font-size: 12px; }
+                 `}</style>
+            </div>
+        );
+    }
 
     return (
         <div className="card" style={{ borderLeft: `6px solid ${lineColor}` }}>

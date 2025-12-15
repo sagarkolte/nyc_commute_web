@@ -106,7 +106,8 @@ export async function GET(request: Request) {
         } else {
             // GTFS handling
             const feed = feedResponse.data;
-            const targetStopId = (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`;
+            const targetStopId = (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`;
+            const destStopId = searchParams.get('destStopId');
 
             const getTime = (t: any) => {
                 if (t === null || t === undefined) return null;
@@ -118,30 +119,51 @@ export async function GET(request: Request) {
 
             feed.entity.forEach((entity: any) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
-                    // Check Route ID
                     const entityRouteId = entity.tripUpdate.trip.routeId;
-
                     const isRail = routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
-                    const routeMatches = (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? true : entityRouteId === routeId;
+                    const routeMatches = isRail ? true : entityRouteId === routeId;
 
                     if (routeMatches) {
                         routeIdMatchCount++;
-                        entity.tripUpdate.stopTimeUpdate.forEach((stopUpdate: any) => {
-                            const stopMatch = isRail ? stopUpdate.stopId === stopId : stopUpdate.stopId === targetStopId;
-                            if (stopMatch) {
-                                stopMatchCount++;
-                                const arrivalTime = getTime(stopUpdate.arrival?.time) || getTime(stopUpdate.departure?.time);
 
-                                if (arrivalTime && arrivalTime > now) {
-                                    afterNowCount++;
-                                    arrivals.push({
-                                        routeId: entityRouteId,
-                                        time: arrivalTime,
-                                        minutesUntil: Math.floor((arrivalTime - now) / 60)
-                                    });
-                                }
+                        const updates = entity.tripUpdate.stopTimeUpdate;
+                        let originUpdate: any = null;
+
+                        if (destStopId) {
+                            // Origin-Destination filtering
+                            const originIdx = updates.findIndex((u: any) => u.stopId === stopId);
+                            const destIdx = updates.findIndex((u: any) => u.stopId === destStopId);
+
+                            if (originIdx !== -1 && destIdx !== -1 && originIdx < destIdx) {
+                                originUpdate = updates[originIdx];
                             }
-                        });
+                        } else {
+                            // Standard single-stop filtering
+                            originUpdate = updates.find((u: any) => isRail ? u.stopId === stopId : u.stopId === targetStopId);
+                        }
+
+                        if (originUpdate) {
+                            stopMatchCount++;
+                            const arrivalTime = getTime(originUpdate.arrival?.time) || getTime(originUpdate.departure?.time);
+
+                            if (arrivalTime && arrivalTime > now) {
+                                afterNowCount++;
+
+                                // Extract Track (Try various standard/extension paths)
+                                // MNR often puts track in extension? Or relying on platform in stopId?
+                                let track = 'TBD';
+                                // Try checking if track is available in extensions (hypothetical accessor)
+                                // For now, we will leave as TBD or parse from raw if we knew structure.
+
+                                arrivals.push({
+                                    routeId: entityRouteId,
+                                    time: arrivalTime,
+                                    minutesUntil: Math.floor((arrivalTime - now) / 60),
+                                    destination: entity.tripUpdate.trip.tripHeadsign || 'Unknown',
+                                    track: track // Placeholder until we confirm track field location
+                                });
+                            }
+                        }
                     }
                 }
             });

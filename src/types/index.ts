@@ -9,6 +9,7 @@ export interface CommuteTuple {
     stopId: string; // GTFS User-facing stop ID
     direction: CommuteDirection; // Inferred from GTFS data or user selection
     destinationName?: string; // Explicit terminal station name (e.g. "Chelsea Piers")
+    destinationStopId?: string; // For Rail (MNR/LIRR) Start-End filtering
     createdAt: number;
 }
 
@@ -16,6 +17,8 @@ export interface Arrival {
     routeId: string;
     time: number; // unix timestamp
     minutesUntil: number;
+    destination?: string;
+    track?: string;
 }
 
 export interface Station {

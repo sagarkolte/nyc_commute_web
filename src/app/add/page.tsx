@@ -43,7 +43,7 @@ export default function AddPage() {
         setStep('station');
     };
 
-    const handleStationSelect = (s: Station, routeId?: string) => {
+    const handleStationSelect = (s: Station, routeId?: string, destStation?: Station) => {
         setStation(s);
         // For Bus, the station already implies direction (it's a specific stop)
         if (mode === 'bus') {
@@ -52,12 +52,16 @@ export default function AddPage() {
             // But let's just pass what we have; checking strict types might be needed.
             // We'll cast to any to be safe for now, as direction is just a label for Bus in our usage.
             saveTuple(s, (s.direction as any) || 'N', routeId);
+        } else if (mode === 'mnr' && destStation) {
+            // Metro-North: Origin -> Destination flow (skip direction step)
+            // We use 'N' as a placeholder direction, but the filtering will use destId.
+            saveTuple(s, 'N', undefined, destStation);
         } else {
             setStep('direction');
         }
     };
 
-    const saveTuple = (s: Station, dir: 'N' | 'S' | 'E' | 'W', specificRouteId?: string) => {
+    const saveTuple = (s: Station, dir: 'N' | 'S' | 'E' | 'W', specificRouteId?: string, destStation?: Station) => {
         const newTuple: CommuteTuple = {
             id: Date.now().toString(),
             label: `${s.name} (${mode})`,
@@ -65,14 +69,19 @@ export default function AddPage() {
             routeId: specificRouteId || line,
             stopId: s.id,
             direction: dir,
-            destinationName: s.headsign,
+            destinationName: s.headsign, // For Bus
+            destinationStopId: destStation?.id, // For MNR
             createdAt: Date.now()
         };
 
         if (mode === 'lirr' || mode === 'mnr' || mode === 'path') {
-            newTuple.label = `${s.name} - ${dir === 'N' ? 'NYC Bound' : 'NJ/Outbound'}`;
-            if (mode === 'lirr' || mode === 'mnr') {
-                newTuple.label = `${s.name} - ${dir === 'N' ? 'Westbound' : 'Eastbound'}`;
+            if (destStation) {
+                newTuple.label = `${s.name} ➔ ${destStation.name}`;
+            } else {
+                newTuple.label = `${s.name} - ${dir === 'N' ? 'NYC Bound' : 'NJ/Outbound'}`;
+                if (mode === 'lirr' || mode === 'mnr') {
+                    newTuple.label = `${s.name} - ${dir === 'N' ? 'Westbound' : 'Eastbound'}`;
+                }
             }
         } else if (mode === 'bus') {
             newTuple.label = `${s.name} - ${dir}`;
