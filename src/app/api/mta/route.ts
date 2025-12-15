@@ -129,7 +129,8 @@ export async function GET(request: Request) {
                         // DEBUG LOGGING for MNR
                         if (routeId.startsWith('MNR')) {
                             const stopIds = entity.tripUpdate.stopTimeUpdate.map((u: any) => u.stopId).join(', ');
-                            console.log(`[MNR Debug] Trip=${entityRouteId} Stops=${stopIds}`);
+                            const headsign = entity.tripUpdate.trip.tripHeadsign;
+                            console.log(`[MNR Debug] Trip=${entityRouteId} Headsign=${headsign} Stops=${stopIds}`);
                         }
 
                         const updates = entity.tripUpdate.stopTimeUpdate;
