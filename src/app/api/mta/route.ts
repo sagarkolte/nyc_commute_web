@@ -130,7 +130,6 @@ export async function GET(request: Request) {
                             const headsign = entity.tripUpdate.trip.tripHeadsign;
                             console.log(`[MNR Debug] Trip=${entityRouteId} Headsign=${headsign} Stops=${stopIds}`);
                         }
-
                         const updates = entity.tripUpdate.stopTimeUpdate;
                         let originUpdate: any = null;
 
@@ -147,6 +146,36 @@ export async function GET(request: Request) {
                             originUpdate = updates.find((u: any) => isRail ? u.stopId === stopId : u.stopId === targetStopId);
                         }
 
+                        // DEBUG LOGGING for MNR
+                        if (routeId.startsWith('MNR')) {
+                            const stopIds = entity.tripUpdate.stopTimeUpdate.map((u: any) => u.stopId).join(', ');
+
+                            // Try to find Headsign
+                            let headsign = entity.tripUpdate.trip.tripHeadsign;
+                            if (!headsign) {
+                                // Fallback: Last stop in the update list?
+                                // Or Last stop of the trip (GTFS)? We only have updates.
+                                const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
+                                if (lastUpdate) {
+                                    // MNR Stop IDs might map to names
+                                    const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
+                                    if (st) headsign = st.name;
+                                }
+                            }
+
+                            console.log(`[MNR Debug] Trip=${entityRouteId} Headsign=${headsign} Stops=${stopIds}`);
+
+                            // Log originUpdate structure to find TRACK info
+                            if (originUpdate) {
+                                // Check for extensions (NYCT or MNR specific?)
+                                // We only log if we haven't seen it yet to avoid spam?
+                                // Actually just log one example.
+                                if (stopMatchCount === 0) { // Log on first match
+                                    console.log(`[MNR Track Debug] OriginUpdate:`, JSON.stringify(originUpdate, null, 2));
+                                }
+                            }
+                        }
+
                         if (originUpdate) {
                             stopMatchCount++;
                             const arrivalTime = getTime(originUpdate.arrival?.time) || getTime(originUpdate.departure?.time);
@@ -154,18 +183,28 @@ export async function GET(request: Request) {
                             if (arrivalTime && arrivalTime > now) {
                                 afterNowCount++;
 
-                                // Extract Track (Try various standard/extension paths)
-                                // MNR often puts track in extension? Or relying on platform in stopId?
+                                // Extract Track with Fallback
                                 let track = 'TBD';
-                                // Try checking if track is available in extensions (hypothetical accessor)
-                                // For now, we will leave as TBD or parse from raw if we knew structure.
+                                // Proposed path for MNR track?
+                                // Often: stopUpdate.departure.extension?.nyctStopAssignment?.track
+                                // But bindings might verify. Let's parse manually if needed or wait for debug log to confirm.
+
+                                // Determine Headsign for display
+                                let displayDest = entity.tripUpdate.trip.tripHeadsign;
+                                if (!displayDest) {
+                                    const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
+                                    if (lastUpdate) {
+                                        const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
+                                        if (st) displayDest = st.name;
+                                    }
+                                }
 
                                 arrivals.push({
                                     routeId: entityRouteId,
                                     time: arrivalTime,
                                     minutesUntil: Math.floor((arrivalTime - now) / 60),
-                                    destination: entity.tripUpdate.trip.tripHeadsign || 'Unknown',
-                                    track: track // Placeholder until we confirm track field location
+                                    destination: displayDest || 'Unknown',
+                                    track: track
                                 });
                             }
                         }
