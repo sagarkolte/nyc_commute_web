@@ -1,9 +1,9 @@
 [
     {
         "id": "1",
-        "name": "Grand Central Terminal",
-        "lat": "40.7527",
-        "lon": "-73.9772",
+        "name": "Grand Central",
+        "lat": "40.752998",
+        "lon": "-73.977056",
         "lines": [
             "Hudson",
             "Harlem",
@@ -12,9 +12,9 @@
     },
     {
         "id": "4",
-        "name": "Harlem-125th Street",
-        "lat": "40.8051",
-        "lon": "-73.9390",
+        "name": "Harlem-125 St",
+        "lat": "40.805157",
+        "lon": "-73.939149",
         "lines": [
             "Hudson",
             "Harlem",
@@ -22,46 +22,109 @@
         ]
     },
     {
-        "id": "14",
-        "name": "Yankees-E 153rd St",
-        "lat": "40.8267",
-        "lon": "-73.9268",
+        "id": "622",
+        "name": "Yankees-E 153 St",
+        "lat": "40.8253",
+        "lon": "-73.9299",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "184",
+        "name": "Highbridge Yard",
+        "lat": "40.8359",
+        "lon": "-73.9315",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "9",
+        "name": "Morris Heights",
+        "lat": "40.854252",
+        "lon": "-73.919583",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "10",
+        "name": "University Heights",
+        "lat": "40.862248",
+        "lon": "-73.91312",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "11",
         "name": "Marble Hill",
-        "lat": "40.8756",
-        "lon": "-73.9103",
+        "lat": "40.874333",
+        "lon": "-73.910941",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "14",
+        "name": "Spuyten Duyvil",
+        "lat": "40.878245",
+        "lon": "-73.921455",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "16",
         "name": "Riverdale",
-        "lat": "40.8986",
-        "lon": "-73.9125",
+        "lat": "40.903981",
+        "lon": "-73.914126",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "17",
+        "name": "Ludlow",
+        "lat": "40.924972",
+        "lon": "-73.904612",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "18",
         "name": "Yonkers",
-        "lat": "40.9351",
-        "lon": "-73.9030",
+        "lat": "40.935795",
+        "lon": "-73.902668",
         "lines": [
             "Hudson"
         ]
     },
     {
+        "id": "19",
+        "name": "Glenwood",
+        "lat": "40.950496",
+        "lon": "-73.899062",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "20",
+        "name": "Greystone",
+        "lat": "40.972705",
+        "lon": "-73.889069",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
         "id": "22",
         "name": "Hastings-on-Hudson",
-        "lat": "40.9939",
-        "lon": "-73.8828",
+        "lat": "40.994109",
+        "lon": "-73.884512",
         "lines": [
             "Hudson"
         ]
@@ -69,26 +132,62 @@
     {
         "id": "23",
         "name": "Dobbs Ferry",
-        "lat": "41.0151",
-        "lon": "-73.8758",
+        "lat": "41.012459",
+        "lon": "-73.87949",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "24",
+        "name": "Ardsley-on-Hudson",
+        "lat": "41.026198",
+        "lon": "-73.876543",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "25",
+        "name": "Irvington",
+        "lat": "41.039993",
+        "lon": "-73.873083",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "27",
         "name": "Tarrytown",
-        "lat": "41.0776",
-        "lon": "-73.8646",
+        "lat": "41.076473",
+        "lon": "-73.864563",
         "lines": [
             "Hudson"
         ]
     },
     {
+        "id": "29",
+        "name": "Philipse Manor",
+        "lat": "41.09492",
+        "lon": "-73.869755",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "30",
+        "name": "Scarborough",
+        "lat": "41.135763",
+        "lon": "-73.866163",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
         "id": "31",
         "name": "Ossining",
-        "lat": "41.1614",
-        "lon": "-73.8701",
+        "lat": "41.157663",
+        "lon": "-73.869281",
         "lines": [
             "Hudson"
         ]
@@ -96,53 +195,179 @@
     {
         "id": "33",
         "name": "Croton-Harmon",
-        "lat": "41.1901",
-        "lon": "-73.8833",
+        "lat": "41.189903",
+        "lon": "-73.882394",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "37",
+        "name": "Cortlandt",
+        "lat": "41.246259",
+        "lon": "-73.921884",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "39",
         "name": "Peekskill",
-        "lat": "41.2858",
-        "lon": "-73.9298",
+        "lat": "41.285962",
+        "lon": "-73.93042",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "40",
+        "name": "Manitou",
+        "lat": "41.332601",
+        "lon": "-73.970426",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "42",
+        "name": "Garrison",
+        "lat": "41.38178",
+        "lon": "-73.947202",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "43",
+        "name": "Cold Spring",
+        "lat": "41.415283",
+        "lon": "-73.95809",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "44",
+        "name": "Breakneck Ridge",
+        "lat": "41.450181",
+        "lon": "-73.982449",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "46",
         "name": "Beacon",
-        "lat": "41.5057",
-        "lon": "-73.9856",
+        "lat": "41.504007",
+        "lon": "-73.984528",
         "lines": [
             "Hudson"
+        ]
+    },
+    {
+        "id": "49",
+        "name": "New Hamburg",
+        "lat": "41.587448",
+        "lon": "-73.947226",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "51",
         "name": "Poughkeepsie",
-        "lat": "41.7076",
-        "lon": "-73.9382",
+        "lat": "41.705839",
+        "lon": "-73.937946",
         "lines": [
             "Hudson"
         ]
     },
     {
-        "id": "108",
-        "name": "Mount Vernon West",
-        "lat": "40.9128",
-        "lon": "-73.8457",
+        "id": "54",
+        "name": "Melrose",
+        "lat": "40.825761",
+        "lon": "-73.915231",
         "lines": [
-            "Harlem"
+            "MNR"
+        ]
+    },
+    {
+        "id": "55",
+        "name": "Tremont",
+        "lat": "40.847301",
+        "lon": "-73.89955",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "56",
+        "name": "Fordham",
+        "lat": "40.8615",
+        "lon": "-73.89058",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "57",
+        "name": "Botanical Garden",
+        "lat": "40.866555",
+        "lon": "-73.883109",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "58",
+        "name": "Williams Bridge",
+        "lat": "40.878569",
+        "lon": "-73.871064",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "59",
+        "name": "Woodlawn",
+        "lat": "40.895361",
+        "lon": "-73.862916",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "61",
+        "name": "Wakefield",
+        "lat": "40.905936",
+        "lon": "-73.85568",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "62",
+        "name": "Mt Vernon West",
+        "lat": "40.912142",
+        "lon": "-73.851129",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "64",
+        "name": "Fleetwood",
+        "lat": "40.92699",
+        "lon": "-73.83948",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "65",
         "name": "Bronxville",
-        "lat": "40.9379",
-        "lon": "-73.8329",
+        "lat": "40.93978",
+        "lon": "-73.835208",
         "lines": [
             "Harlem"
         ]
@@ -150,8 +375,8 @@
     {
         "id": "66",
         "name": "Tuckahoe",
-        "lat": "40.9535",
-        "lon": "-73.8242",
+        "lat": "40.949393",
+        "lon": "-73.830166",
         "lines": [
             "Harlem"
         ]
@@ -159,8 +384,8 @@
     {
         "id": "68",
         "name": "Crestwood",
-        "lat": "40.9631",
-        "lon": "-73.8188",
+        "lat": "40.958997",
+        "lon": "-73.820564",
         "lines": [
             "Harlem"
         ]
@@ -168,8 +393,8 @@
     {
         "id": "71",
         "name": "Scarsdale",
-        "lat": "41.0028",
-        "lon": "-73.8051",
+        "lat": "40.989168",
+        "lon": "-73.808634",
         "lines": [
             "Harlem"
         ]
@@ -177,8 +402,8 @@
     {
         "id": "72",
         "name": "Hartsdale",
-        "lat": "41.0184",
-        "lon": "-73.8009",
+        "lat": "41.010333",
+        "lon": "-73.796407",
         "lines": [
             "Harlem"
         ]
@@ -186,8 +411,8 @@
     {
         "id": "74",
         "name": "White Plains",
-        "lat": "41.0336",
-        "lon": "-73.7709",
+        "lat": "41.032589",
+        "lon": "-73.775208",
         "lines": [
             "Harlem"
         ]
@@ -195,8 +420,8 @@
     {
         "id": "76",
         "name": "North White Plains",
-        "lat": "41.0501",
-        "lon": "-73.7744",
+        "lat": "41.049806",
+        "lon": "-73.773142",
         "lines": [
             "Harlem"
         ]
@@ -204,26 +429,107 @@
     {
         "id": "78",
         "name": "Valhalla",
-        "lat": "41.0772",
-        "lon": "-73.7758",
+        "lat": "41.072819",
+        "lon": "-73.772599",
         "lines": [
             "Harlem"
         ]
     },
     {
-        "id": "142",
-        "name": "Mount Kisco",
-        "lat": "41.2014",
-        "lon": "-73.7290",
+        "id": "79",
+        "name": "Mt Pleasant",
+        "lat": "41.095877",
+        "lon": "-73.793822",
         "lines": [
-            "Harlem"
+            "MNR"
+        ]
+    },
+    {
+        "id": "80",
+        "name": "Hawthorne",
+        "lat": "41.108581",
+        "lon": "-73.79625",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "81",
+        "name": "Pleasantville",
+        "lat": "41.135222",
+        "lon": "-73.792661",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "83",
+        "name": "Chappaqua",
+        "lat": "41.158015",
+        "lon": "-73.774885",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "84",
+        "name": "Mt Kisco",
+        "lat": "41.208242",
+        "lon": "-73.729778",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "85",
+        "name": "Bedford Hills",
+        "lat": "41.237316",
+        "lon": "-73.699936",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "86",
         "name": "Katonah",
-        "lat": "41.2584",
-        "lon": "-73.6841",
+        "lat": "41.259552",
+        "lon": "-73.684155",
+        "lines": [
+            "Harlem"
+        ]
+    },
+    {
+        "id": "88",
+        "name": "Goldens Bridge",
+        "lat": "41.294338",
+        "lon": "-73.677655",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "89",
+        "name": "Purdy's",
+        "lat": "41.325775",
+        "lon": "-73.659061",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "90",
+        "name": "Croton Falls",
+        "lat": "41.347722",
+        "lon": "-73.662269",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "91",
+        "name": "Brewster",
+        "lat": "41.39447",
+        "lon": "-73.619802",
         "lines": [
             "Harlem"
         ]
@@ -231,44 +537,89 @@
     {
         "id": "94",
         "name": "Southeast",
-        "lat": "41.4285",
-        "lon": "-73.6190",
+        "lat": "41.413203",
+        "lon": "-73.623787",
         "lines": [
             "Harlem"
         ]
     },
     {
-        "id": "91",
-        "name": "Brewster",
-        "lat": "41.3969",
-        "lon": "-73.6061",
+        "id": "97",
+        "name": "Patterson",
+        "lat": "41.511827",
+        "lon": "-73.604584",
         "lines": [
-            "Harlem"
+            "MNR"
+        ]
+    },
+    {
+        "id": "98",
+        "name": "Pawling",
+        "lat": "41.564205",
+        "lon": "-73.600524",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "99",
+        "name": "Appalachian Trail",
+        "lat": "41.592871",
+        "lon": "-73.588032",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "100",
+        "name": "Harlem Valley-Wingdale",
+        "lat": "41.637525",
+        "lon": "-73.57145",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "101",
+        "name": "Dover Plains",
+        "lat": "41.740401",
+        "lon": "-73.576502",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "176",
+        "name": "Tenmile River",
+        "lat": "41.779938",
+        "lon": "-73.558204",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "177",
         "name": "Wassaic",
-        "lat": "41.7617",
-        "lon": "-73.5594",
+        "lat": "41.814722",
+        "lon": "-73.562197",
         "lines": [
             "Harlem"
         ]
     },
     {
-        "id": "208",
-        "name": "Mount Vernon East",
-        "lat": "40.9103",
-        "lon": "-73.8311",
+        "id": "105",
+        "name": "Mt Vernon East ",
+        "lat": "40.912161",
+        "lon": "-73.832185",
         "lines": [
-            "New Haven"
+            "MNR"
         ]
     },
     {
         "id": "106",
         "name": "Pelham",
-        "lat": "40.9161",
-        "lon": "-73.8117",
+        "lat": "40.910321",
+        "lon": "-73.810242",
         "lines": [
             "New Haven"
         ]
@@ -276,8 +627,8 @@
     {
         "id": "108",
         "name": "New Rochelle",
-        "lat": "40.9150",
-        "lon": "-73.7844",
+        "lat": "40.911605",
+        "lon": "-73.783807",
         "lines": [
             "New Haven"
         ]
@@ -285,8 +636,8 @@
     {
         "id": "110",
         "name": "Larchmont",
-        "lat": "40.9333",
-        "lon": "-73.7597",
+        "lat": "40.933394",
+        "lon": "-73.759792",
         "lines": [
             "New Haven"
         ]
@@ -294,8 +645,8 @@
     {
         "id": "111",
         "name": "Mamaroneck",
-        "lat": "40.9526",
-        "lon": "-73.7389",
+        "lat": "40.954061",
+        "lon": "-73.736125",
         "lines": [
             "New Haven"
         ]
@@ -303,8 +654,8 @@
     {
         "id": "112",
         "name": "Harrison",
-        "lat": "40.9692",
-        "lon": "-73.7144",
+        "lat": "40.969432",
+        "lon": "-73.712964",
         "lines": [
             "New Haven"
         ]
@@ -312,8 +663,8 @@
     {
         "id": "114",
         "name": "Rye",
-        "lat": "40.9858",
-        "lon": "-73.6828",
+        "lat": "40.985922",
+        "lon": "-73.682553",
         "lines": [
             "New Haven"
         ]
@@ -321,8 +672,8 @@
     {
         "id": "115",
         "name": "Port Chester",
-        "lat": "41.0006",
-        "lon": "-73.6644",
+        "lat": "41.000732",
+        "lon": "-73.6647",
         "lines": [
             "New Haven"
         ]
@@ -330,8 +681,8 @@
     {
         "id": "116",
         "name": "Greenwich",
-        "lat": "41.0219",
-        "lon": "-73.6247",
+        "lat": "41.021277",
+        "lon": "-73.624621",
         "lines": [
             "New Haven"
         ]
@@ -339,26 +690,89 @@
     {
         "id": "118",
         "name": "Cos Cob",
-        "lat": "41.0306",
-        "lon": "-73.6006",
+        "lat": "41.030171",
+        "lon": "-73.598306",
         "lines": [
             "New Haven"
+        ]
+    },
+    {
+        "id": "120",
+        "name": "Riverside",
+        "lat": "41.031682",
+        "lon": "-73.588173",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "121",
+        "name": "Old Greenwich",
+        "lat": "41.033817",
+        "lon": "-73.565859",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "124",
         "name": "Stamford",
-        "lat": "41.0469",
-        "lon": "-73.5419",
+        "lat": "41.046611",
+        "lon": "-73.542846",
         "lines": [
             "New Haven"
         ]
     },
     {
+        "id": "153",
+        "name": "Glenbrook",
+        "lat": "41.070547",
+        "lon": "-73.520021",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "651",
+        "name": "Springdale MW Facility",
+        "lat": "41.082147",
+        "lon": "-73.519675",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "154",
+        "name": "Springdale",
+        "lat": "41.08876",
+        "lon": "-73.517828",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "155",
+        "name": "Talmadge Hill",
+        "lat": "41.116012",
+        "lon": "-73.498149",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "157",
+        "name": "New Canaan",
+        "lat": "41.146305",
+        "lon": "-73.495626",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
         "id": "127",
         "name": "Noroton Heights",
-        "lat": "41.0664",
-        "lon": "-73.4981",
+        "lat": "41.069041",
+        "lon": "-73.49788",
         "lines": [
             "New Haven"
         ]
@@ -366,8 +780,8 @@
     {
         "id": "128",
         "name": "Darien",
-        "lat": "41.0792",
-        "lon": "-73.4739",
+        "lat": "41.076913",
+        "lon": "-73.472966",
         "lines": [
             "New Haven"
         ]
@@ -375,8 +789,8 @@
     {
         "id": "129",
         "name": "Rowayton",
-        "lat": "41.0928",
-        "lon": "-73.4358",
+        "lat": "41.077456",
+        "lon": "-73.445527",
         "lines": [
             "New Haven"
         ]
@@ -384,35 +798,134 @@
     {
         "id": "131",
         "name": "South Norwalk",
-        "lat": "41.0967",
-        "lon": "-73.4217",
+        "lat": "41.09673",
+        "lon": "-73.421132",
         "lines": [
             "New Haven"
+        ]
+    },
+    {
+        "id": "158",
+        "name": "Merritt 7",
+        "lat": "41.146618",
+        "lon": "-73.427859",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "160",
+        "name": "Wilton",
+        "lat": "41.196202",
+        "lon": "-73.432434",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "161",
+        "name": "Cannondale",
+        "lat": "41.21662",
+        "lon": "-73.426703",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "162",
+        "name": "Branchville",
+        "lat": "41.26763",
+        "lon": "-73.441421",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "163",
+        "name": "Redding",
+        "lat": "41.325684",
+        "lon": "-73.4338",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "164",
+        "name": "Bethel",
+        "lat": "41.376225",
+        "lon": "-73.418171",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "165",
+        "name": "Danbury",
+        "lat": "41.396146",
+        "lon": "-73.44879",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "133",
+        "name": "East Norwalk",
+        "lat": "41.103996",
+        "lon": "-73.404588",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "134",
         "name": "Westport",
-        "lat": "41.1239",
-        "lon": "-73.3703",
+        "lat": "41.118928",
+        "lon": "-73.371413",
         "lines": [
             "New Haven"
+        ]
+    },
+    {
+        "id": "136",
+        "name": "Green's Farms",
+        "lat": "41.122265",
+        "lon": "-73.315408",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "137",
+        "name": "Southport",
+        "lat": "41.134844",
+        "lon": "-73.28897",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "138",
         "name": "Fairfield",
-        "lat": "41.1406",
-        "lon": "-73.2561",
+        "lat": "41.143077",
+        "lon": "-73.257742",
         "lines": [
             "New Haven"
         ]
     },
     {
+        "id": "188",
+        "name": "Fairfield-Black Rock",
+        "lat": "41.161",
+        "lon": "-73.234336",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
         "id": "140",
         "name": "Bridgeport",
-        "lat": "41.1783",
-        "lon": "-73.1883",
+        "lat": "41.178677",
+        "lon": "-73.187076",
         "lines": [
             "New Haven"
         ]
@@ -420,37 +933,100 @@
     {
         "id": "143",
         "name": "Stratford",
-        "lat": "41.1969",
-        "lon": "-73.1367",
+        "lat": "41.194255",
+        "lon": "-73.131532",
         "lines": [
             "New Haven"
+        ]
+    },
+    {
+        "id": "167",
+        "name": "Derby-Shelton",
+        "lat": "41.319718",
+        "lon": "-73.083548",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "168",
+        "name": "Ansonia",
+        "lat": "41.344156",
+        "lon": "-73.079892",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "169",
+        "name": "Seymour",
+        "lat": "41.395139",
+        "lon": "-73.072499",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "170",
+        "name": "Beacon Falls",
+        "lat": "41.441752",
+        "lon": "-73.06359",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "171",
+        "name": "Naugatuck",
+        "lat": "41.494204",
+        "lon": "-73.052655",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "172",
+        "name": "Waterbury",
+        "lat": "41.552728",
+        "lon": "-73.046126",
+        "lines": [
+            "MNR"
         ]
     },
     {
         "id": "145",
         "name": "Milford",
-        "lat": "41.2225",
-        "lon": "-73.0614",
+        "lat": "41.223231",
+        "lon": "-73.057647",
         "lines": [
             "New Haven"
         ]
     },
     {
-        "id": "264",
-        "name": "New Haven Union Station",
-        "lat": "41.2974",
-        "lon": "-72.9264",
+        "id": "190",
+        "name": "West Haven",
+        "lat": "41.27142",
+        "lon": "-72.963488",
+        "lines": [
+            "MNR"
+        ]
+    },
+    {
+        "id": "149",
+        "name": "New Haven",
+        "lat": "41.296501",
+        "lon": "-72.92829",
         "lines": [
             "New Haven"
         ]
     },
     {
-        "id": "266",
-        "name": "New Haven State St",
-        "lat": "41.3039",
-        "lon": "-72.9214",
+        "id": "151",
+        "name": "New Haven-State St",
+        "lat": "41.304979",
+        "lon": "-72.921747",
         "lines": [
-            "New Haven"
+            "MNR"
         ]
     }
 ]

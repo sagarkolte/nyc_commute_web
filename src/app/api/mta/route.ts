@@ -188,11 +188,17 @@ export async function GET(request: Request) {
 
                                 // Extract Track with Fallback
                                 let track = 'TBD';
-                                // Try NyctStopAssignment if available (common for MTA)
-                                // We can't type check easily without generated types, but we can try inspecting the extensions object if it exists in JSON
-                                // const ext = originUpdate?.departure?.extension;
-                                // Check if 'track' is in any key of 'extension'.
-                                // Just rely on the JSON log for now. "Please paste the JSON blob".
+                                const departure = originUpdate.departure || originUpdate.arrival;
+                                const ext = (departure as any)?.['extension']; // Access extension if it exists on the raw binary-decoded object?
+                                // If using 'gtfs-realtime-bindings', extensions are usually in specific fields matching the proto definition
+                                // For MTA, it's often NYCT extension. For MNR, it may be similar.
+
+                                // Since we don't have the custom proto bindings compiled, accessing extensions is hard.
+                                // However, usually the bindings output unknown fields or specific ones.
+                                // Let's leave as TBD but rely on user logs.
+
+                                // WAIT! The User log didn't show the JSON, so I can't guess.
+                                // I will stick to "TBD" but I will Fix the DESTINATION issue which relies on the updated JSON.
 
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;
