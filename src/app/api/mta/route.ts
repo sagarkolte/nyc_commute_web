@@ -189,16 +189,13 @@ export async function GET(request: Request) {
                                 // Extract Track with Fallback
                                 let track = 'TBD';
                                 const departure = originUpdate.departure || originUpdate.arrival;
-                                const ext = (departure as any)?.['extension']; // Access extension if it exists on the raw binary-decoded object?
-                                // If using 'gtfs-realtime-bindings', extensions are usually in specific fields matching the proto definition
-                                // For MTA, it's often NYCT extension. For MNR, it may be similar.
+                                const ext = (departure as any)?.['extension'];
 
-                                // Since we don't have the custom proto bindings compiled, accessing extensions is hard.
-                                // However, usually the bindings output unknown fields or specific ones.
-                                // Let's leave as TBD but rely on user logs.
-
-                                // WAIT! The User log didn't show the JSON, so I can't guess.
-                                // I will stick to "TBD" but I will Fix the DESTINATION issue which relies on the updated JSON.
+                                // DEBUG EXTENSIONS
+                                if (routeId.startsWith('MNR')) {
+                                    console.log(`[MNR Ext Debug] Keys:`, Object.keys(ext || {}).join(', '));
+                                    if (ext) console.log(`[MNR Ext Dump]`, JSON.stringify(ext));
+                                }
 
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;
