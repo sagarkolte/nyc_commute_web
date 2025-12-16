@@ -206,7 +206,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     border-radius: 8px;
                     padding: 8px;
                     margin-top: 4px;
-                    font-family: monospace;
+                    /* font-family: monospace; Removed to match app font */
                 }
                 .board-header-row {
                     display: flex;
