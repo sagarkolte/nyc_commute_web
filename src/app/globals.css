@@ -33,6 +33,6 @@ button {
 .container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px 16px 100px 16px;
   min-height: 100vh;
 }
