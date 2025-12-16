@@ -83,93 +83,17 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         });
     };
 
-    if (isDeptureBoard) {
-        return (
-            <div className="card board-card">
-                <div className="board-header">
-                    <span className="board-title">{toTitleCase(tuple.label)}</span>
-                    <button className="delete-btn-board" onClick={onDelete}><Trash2 size={14} color="#aaa" /></button>
-                </div>
+    // ... (logic remains)
 
-                <div className="board-grid">
-                    <div className="board-row header-row">
-                        <div className="col-time">TIME</div>
-                        <div className="col-dest">DESTINATION</div>
-                    </div>
-                    {loading && arrivals.length === 0 ? (
-                        <div className="board-msg">Loading...</div>
-                    ) : error ? (
-                        <div className="board-msg error">{error}</div>
-                    ) : arrivals.length === 0 ? (
-                        <div className="board-msg">No Trains Found</div>
-                    ) : (
-                        arrivals.map((arr, i) => (
-                            <div key={i} className="board-row">
-                                <div className="col-time">{formatTime(arr.time)}</div>
-                                <div className="col-dest">{toTitleCase(arr.destination || 'Unknown')}</div>
-                            </div>
-                        ))
-                    )}
-                </div>
-
-                <style jsx>{`
-                    .board-card {
-                        background: #000;
-                        border: 1px solid #333;
-                        border-left: 6px solid #C41230; /* MNR Red? or Default Blue */
-                        flex-direction: column;
-                        align-items: stretch;
-                        padding: 0;
-                        overflow: hidden;
-                    }
-                    .board-header {
-                        padding: 8px 12px;
-                        background: #222;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        border-bottom: 1px solid #333;
-                    }
-                    .board-title {
-                        font-family: monospace;
-                        color: #FCCC0A; /* Gold */
-                        font-weight: bold;
-                        font-size: 14px;
-                    }
-                    .delete-btn-board { background:none; border:none; cursor: pointer; }
-                    .board-grid {
-                        padding: 8px;
-                        display: flex;
-                        flex-direction: column;
-                        font-family: monospace;
-                    }
-                    .board-row {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 4px;
-                        font-size: 14px;
-                    }
-                    .header-row {
-                        color: #C41230; /* Red headers */
-                        font-weight: bold;
-                        border-bottom: 1px solid #333;
-                        margin-bottom: 8px;
-                        padding-bottom: 2px;
-                        font-size: 12px;
-                    }
-                    .col-time { width: 70px; color: #FCCC0A; text-align: left; }
-                    .col-dest { flex: 1; color: #FCCC0A; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;}
-                    .board-msg { color: #666; font-family: monospace; text-align: center; padding: 10px; font-size: 12px; }
-                 `}</style>
-            </div>
-        );
-    }
+    // Common Header Props
+    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') ? '#0039A6' : '#999');
+    const badgeText = formatRouteId(tuple.routeId);
 
     return (
-        <div className="card" style={{ borderLeft: `6px solid ${lineColor}` }}>
+        <div className={`card ${isDeptureBoard ? 'mnr-card' : ''}`} style={{ borderLeft: `6px solid ${lineColor}` }}>
             <div className="card-header">
                 <div className="badge" style={{ backgroundColor: lineColor }}>
-                    {formatRouteId(tuple.routeId)}
+                    {badgeText}
                 </div>
                 <div className="info">
                     <h3>{toTitleCase(tuple.label)}</h3>
@@ -185,99 +109,128 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 </button>
             </div>
 
-            <div className="arrivals">
+            <div className="card-body">
                 {loading && arrivals.length === 0 ? (
-                    <div className="loading">Loading...</div>
+                    <div className="state-msg">Loading...</div>
                 ) : error ? (
-                    <div className="error" style={{ fontSize: '10px', color: 'red', lineHeight: 1.2, maxWidth: '80px', overflow: 'hidden' }}>{error}</div>
+                    <div className="state-msg error">{error}</div>
                 ) : arrivals.length === 0 ? (
-                    <div className="empty" style={{ fontSize: '11px', lineHeight: 1.2, color: '#666' }}>
-                        No Info
+                    <div className="state-msg">No Info</div>
+                ) : isDeptureBoard ? (
+                    <div className="board-container">
+                        <div className="board-header-row">
+                            <span className="th-time">TIME</span>
+                            <span className="th-dest">DESTINATION</span>
+                        </div>
+                        {arrivals.map((arr, i) => (
+                            <div key={i} className="board-row">
+                                <span className="td-time">{formatTime(arr.time)}</span>
+                                <span className="td-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
+                            </div>
+                        ))}
                     </div>
                 ) : (
-                    arrivals.map((arrival, i) => (
-                        <div key={i} className="arrival-item">
-                            <span className="min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
-                            <span className="label">min</span>
-                        </div>
-                    ))
+                    <div className="arrivals-list">
+                        {arrivals.map((arrival, i) => (
+                            <div key={i} className="arrival-item">
+                                <span className="min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
+                                <span className="label">min</span>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
 
             <style jsx>{`
-        .card {
-          background: var(--card-bg);
-          border-radius: 12px;
-          padding: 12px;
-          margin-bottom: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 10px;
-          min-height: 80px;
-        }
-        .card-header {
-           display: flex;
-           align-items: center;
-           flex: 1;
-           min-width: 0;
-           padding-right: 8px;
-        }
-        .badge {
-          min-width: 32px;
-          height: 32px;
-          padding: 0 8px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 11px;
-          margin-right: 12px;
-          color: white;
-          white-space: nowrap;
-          flex-shrink: 0;
-        }
-        .info {
-          flex: 1;
-          min-width: 0;
-          margin-right: 4px;
-        }
-        .info h3 { 
-          margin: 0; 
-          font-size: 14px; 
-          font-weight: 600;
-          line-height: 1.2;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          white-space: normal;
-        }
-        .info p { 
-          margin: 2px 0 0; 
-          font-size: 11px; 
-          color: var(--text-muted);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .arrivals { 
-          display: flex; 
-          gap: 8px; 
-          flex-shrink: 0; 
-          text-align: right;
-        }
-        .arrival-item { display: flex; flex-direction: column; align-items: center; width: 28px; }
-        .min { font-size: 18px; font-weight: bold; line-height: 1.2; }
-        .label { font-size: 9px; color: var(--text-muted); }
-        .delete-btn { 
-            background: none; 
-            padding: 4px; 
-            flex-shrink: 0;
-            opacity: 0.5;
-        }
-      `}</style>
+                .card {
+                  background: var(--card-bg);
+                  border-radius: 12px;
+                  padding: 12px;
+                  margin-bottom: 12px;
+                  display: flex;
+                  flex-direction: column; /* Changed to column to support vertical body */
+                  gap: 10px;
+                  min-height: 80px;
+                  position: relative;
+                }
+                .card-header {
+                   display: flex;
+                   align-items: center;
+                   width: 100%;
+                }
+                /* Badge/Info/Delete from original */
+                .badge {
+                  min-width: 32px; height: 32px; padding: 0 8px; border-radius: 16px;
+                  display: flex; align-items: center; justify-content: center;
+                  font-weight: bold; font-size: 11px; margin-right: 12px;
+                  color: white; white-space: nowrap; flex-shrink: 0;
+                }
+                .info { flex: 1; min-width: 0; margin-right: 4px; }
+                .info h3 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+                .info p { margin: 2px 0 0; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                .delete-btn { background: none; border: none; padding: 4px; cursor: pointer; opacity: 0.5; }
+
+                .card-body {
+                    width: 100%;
+                }
+
+                /* Standard Arrivals List */
+                .arrivals-list { 
+                  display: flex; gap: 8px; justify-content: flex-end; /* Align right to match original look? */
+                }
+                /* Actually original was row layout: Header | Body(Right). 
+                   If we switch to Column, the body is below. 
+                   For Standard Layout, we want Body to be RIGHT aligned next to header?
+                   No, standard layout was Header(Left) ... Arrivals(Right).
+                   MNR Layout is Header(Top) ... Board(Bottom).
+                   
+                   To support BOTH:
+                   - If Standard: .card propery 'flex-direction: row'.
+                   - If MNR: .card property 'flex-direction: column'.
+                */
+                .card:not(.mnr-card) {
+                    flex-direction: row;
+                    align-items: center;
+                }
+                .card.mnr-card {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                
+                .state-msg { font-size: 11px; color: #666; text-align: right; width: 100%; }
+                
+                .arrival-item { display: flex; flex-direction: column; align-items: center; width: 28px; }
+                .min { font-size: 18px; font-weight: bold; line-height: 1.2; }
+                .label { font-size: 9px; color: var(--text-muted); }
+
+                /* MNR Board Styles */
+                .board-container {
+                    background: #000;
+                    border: 1px solid #333;
+                    border-radius: 8px;
+                    padding: 8px;
+                    margin-top: 4px;
+                    font-family: monospace;
+                }
+                .board-header-row {
+                    display: flex;
+                    border-bottom: 1px solid #333;
+                    padding-bottom: 4px;
+                    margin-bottom: 4px;
+                    color: #C41230; /* Red Header */
+                    font-size: 11px;
+                    font-weight: bold;
+                }
+                .board-row {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 4px;
+                    color: #FCCC0A; /* Gold Text */
+                    font-size: 13px;
+                }
+                .th-time, .td-time { width: 70px; text-align: left; }
+                .th-dest, .td-dest { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            `}</style>
         </div>
     );
 };
