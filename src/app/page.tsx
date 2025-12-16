@@ -56,8 +56,9 @@ export default function Home() {
         .fab {
           position: fixed;
           bottom: 32px;
-          left: 50%;
-          transform: translateX(-50%);
+          left: 0;
+          right: 0;
+          margin: 0 auto;
           width: 56px; height: 56px;
           border-radius: 28px;
           background: var(--primary);
