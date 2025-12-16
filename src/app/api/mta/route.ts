@@ -155,7 +155,14 @@ export async function GET(request: Request) {
                                     const fs = require('fs');
                                     const path = require('path');
                                     const logPath = path.join(process.cwd(), 'public', 'mnr_debug.json');
-                                    fs.writeFileSync(logPath, JSON.stringify(originUpdate, null, 2));
+                                    const debugObj = {
+                                        raw: originUpdate,
+                                        departureExt: (originUpdate.departure as any)?.extension,
+                                        // Try standard NYCT Extension ID usually 1001 or similar? 
+                                        // Hard to guess without proto.
+                                        departureKeys: Object.keys(originUpdate.departure || {})
+                                    };
+                                    fs.writeFileSync(logPath, JSON.stringify(debugObj, null, 2));
                                 } catch (e) {
                                     console.error('Failed to write debug log', e);
                                 }

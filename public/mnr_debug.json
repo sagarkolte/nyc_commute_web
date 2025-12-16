@@ -1,0 +1,11 @@
+{
+  "arrival": {
+    "delay": 420,
+    "time": "1765839960"
+  },
+  "departure": {
+    "delay": 420,
+    "time": "1765839960"
+  },
+  "stopId": "1"
+}
