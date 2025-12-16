@@ -117,11 +117,13 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         <div className="board-header-row">
                             <span className="th-time">TIME</span>
                             <span className="th-dest">DESTINATION</span>
+                            <span className="th-eta">ETA</span>
                         </div>
                         {arrivals.map((arr, i) => (
                             <div key={i} className="board-row">
                                 <span className="td-time">{formatTime(arr.time)}</span>
                                 <span className="td-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
+                                <span className="td-eta">{arr.minutesUntil} min</span>
                             </div>
                         ))}
                     </div>
@@ -225,7 +227,8 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     font-size: 13px;
                 }
                 .th-time, .td-time { width: 70px; text-align: left; }
-                .th-dest, .td-dest { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+                .th-dest, .td-dest { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+                .th-eta, .td-eta { width: 60px; text-align: right; }
             `}</style>
         </div>
     );
