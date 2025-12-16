@@ -83,10 +83,6 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         });
     };
 
-    // ... (logic remains)
-
-    // Common Header Props
-    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') ? '#0039A6' : '#999');
     const badgeText = formatRouteId(tuple.routeId);
 
     return (
