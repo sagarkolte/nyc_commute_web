@@ -149,30 +149,12 @@ export async function GET(request: Request) {
 
                         if (originUpdate) {
                             stopMatchCount++;
-                            // DEBUG: Hunt for Track (Write to file)
-                            if (routeId.startsWith('MNR') && stopMatchCount <= 1) {
-                                try {
-                                    const fs = require('fs');
-                                    const path = require('path');
-                                    const logPath = path.join(process.cwd(), 'public', 'mnr_debug.json');
-                                    const debugObj = {
-                                        raw: originUpdate,
-                                        departureExt: (originUpdate.departure as any)?.extension,
-                                        // Try standard NYCT Extension ID usually 1001 or similar? 
-                                        // Hard to guess without proto.
-                                        departureKeys: Object.keys(originUpdate.departure || {})
-                                    };
-                                    fs.writeFileSync(logPath, JSON.stringify(debugObj, null, 2));
-                                } catch (e) {
-                                    console.error('Failed to write debug log', e);
-                                }
-                            }
                             const arrivalTime = getTime(originUpdate.arrival?.time) || getTime(originUpdate.departure?.time);
 
                             if (arrivalTime && arrivalTime > now) {
                                 afterNowCount++;
 
-                                // Extract Track with Fallback
+                                // Extract Track (Not available in current GTFS-RT feed)
                                 let track = 'TBD';
                                 const departure = originUpdate.departure || originUpdate.arrival;
                                 const ext = (departure as any)?.['extension'];
