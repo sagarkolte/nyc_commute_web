@@ -146,16 +146,43 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                   padding: 12px;
                   margin-bottom: 12px;
                   display: flex;
-                  flex-direction: column; /* Changed to column to support vertical body */
                   gap: 10px;
                   min-height: 80px;
                   position: relative;
                 }
+                
                 .card-header {
                    display: flex;
                    align-items: center;
-                   width: 100%;
                 }
+
+                /* Standard Card (Row) */
+                .card:not(.mnr-card) {
+                    flex-direction: row;
+                    align-items: center;
+                }
+                .card:not(.mnr-card) .card-header {
+                    flex: 1; /* Take remaining width */
+                    min-width: 0; /* Allow text truncate */
+                }
+                .card:not(.mnr-card) .card-body {
+                    flex: 0 0 auto; /* Fit to content */
+                    width: auto;
+                    padding-left: 4px; /* Space from header */
+                }
+
+                /* MNR Card (Column) */
+                .card.mnr-card {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                .card.mnr-card .card-header {
+                    width: 100%;
+                }
+                .card.mnr-card .card-body {
+                    width: 100%;
+                }
+
                 /* Badge/Info/Delete from original */
                 .badge {
                   min-width: 32px; height: 32px; padding: 0 8px; border-radius: 16px;
@@ -163,36 +190,15 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                   font-weight: bold; font-size: 11px; margin-right: 12px;
                   color: white; white-space: nowrap; flex-shrink: 0;
                 }
+                
                 .info { flex: 1; min-width: 0; margin-right: 4px; }
                 .info h3 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
                 .info p { margin: 2px 0 0; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
                 .delete-btn { background: none; border: none; padding: 4px; cursor: pointer; opacity: 0.5; }
 
-                .card-body {
-                    width: 100%;
-                }
-
                 /* Standard Arrivals List */
                 .arrivals-list { 
-                  display: flex; gap: 8px; justify-content: flex-end; /* Align right to match original look? */
-                }
-                /* Actually original was row layout: Header | Body(Right). 
-                   If we switch to Column, the body is below. 
-                   For Standard Layout, we want Body to be RIGHT aligned next to header?
-                   No, standard layout was Header(Left) ... Arrivals(Right).
-                   MNR Layout is Header(Top) ... Board(Bottom).
-                   
-                   To support BOTH:
-                   - If Standard: .card propery 'flex-direction: row'.
-                   - If MNR: .card property 'flex-direction: column'.
-                */
-                .card:not(.mnr-card) {
-                    flex-direction: row;
-                    align-items: center;
-                }
-                .card.mnr-card {
-                    flex-direction: column;
-                    align-items: stretch;
+                  display: flex; gap: 8px; justify-content: flex-end;
                 }
                 
                 .state-msg { font-size: 11px; color: #666; text-align: right; width: 100%; }
@@ -208,7 +214,6 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     border-radius: 8px;
                     padding: 8px;
                     margin-top: 4px;
-                    /* font-family: monospace; Removed to match app font */
                 }
                 .board-header-row {
                     display: flex;
