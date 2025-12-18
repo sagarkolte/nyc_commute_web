@@ -125,7 +125,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         } else if (mode === 'path') {
             data = pathStations;
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
-        } else if (mode === 'njt') {
+        } else if (mode === 'njt' || mode === 'njt-rail') {
             data = njtStations;
             const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
             if (originStation) {
