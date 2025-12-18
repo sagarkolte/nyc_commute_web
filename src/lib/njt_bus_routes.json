@@ -1,0 +1,1372 @@
+[
+  {
+    "id": "1",
+    "shortName": "1",
+    "longName": "Newark"
+  },
+  {
+    "id": "10",
+    "shortName": "10",
+    "longName": "Bayonne - Jersey City"
+  },
+  {
+    "id": "101",
+    "shortName": "101",
+    "longName": "West Orange - Montclair - New York"
+  },
+  {
+    "id": "102",
+    "shortName": "102",
+    "longName": "Bloomfield - New York"
+  },
+  {
+    "id": "105",
+    "shortName": "105",
+    "longName": "West Caldwell - Cedar Grove - New York"
+  },
+  {
+    "id": "107",
+    "shortName": "107",
+    "longName": "Irvington - New York"
+  },
+  {
+    "id": "108",
+    "shortName": "108",
+    "longName": "Newark - New York"
+  },
+  {
+    "id": "109",
+    "shortName": "109",
+    "longName": "North Newark - Harrison - New York"
+  },
+  {
+    "id": "11",
+    "shortName": "11",
+    "longName": "Newark - Willowbrook"
+  },
+  {
+    "id": "111",
+    "shortName": "111",
+    "longName": "New York - IKEA - Jersey Gardens"
+  },
+  {
+    "id": "112",
+    "shortName": "112",
+    "longName": "Clark - New York"
+  },
+  {
+    "id": "113",
+    "shortName": "113",
+    "longName": "Dunellen - New York"
+  },
+  {
+    "id": "114",
+    "shortName": "114",
+    "longName": "Bridgewater - New York"
+  },
+  {
+    "id": "115",
+    "shortName": "115",
+    "longName": "Rahway - New York"
+  },
+  {
+    "id": "116",
+    "shortName": "116",
+    "longName": "Perth Amboy - New York"
+  },
+  {
+    "id": "117",
+    "shortName": "117",
+    "longName": "Somerville - New York Express"
+  },
+  {
+    "id": "119",
+    "shortName": "119",
+    "longName": "Bayonne - Jersey City - New York"
+  },
+  {
+    "id": "12",
+    "shortName": "12",
+    "longName": "Broadway Bayonne"
+  },
+  {
+    "id": "120",
+    "shortName": "120",
+    "longName": "Bayonne - New York Downtown"
+  },
+  {
+    "id": "121",
+    "shortName": "121",
+    "longName": "North Bergen - New York"
+  },
+  {
+    "id": "122",
+    "shortName": "122",
+    "longName": "Secaucus - New York"
+  },
+  {
+    "id": "123",
+    "shortName": "123",
+    "longName": "Jersey City - Union City - New York"
+  },
+  {
+    "id": "124",
+    "shortName": "124",
+    "longName": "Secaucus - New York"
+  },
+  {
+    "id": "125",
+    "shortName": "125",
+    "longName": "Jersey City - Journal Square - New York"
+  },
+  {
+    "id": "126",
+    "shortName": "126",
+    "longName": "Hoboken - New York"
+  },
+  {
+    "id": "127",
+    "shortName": "127",
+    "longName": "Ridgefield - Union City - New York"
+  },
+  {
+    "id": "128",
+    "shortName": "128",
+    "longName": "North Bergen - Boulevard East - New York"
+  },
+  {
+    "id": "129",
+    "shortName": "129",
+    "longName": "Secaucus - Union City - New York"
+  },
+  {
+    "id": "13",
+    "shortName": "13",
+    "longName": "Broad Street - Clinton Avenue"
+  },
+  {
+    "id": "130",
+    "shortName": "130",
+    "longName": "Lakewood - New York - Union Hill Express"
+  },
+  {
+    "id": "131",
+    "shortName": "131",
+    "longName": "Sayreville - New York"
+  },
+  {
+    "id": "132",
+    "shortName": "132",
+    "longName": "Lakewood - New York - Gordons Corner Express"
+  },
+  {
+    "id": "133",
+    "shortName": "133",
+    "longName": "Old Bridge - Aberdeen - New York"
+  },
+  {
+    "id": "135",
+    "shortName": "135",
+    "longName": "Freehold - Matawan - New York"
+  },
+  {
+    "id": "136",
+    "shortName": "136",
+    "longName": "Lakewood - New York - Freehold Mall Express"
+  },
+  {
+    "id": "137",
+    "shortName": "137",
+    "longName": "Toms River - New York"
+  },
+  {
+    "id": "138",
+    "shortName": "138",
+    "longName": "Old Bridge - East Brunswick - New York"
+  },
+  {
+    "id": "139",
+    "shortName": "139",
+    "longName": "Lakewood - Old Bridge - New York (via Route 9)"
+  },
+  {
+    "id": "14",
+    "shortName": "14",
+    "longName": "Duncan - Mallory - NJ 440"
+  },
+  {
+    "id": "144",
+    "shortName": "144",
+    "longName": "Elmwood Park-Hackensack-New York"
+  },
+  {
+    "id": "145",
+    "shortName": "145",
+    "longName": "Fair Lawn - New York"
+  },
+  {
+    "id": "148",
+    "shortName": "148",
+    "longName": "Midland Park - New York"
+  },
+  {
+    "id": "151",
+    "shortName": "151",
+    "longName": "Paterson - New York Express"
+  },
+  {
+    "id": "153",
+    "shortName": "153",
+    "longName": "Fairview - Fort Lee - New York"
+  },
+  {
+    "id": "154",
+    "shortName": "154",
+    "longName": "Fort Lee-Palisades Park-New York"
+  },
+  {
+    "id": "155",
+    "shortName": "155",
+    "longName": "Bogota-Ridgefield Park-New York"
+  },
+  {
+    "id": "156",
+    "shortName": "156",
+    "longName": "Englewood Cliffs - Fort Lee - New York"
+  },
+  {
+    "id": "157",
+    "shortName": "157",
+    "longName": "Teaneck-Ridgefield Park-New York"
+  },
+  {
+    "id": "158",
+    "shortName": "158",
+    "longName": "Fort Lee-Edgewater-New York"
+  },
+  {
+    "id": "159",
+    "shortName": "159",
+    "longName": "Fort Lee-New York"
+  },
+  {
+    "id": "16",
+    "shortName": "16",
+    "longName": "Newport Mall - Journal Square"
+  },
+  {
+    "id": "160",
+    "shortName": "160",
+    "longName": "Elmwood Park - Wallington - New York"
+  },
+  {
+    "id": "161",
+    "shortName": "161",
+    "longName": "Paterson - Passaic - New York"
+  },
+  {
+    "id": "162",
+    "shortName": "162",
+    "longName": "Maywood - New York"
+  },
+  {
+    "id": "163",
+    "shortName": "163",
+    "longName": "Ridgewood - New York"
+  },
+  {
+    "id": "163S",
+    "shortName": "163S",
+    "longName": "Ridgewood - Paramus Seasonal"
+  },
+  {
+    "id": "164",
+    "shortName": "164",
+    "longName": "Midland Park - Fair Lawn - New York"
+  },
+  {
+    "id": "165",
+    "shortName": "165",
+    "longName": "Westwood - New York"
+  },
+  {
+    "id": "166",
+    "shortName": "166",
+    "longName": "Cresskill - Bergenfield - New York"
+  },
+  {
+    "id": "167",
+    "shortName": "167",
+    "longName": "Harrington Park - Dumont - New York"
+  },
+  {
+    "id": "168",
+    "shortName": "168",
+    "longName": "Paramus - New York"
+  },
+  {
+    "id": "171",
+    "shortName": "171",
+    "longName": "Paterson - New York (GWB)"
+  },
+  {
+    "id": "175",
+    "shortName": "175",
+    "longName": "Ridgewood - New York (GWB)"
+  },
+  {
+    "id": "177",
+    "shortName": "177",
+    "longName": "Harrington Park - New Milford - New York Express"
+  },
+  {
+    "id": "178",
+    "shortName": "178",
+    "longName": "Hackensack - Englewood - New York (GWB)"
+  },
+  {
+    "id": "181",
+    "shortName": "181",
+    "longName": "Union City - New York (GWB)"
+  },
+  {
+    "id": "182",
+    "shortName": "182",
+    "longName": "Hackensack - New York (GWB)"
+  },
+  {
+    "id": "186",
+    "shortName": "186",
+    "longName": "Dumont - New York (GWB)"
+  },
+  {
+    "id": "188",
+    "shortName": "188",
+    "longName": "West New York - New York (GWB)"
+  },
+  {
+    "id": "190",
+    "shortName": "190",
+    "longName": "Paterson - Secaucus - New York"
+  },
+  {
+    "id": "191",
+    "shortName": "191",
+    "longName": "Willowbrook - Montclair - New York"
+  },
+  {
+    "id": "192",
+    "shortName": "192",
+    "longName": "Clifton - New York"
+  },
+  {
+    "id": "193",
+    "shortName": "193",
+    "longName": "Willowbrook - New York Express"
+  },
+  {
+    "id": "194",
+    "shortName": "194",
+    "longName": "Stockholm - West Milford - New York"
+  },
+  {
+    "id": "195",
+    "shortName": "195",
+    "longName": "Willowbrook - Cedar Grove - New York"
+  },
+  {
+    "id": "196",
+    "shortName": "196",
+    "longName": "Warwick - Ringwood - New York"
+  },
+  {
+    "id": "197",
+    "shortName": "197",
+    "longName": "Warwick - Wayne - New York"
+  },
+  {
+    "id": "198",
+    "shortName": "198",
+    "longName": "Wayne-William Paterson University-New York"
+  },
+  {
+    "id": "199",
+    "shortName": "199",
+    "longName": "Clifton - Lyndhurst - New York"
+  },
+  {
+    "id": "2",
+    "shortName": "2",
+    "longName": "Jersey City - Journal Square - Secaucus"
+  },
+  {
+    "id": "21",
+    "shortName": "21",
+    "longName": "Main Street"
+  },
+  {
+    "id": "22",
+    "shortName": "22",
+    "longName": "North Bergen - Union City - Hoboken"
+  },
+  {
+    "id": "23",
+    "shortName": "23",
+    "longName": "North Bergen - Weehawken - Hoboken"
+  },
+  {
+    "id": "24",
+    "shortName": "24",
+    "longName": "Elizabethport - Newark -  Orange"
+  },
+  {
+    "id": "25",
+    "shortName": "25",
+    "longName": "Springfield Avenue"
+  },
+  {
+    "id": "26",
+    "shortName": "26",
+    "longName": "Irvington - Elizabeth"
+  },
+  {
+    "id": "27",
+    "shortName": "27",
+    "longName": "Mount Prospect"
+  },
+  {
+    "id": "28",
+    "shortName": "28",
+    "longName": "Newark - Montclair State - Willowbrook"
+  },
+  {
+    "id": "29",
+    "shortName": "29",
+    "longName": "Bloomfield Avenue"
+  },
+  {
+    "id": "30",
+    "shortName": "30",
+    "longName": "North Arlington-Kearny-Newark"
+  },
+  {
+    "id": "31",
+    "shortName": "31",
+    "longName": "South Orange Avenue - Newark Penn Station"
+  },
+  {
+    "id": "313",
+    "shortName": "313",
+    "longName": "Cape May - Wildwood - 30th Street Philadelphia"
+  },
+  {
+    "id": "315",
+    "shortName": "315",
+    "longName": "Cape May - Wildwood - 30th Street Philadelphia"
+  },
+  {
+    "id": "317",
+    "shortName": "317",
+    "longName": "Asbury Park - Fort Dix - Philadelphia"
+  },
+  {
+    "id": "319",
+    "shortName": "319",
+    "longName": "New York  - Atlantic City - Cape May"
+  },
+  {
+    "id": "320",
+    "shortName": "320",
+    "longName": "Mill Creek - North Bergen Park/Ride - New York"
+  },
+  {
+    "id": "321",
+    "shortName": "321",
+    "longName": "Vince Lombardi Park/Ride - New York"
+  },
+  {
+    "id": "324",
+    "shortName": "324",
+    "longName": "Wayne/Route 23 Transit Center-New York Express"
+  },
+  {
+    "id": "329",
+    "shortName": "329",
+    "longName": "Harmon Cove-Secaucus Junction"
+  },
+  {
+    "id": "34",
+    "shortName": "34",
+    "longName": "Market Street"
+  },
+  {
+    "id": "34S",
+    "shortName": "34S",
+    "longName": "Bloomfield Seasonal Service"
+  },
+  {
+    "id": "355",
+    "shortName": "355",
+    "longName": "American Dream - New York"
+  },
+  {
+    "id": "361",
+    "shortName": "361",
+    "longName": "Newark - Ivy Hill Express"
+  },
+  {
+    "id": "37",
+    "shortName": "37",
+    "longName": "Lyons Avenue"
+  },
+  {
+    "id": "375",
+    "shortName": "375",
+    "longName": "Springfield Avenue Express"
+  },
+  {
+    "id": "378",
+    "shortName": "378",
+    "longName": "Newark - UPS Secaucus Express"
+  },
+  {
+    "id": "39",
+    "shortName": "39",
+    "longName": "Irvington - Newark"
+  },
+  {
+    "id": "390",
+    "shortName": "390",
+    "longName": "Northern Division Mail Truck"
+  },
+  {
+    "id": "399",
+    "shortName": "399",
+    "longName": "Southern Division Mail Truck"
+  },
+  {
+    "id": "40",
+    "shortName": "40",
+    "longName": "Kearny - Jersey Gardens"
+  },
+  {
+    "id": "400",
+    "shortName": "400",
+    "longName": "Sicklerville  - Philadelphia"
+  },
+  {
+    "id": "401",
+    "shortName": "401",
+    "longName": "Salem - Philadelphia"
+  },
+  {
+    "id": "402",
+    "shortName": "402",
+    "longName": "Pennsville - Philadelphia"
+  },
+  {
+    "id": "403",
+    "shortName": "403",
+    "longName": "Camden - Lindenwold PATCO - Turnersville"
+  },
+  {
+    "id": "404",
+    "shortName": "404",
+    "longName": "Cherry Hill Mall - Pennsauken - Philadelphia"
+  },
+  {
+    "id": "405",
+    "shortName": "405",
+    "longName": "Camden - Merchantville - Cherry Hill Mall"
+  },
+  {
+    "id": "406",
+    "shortName": "406",
+    "longName": "Berlin - Marlton - Philadelphia"
+  },
+  {
+    "id": "407",
+    "shortName": "407",
+    "longName": "Camden - Merchantville - Moorestown Mall"
+  },
+  {
+    "id": "408",
+    "shortName": "408",
+    "longName": "Millville - Philadelphia"
+  },
+  {
+    "id": "409",
+    "shortName": "409",
+    "longName": "Trenton - Willingboro - Philadelphia"
+  },
+  {
+    "id": "41",
+    "shortName": "41",
+    "longName": "Park Avenue"
+  },
+  {
+    "id": "410",
+    "shortName": "410",
+    "longName": "Bridgeton - Philadelphia"
+  },
+  {
+    "id": "412",
+    "shortName": "412",
+    "longName": "Sewell - Glassboro - Philadelphia"
+  },
+  {
+    "id": "413",
+    "shortName": "413",
+    "longName": "Camden - Mt. Holly - Florence"
+  },
+  {
+    "id": "414",
+    "shortName": "414",
+    "longName": "Philadelphia - Moorestown"
+  },
+  {
+    "id": "417",
+    "shortName": "417",
+    "longName": "Willingboro Express"
+  },
+  {
+    "id": "418",
+    "shortName": "418",
+    "longName": "Trenton Express"
+  },
+  {
+    "id": "419",
+    "shortName": "419",
+    "longName": "Camden-Pennsauken Transit Center-Riverside"
+  },
+  {
+    "id": "44",
+    "shortName": "44",
+    "longName": "Tremont - Central Avenue - Newark Penn Station"
+  },
+  {
+    "id": "450",
+    "shortName": "450",
+    "longName": "Cherry Hill Mall - Audubon -Camden"
+  },
+  {
+    "id": "451",
+    "shortName": "451",
+    "longName": "Camden-Voorhees Town Center"
+  },
+  {
+    "id": "452",
+    "shortName": "452",
+    "longName": "Camden - 36th St. Station"
+  },
+  {
+    "id": "453",
+    "shortName": "453",
+    "longName": "Ferry Avenue PATCO - Camden"
+  },
+  {
+    "id": "455",
+    "shortName": "455",
+    "longName": "Cherry Hill Mall-Woodbury-Paulsboro"
+  },
+  {
+    "id": "457",
+    "shortName": "457",
+    "longName": "Moorestown Mall - Camden"
+  },
+  {
+    "id": "459",
+    "shortName": "459",
+    "longName": "Voorhees Town Ctr-Camden County Coll.-Avandale P/R"
+  },
+  {
+    "id": "463",
+    "shortName": "463",
+    "longName": "Woodbury - Avandale Park/Ride"
+  },
+  {
+    "id": "468",
+    "shortName": "468",
+    "longName": "Penns Grove - Salem - Woodstown"
+  },
+  {
+    "id": "48",
+    "shortName": "48",
+    "longName": "Elizabeth - Woodbridge - Perth Amboy"
+  },
+  {
+    "id": "5",
+    "shortName": "5",
+    "longName": "Kinney"
+  },
+  {
+    "id": "501",
+    "shortName": "501",
+    "longName": "Atlantic City - Brigantine Beach"
+  },
+  {
+    "id": "502",
+    "shortName": "502",
+    "longName": "Atlantic City - Hamilton Mall - Atlantic/Cape C. C"
+  },
+  {
+    "id": "504",
+    "shortName": "504",
+    "longName": "Atlantic City - Ventnor Plaza - Margate"
+  },
+  {
+    "id": "505",
+    "shortName": "505",
+    "longName": "Atlantic City-Margate-Longport"
+  },
+  {
+    "id": "507",
+    "shortName": "507",
+    "longName": "Atlantic City - Ocean City"
+  },
+  {
+    "id": "508",
+    "shortName": "508",
+    "longName": "Atlantic City-Stockton College-Hamilton Mall"
+  },
+  {
+    "id": "509",
+    "shortName": "509",
+    "longName": "Atlantic City-Somers Point-Ocean City via New Road"
+  },
+  {
+    "id": "52",
+    "shortName": "52",
+    "longName": "Morris Avenue"
+  },
+  {
+    "id": "529",
+    "shortName": "529",
+    "longName": "Morris Metro Pull in to Pumps"
+  },
+  {
+    "id": "530",
+    "shortName": "530",
+    "longName": "Weekawken Taxi Oradell"
+  },
+  {
+    "id": "531",
+    "shortName": "531",
+    "longName": "Weehawken Taxi Westwood"
+  },
+  {
+    "id": "532",
+    "shortName": "532",
+    "longName": "Weehawken Taxi Wayne"
+  },
+  {
+    "id": "534",
+    "shortName": "534",
+    "longName": "Weehawken Taxi Ironbound 113/116"
+  },
+  {
+    "id": "535",
+    "shortName": "535",
+    "longName": "Weehawken Taxi Ironbound 114/117"
+  },
+  {
+    "id": "539",
+    "shortName": "539",
+    "longName": "Weehawken Taxi Howell"
+  },
+  {
+    "id": "551",
+    "shortName": "551",
+    "longName": "Philadelphia-Atlantic City"
+  },
+  {
+    "id": "552",
+    "shortName": "552",
+    "longName": "Cape May - Atlantic City"
+  },
+  {
+    "id": "553",
+    "shortName": "553",
+    "longName": "Upper Deerfield - Atlantic City"
+  },
+  {
+    "id": "554",
+    "shortName": "554",
+    "longName": "Lindenwold - PATCO - Atlantic City"
+  },
+  {
+    "id": "555",
+    "shortName": "555",
+    "longName": "Avandale-30th Street Philadelphia"
+  },
+  {
+    "id": "559",
+    "shortName": "559",
+    "longName": "Lakewood - Atlantic City"
+  },
+  {
+    "id": "56",
+    "shortName": "56",
+    "longName": "Elizabeth - Winfield"
+  },
+  {
+    "id": "57",
+    "shortName": "57",
+    "longName": "Tremley"
+  },
+  {
+    "id": "58",
+    "shortName": "58",
+    "longName": "Elizabeth - Kenilworth"
+  },
+  {
+    "id": "59",
+    "shortName": "59",
+    "longName": "Plainfield - Newark"
+  },
+  {
+    "id": "6",
+    "shortName": "6",
+    "longName": "Ocean Avenue - Journal Square"
+  },
+  {
+    "id": "600",
+    "shortName": "600",
+    "longName": "Trenton- Plainsboro (US 1 Corridor)"
+  },
+  {
+    "id": "601",
+    "shortName": "601",
+    "longName": "College of New Jersey-Trenton-Hamilton Marketplace"
+  },
+  {
+    "id": "603",
+    "shortName": "603",
+    "longName": "Mercer Mall-Hamilton Square-Hamilton Marketplace"
+  },
+  {
+    "id": "605",
+    "shortName": "605",
+    "longName": "Montgomery - Princeton - Quaker Bridge Mall"
+  },
+  {
+    "id": "606",
+    "shortName": "606",
+    "longName": "Princeton - Mercerville - Hamilton Marketplace"
+  },
+  {
+    "id": "607",
+    "shortName": "607",
+    "longName": "Ewing - Trenton - Independence Plaza"
+  },
+  {
+    "id": "608",
+    "shortName": "608",
+    "longName": "Hamilton - Ewing"
+  },
+  {
+    "id": "609",
+    "shortName": "609",
+    "longName": "Ewing-Quaker Bridge Mall"
+  },
+  {
+    "id": "610",
+    "shortName": "610",
+    "longName": "Trenton Seasonal"
+  },
+  {
+    "id": "611",
+    "shortName": "611",
+    "longName": "Trenton-River View Plaza Circulator"
+  },
+  {
+    "id": "612",
+    "shortName": "612",
+    "longName": "Lawrence-West Windsor-Princeton Jct. Rail Sta."
+  },
+  {
+    "id": "613",
+    "shortName": "613",
+    "longName": "Mercer Mall-Yardville- Hamilton Marketplace"
+  },
+  {
+    "id": "619",
+    "shortName": "619",
+    "longName": "Ewing - Mercer County College"
+  },
+  {
+    "id": "62",
+    "shortName": "62",
+    "longName": "Newark -  Elizabeth"
+  },
+  {
+    "id": "624",
+    "shortName": "624",
+    "longName": "Pennington - East Trenton"
+  },
+  {
+    "id": "63",
+    "shortName": "63",
+    "longName": "Lakewood - Jersey City - Weehawken Exp."
+  },
+  {
+    "id": "64",
+    "shortName": "64",
+    "longName": "Lakewood - Jersey City - Weehawken"
+  },
+  {
+    "id": "65",
+    "shortName": "65",
+    "longName": "Newark - Somerville"
+  },
+  {
+    "id": "66",
+    "shortName": "66",
+    "longName": "Newark - Mountainside"
+  },
+  {
+    "id": "67",
+    "shortName": "67",
+    "longName": "Toms River - Lakewood - Newark"
+  },
+  {
+    "id": "68",
+    "shortName": "68",
+    "longName": "Old Bridge-East Brunswick-Jersey City -Weehawken"
+  },
+  {
+    "id": "70",
+    "shortName": "70",
+    "longName": "Newark - Livingston Mall"
+  },
+  {
+    "id": "702",
+    "shortName": "702",
+    "longName": "Paterson - Elmwood Park"
+  },
+  {
+    "id": "703",
+    "shortName": "703",
+    "longName": "Haledon - Paterson - East Rutherford"
+  },
+  {
+    "id": "704",
+    "shortName": "704",
+    "longName": "Paterson - Willowbrook Mall"
+  },
+  {
+    "id": "705",
+    "shortName": "705",
+    "longName": "Passaic - Willowbrook Mall"
+  },
+  {
+    "id": "707",
+    "shortName": "707",
+    "longName": "Paterson - Paramus"
+  },
+  {
+    "id": "709",
+    "shortName": "709",
+    "longName": "Bloomfield - Passaic - Paramus"
+  },
+  {
+    "id": "71",
+    "shortName": "71",
+    "longName": "Newark - West Caldwell"
+  },
+  {
+    "id": "712",
+    "shortName": "712",
+    "longName": "Hackensack - Paterson - Willowbrook Mall"
+  },
+  {
+    "id": "72",
+    "shortName": "72",
+    "longName": "Paterson - Bloomfield - Newark"
+  },
+  {
+    "id": "722",
+    "shortName": "722",
+    "longName": "Paterson - Paramus Park"
+  },
+  {
+    "id": "73",
+    "shortName": "73",
+    "longName": "Newark - Orange - Livingston"
+  },
+  {
+    "id": "74",
+    "shortName": "74",
+    "longName": "Paterson - Nutley - Newark"
+  },
+  {
+    "id": "744",
+    "shortName": "744",
+    "longName": "Passaic - Paterson"
+  },
+  {
+    "id": "746",
+    "shortName": "746",
+    "longName": "Ridgewood - Paterson"
+  },
+  {
+    "id": "748",
+    "shortName": "748",
+    "longName": "Paterson - Wayne"
+  },
+  {
+    "id": "751",
+    "shortName": "751",
+    "longName": "Paramus - Cliffside Park - Edgewater"
+  },
+  {
+    "id": "752",
+    "shortName": "752",
+    "longName": "Oakland - Ridgewood - Hackensack"
+  },
+  {
+    "id": "753",
+    "shortName": "753",
+    "longName": "New Milford - Paramus"
+  },
+  {
+    "id": "755",
+    "shortName": "755",
+    "longName": "Paramus - Fort Lee - Edgewater"
+  },
+  {
+    "id": "756",
+    "shortName": "756",
+    "longName": "Englewood Cliffs - Fort Lee - Paramus"
+  },
+  {
+    "id": "758",
+    "shortName": "758",
+    "longName": "Passaic - Paramus Park"
+  },
+  {
+    "id": "76",
+    "shortName": "76",
+    "longName": "Newark - Hackensack"
+  },
+  {
+    "id": "762",
+    "shortName": "762",
+    "longName": "Hackensack - New Milford - Paramus"
+  },
+  {
+    "id": "770",
+    "shortName": "770",
+    "longName": "Paterson - Hackensack"
+  },
+  {
+    "id": "772",
+    "shortName": "772",
+    "longName": "Paramus - Hackensack - American Dream"
+  },
+  {
+    "id": "78",
+    "shortName": "78",
+    "longName": "Newark - Secaucus"
+  },
+  {
+    "id": "780",
+    "shortName": "780",
+    "longName": "Passaic - Hackensack - Englewood"
+  },
+  {
+    "id": "79",
+    "shortName": "79",
+    "longName": "Parsippany - Newark Express"
+  },
+  {
+    "id": "8",
+    "shortName": "8",
+    "longName": "Bergen Avenue"
+  },
+  {
+    "id": "80",
+    "shortName": "80",
+    "longName": "Greenville - Journal Square - Exchange Place"
+  },
+  {
+    "id": "801",
+    "shortName": "801",
+    "longName": "Metropark - JFK Hospital"
+  },
+  {
+    "id": "802",
+    "shortName": "802",
+    "longName": "Metropark - Rt. 1/Green St."
+  },
+  {
+    "id": "803",
+    "shortName": "803",
+    "longName": "Metropark - Woodbridge Center Dr."
+  },
+  {
+    "id": "804",
+    "shortName": "804",
+    "longName": "Metropark - Wood Ave."
+  },
+  {
+    "id": "805",
+    "shortName": "805",
+    "longName": "Metropark - Ford Ave."
+  },
+  {
+    "id": "81",
+    "shortName": "81",
+    "longName": "Bayonne - Jersey City"
+  },
+  {
+    "id": "810",
+    "shortName": "810",
+    "longName": "New Brunswick - Woodbridge Center"
+  },
+  {
+    "id": "811",
+    "shortName": "811",
+    "longName": "New Brunswick - South River"
+  },
+  {
+    "id": "813",
+    "shortName": "813",
+    "longName": "Perth Amboy - Middlesex County College"
+  },
+  {
+    "id": "814",
+    "shortName": "814",
+    "longName": "N. Brunswick - New Brunswick - Middlesex C. C."
+  },
+  {
+    "id": "815",
+    "shortName": "815",
+    "longName": "New Brunswick-East Brunswick-Woodbridge Ctr"
+  },
+  {
+    "id": "817",
+    "shortName": "817",
+    "longName": "Campbell s Junction - Perth Amboy"
+  },
+  {
+    "id": "818",
+    "shortName": "818",
+    "longName": "New Brunswick - East Brunswick - Old Bridge"
+  },
+  {
+    "id": "819",
+    "shortName": "819",
+    "longName": "Piscataway-Plainfield-Metuchen-Middlesex Mall"
+  },
+  {
+    "id": "82",
+    "shortName": "82",
+    "longName": "Jersey City Heights - Exchange Place"
+  },
+  {
+    "id": "822",
+    "shortName": "822",
+    "longName": "Plainfield - North Plainfield"
+  },
+  {
+    "id": "83",
+    "shortName": "83",
+    "longName": "Hackensack - Jersey City - Journal Square"
+  },
+  {
+    "id": "830",
+    "shortName": "830",
+    "longName": "Asbury Park - Point Pleasant Beach"
+  },
+  {
+    "id": "831",
+    "shortName": "831",
+    "longName": "Red Bank - Monmouth Mall - Long Branch"
+  },
+  {
+    "id": "832",
+    "shortName": "832",
+    "longName": "Brookdale Community College-Red Bank-Asbury Park"
+  },
+  {
+    "id": "834",
+    "shortName": "834",
+    "longName": "Red Bank - Highlands"
+  },
+  {
+    "id": "836",
+    "shortName": "836",
+    "longName": "Asbury Park-Freehold Raceway Mall-Centra State"
+  },
+  {
+    "id": "837",
+    "shortName": "837",
+    "longName": "Long Branch - Asbury Park - Seaview Square"
+  },
+  {
+    "id": "838",
+    "shortName": "838",
+    "longName": "Freehold-Red Bank-Sea Bright"
+  },
+  {
+    "id": "84",
+    "shortName": "84",
+    "longName": "North Bergen - Jersey City - Journal Square"
+  },
+  {
+    "id": "85",
+    "shortName": "85",
+    "longName": "American Dream - Mill Creek  - Hoboken"
+  },
+  {
+    "id": "86",
+    "shortName": "86",
+    "longName": "Union City - Jersey City - Newport Centre Mall"
+  },
+  {
+    "id": "87",
+    "shortName": "87",
+    "longName": "Jersey City - Hoboken"
+  },
+  {
+    "id": "871",
+    "shortName": "871",
+    "longName": "Morristown - Boonton - Willowbrook Mall"
+  },
+  {
+    "id": "872",
+    "shortName": "872",
+    "longName": "Morristown - Parsippany-Troy Hills"
+  },
+  {
+    "id": "873",
+    "shortName": "873",
+    "longName": "Greystone - Morristown - Livingston"
+  },
+  {
+    "id": "874",
+    "shortName": "874",
+    "longName": "Morristown - Willowbrook Mall"
+  },
+  {
+    "id": "875",
+    "shortName": "875",
+    "longName": "Morristown - Dover - Roxbury"
+  },
+  {
+    "id": "878",
+    "shortName": "878",
+    "longName": "Morris - Florham Park - Madison"
+  },
+  {
+    "id": "88",
+    "shortName": "88",
+    "longName": "North Bergen - Jersey City - Journal Square"
+  },
+  {
+    "id": "880",
+    "shortName": "880",
+    "longName": "Morristown - Dover - Rockaway"
+  },
+  {
+    "id": "89",
+    "shortName": "89",
+    "longName": "North Bergen - Hoboken"
+  },
+  {
+    "id": "890",
+    "shortName": "890",
+    "longName": "South Main Street"
+  },
+  {
+    "id": "891",
+    "shortName": "891",
+    "longName": "Heckman"
+  },
+  {
+    "id": "9",
+    "shortName": "9",
+    "longName": "Montgomery St - West Side Avenue"
+  },
+  {
+    "id": "90",
+    "shortName": "90",
+    "longName": "Grove Street Crosstown"
+  },
+  {
+    "id": "92",
+    "shortName": "92",
+    "longName": "Orange Crosstown"
+  },
+  {
+    "id": "94",
+    "shortName": "94",
+    "longName": "Stuyvesant Crosstown"
+  },
+  {
+    "id": "96",
+    "shortName": "96",
+    "longName": "18th Street Crosstown"
+  },
+  {
+    "id": "97",
+    "shortName": "97",
+    "longName": "East Orange - Montclair"
+  },
+  {
+    "id": "986",
+    "shortName": "986",
+    "longName": "Summit - Murray Hill - Plainfield"
+  },
+  {
+    "id": "99",
+    "shortName": "99",
+    "longName": "Clifton Avenue Crosstown"
+  },
+  {
+    "id": "AC1",
+    "shortName": "AC1",
+    "longName": "A.C.Rail - Tropicana"
+  },
+  {
+    "id": "AC3",
+    "shortName": "AC3",
+    "longName": "A.C. Rail - Hard Rock/Resorts"
+  },
+  {
+    "id": "AC4B",
+    "shortName": "AC4B",
+    "longName": "A.C. Rail - Marina Casinos"
+  },
+  {
+    "id": "HBLR",
+    "shortName": "HBLR",
+    "longName": "Hudson Bergen Light Rail"
+  },
+  {
+    "id": "NLR",
+    "shortName": "NLR",
+    "longName": "Newark Light Rail"
+  },
+  {
+    "id": "PRIB",
+    "shortName": "PRIB",
+    "longName": "Princeton Rail Shuttle Service"
+  },
+  {
+    "id": "RvLN",
+    "shortName": "RvLN",
+    "longName": "River LINE"
+  },
+  {
+    "id": "go25",
+    "shortName": "go25",
+    "longName": "go25 Springfield Avenue"
+  },
+  {
+    "id": "go28",
+    "shortName": "go28",
+    "longName": "go28 Newark Airport - Newark - Bloomfield"
+  }
+]

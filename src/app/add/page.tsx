@@ -6,6 +6,7 @@ import { CommuteTuple, Station } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { StationSelector } from '@/components/StationSelector';
 import Link from 'next/link';
+import RouteSelector from '@/components/RouteSelector';
 
 const LINES = [
     '1', '2', '3', '4', '5', '6', '7',
@@ -13,29 +14,49 @@ const LINES = [
     'N', 'Q', 'R', 'W', 'J', 'Z', 'G', 'L', 'S'
 ];
 
-type Step = 'mode' | 'line' | 'station' | 'direction';
+type Step = 'mode' | 'line' | 'station' | 'direction' | 'route';
 
 export default function AddPage() {
     const router = useRouter();
     const [step, setStep] = useState<Step>('mode');
-    const [mode, setMode] = useState<CommuteTuple['mode'] | 'lirr' | 'mnr' | 'path'>('subway');
+    const [subModeStep, setSubModeStep] = useState<string | null>(null); // For handling NJT Train vs Bus
+    const [mode, setMode] = useState<CommuteTuple['mode'] | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail'>('subway');
     const [line, setLine] = useState('');
     const [station, setStation] = useState<Station | null>(null);
+    const [selectedRoute, setSelectedRoute] = useState<{ id: string, shortName: string } | null>(null);
 
-    const handleModeSelect = (m: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path') => {
+    const handleModeSelect = (m: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt') => {
+        if (m === 'njt') {
+            setSubModeStep('njt');
+            setMode('njt'); // Temporary
+            return;
+        }
+
         setMode(m);
         if (m === 'subway') setStep('line');
         else if (m === 'lirr') {
-            setLine('LIRR'); // Pseudo-line for LIRR
+            setLine('LIRR');
             setStep('station');
         } else if (m === 'mnr') {
-            setLine('MNR'); // Pseudo-line for MNR
+            setLine('MNR');
             setStep('station');
         } else if (m === 'path') {
             setLine('PATH');
             setStep('station');
         }
         else setStep('station'); // Bus
+    };
+
+    const handleSubModeSelect = (sm: 'njt-rail' | 'njt-bus') => {
+        setMode(sm);
+        if (sm === 'njt-rail') {
+            setLine('NJT'); // Rail
+            setStep('station');
+        } else {
+            setLine('NJT Bus');
+            setStep('route');
+        }
+        setSubModeStep(null);
     };
 
     const handleLineSelect = (l: string) => {
@@ -56,25 +77,49 @@ export default function AddPage() {
             // Metro-North: Origin -> Destination flow (skip direction step)
             // We use 'N' as a placeholder direction, but the filtering will use destId.
             saveTuple(s, 'N', undefined, destStation);
+        } else if ((mode === 'njt' || mode === 'njt-rail') && destStation) {
+            // NJ Transit: Origin -> Destination flow
+            saveTuple(s, 'N', 'NJT', destStation);
+        } else if (mode === 'njt-bus' && destStation) {
+            // NJ Transit BUS: Origin -> Destination flow
+            // Include Route Info in label?
+            // Maybe append route number to label or store it?
+            // The `routeId` argument is usually specific trip route, but here we have `selectedRoute`.
+            // We'll pass selectedRoute.shortName as the "Line"? Or just keep NJT Bus.
+            // Using selectedRoute.shortName as routeId for the tuple seems correct.
+            const rId = selectedRoute?.shortName || 'NJT Bus';
+            saveTuple(s, 'N', rId, destStation);
+        } else if (mode === 'lirr' && destStation) {
+            // LIRR: Origin -> Destination flow
+            saveTuple(s, 'N', 'LIRR', destStation);
+        } else if (mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'njt-bus') {
+            // Fallback if somehow single select
+            setStep('station');
         } else {
             setStep('direction');
         }
     };
 
     const saveTuple = (s: Station, dir: 'N' | 'S' | 'E' | 'W', specificRouteId?: string, destStation?: Station) => {
+        let finalMode: any = mode;
+        if (['lirr', 'mnr', 'path', 'njt'].includes(mode)) {
+            finalMode = 'rail';
+        }
+        // njt-bus and njt-rail should represent themselves
+
         const newTuple: CommuteTuple = {
             id: Date.now().toString(),
             label: `${s.name} (${mode})`,
-            mode: (mode === 'lirr' || mode === 'mnr' || mode === 'path') ? 'rail' : mode as any,
+            mode: finalMode,
             routeId: specificRouteId || line,
             stopId: s.id,
             direction: dir,
             destinationName: s.headsign, // For Bus
-            destinationStopId: destStation?.id, // For MNR
+            destinationStopId: destStation?.id, // For MNR/NJT
             createdAt: Date.now()
         };
 
-        if (mode === 'lirr' || mode === 'mnr' || mode === 'path') {
+        if (['lirr', 'mnr', 'path', 'njt', 'njt-rail', 'njt-bus'].includes(mode)) {
             if (destStation) {
                 newTuple.label = `${s.name} ➔ ${destStation.name}`;
             } else {
@@ -100,7 +145,7 @@ export default function AddPage() {
 
     return (
         <main className="container">
-            {step === 'mode' && (
+            {step === 'mode' && !subModeStep && (
                 <>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
                         <Link href="/" style={{ color: 'var(--primary)', marginRight: 16 }}>Cancel</Link>
@@ -110,10 +155,37 @@ export default function AddPage() {
                         <button className="mode-btn" onClick={() => handleModeSelect('subway')}>Subway</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('lirr')}>LIRR</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('mnr')}>Metro-North</button>
+                        <button className="mode-btn" onClick={() => handleModeSelect('njt')}>NJ Transit</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('path')}>PATH</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('bus')}>Bus</button>
                     </div>
                 </>
+            )}
+
+            {step === 'mode' && subModeStep === 'njt' && (
+                <>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+                        <button onClick={() => setSubModeStep(null)} className="back-btn">← Back</button>
+                        <h1>NJ Transit Mode</h1>
+                    </div>
+                    <div className="grid">
+                        <button className="mode-btn" onClick={() => handleSubModeSelect('njt-rail')}>Train</button>
+                        <button className="mode-btn" onClick={() => handleSubModeSelect('njt-bus')}>Bus</button>
+                    </div>
+                </>
+            )}
+
+            {step === 'route' && (
+                <RouteSelector
+                    onSelect={(route) => {
+                        setSelectedRoute(route);
+                        setStep('station');
+                    }}
+                    onBack={() => {
+                        setStep('mode');
+                        setSubModeStep('njt');
+                    }}
+                />
             )}
 
             {step === 'line' && (

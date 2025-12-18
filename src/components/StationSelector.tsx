@@ -7,15 +7,21 @@ import subwayStations from '@/lib/stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
 import mnrStations from '@/lib/mnr_stations.json';
 import pathStations from '@/lib/path_stations.json';
+import njtStations from '@/lib/njt_stations.json';
+import njtBusStations from '@/lib/njt_bus_stations.json';
+import njtBusRouteStops from '@/lib/njt_bus_route_stops.json'; // Import mapping
 
-interface Props {
-    mode: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path';
-    line: string;
+interface StationSelectorProps {
+    mode: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail';
+
+    line?: string; // Made optional as it's not always used
     onSelect: (station: Station, routeId?: string, destStation?: Station) => void;
-    onBack: () => void;
+    onBack?: () => void; // Made optional
+    placeholder?: string; // New prop
+    routeFilter?: string | null; // New prop
 }
 
-export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
+export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, routeFilter }: StationSelectorProps) => {
     const [search, setSearch] = useState('');
     const [busStops, setBusStops] = useState<Station[]>([]);
     const [loading, setLoading] = useState(false);
@@ -63,7 +69,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         setBusStops([]); // Clear stops to restart
     };
 
-    const handleMNRReset = () => {
+    const handleReset = () => {
         setOriginStation(null);
         setSearch('');
     };
@@ -104,7 +110,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         if (mode === 'subway') {
             data = subwayStations;
             return (data as Station[])
-                .filter(s => s.lines.includes(line))
+                .filter(s => line ? s.lines.includes(line) : true)
                 .filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
         } else if (mode === 'lirr') {
             data = lirrStations;
@@ -119,6 +125,38 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
         } else if (mode === 'path') {
             data = pathStations;
             return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+        } else if (mode === 'njt') {
+            data = njtStations;
+            const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            if (originStation) {
+                return res.filter(s => s.id !== originStation.id);
+            }
+            return res;
+
+        } else if (mode === 'njt-bus') {
+            data = njtBusStations;
+            let res = (data as Station[]);
+
+            if (routeFilter && (njtBusRouteStops as any)[routeFilter]) {
+                const stopsOnRoute = (njtBusRouteStops as any)[routeFilter];
+                res = res.filter(s => stopsOnRoute.includes(s.id));
+            }
+
+            res = res.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+
+            if (originStation) {
+                res = res.filter(s => s.id !== originStation.id);
+            }
+
+            // Deduplicate by name
+            const uniqueNames = new Set();
+            res = res.filter(s => {
+                if (uniqueNames.has(s.name)) return false;
+                uniqueNames.add(s.name);
+                return true;
+            });
+
+            return res;
         } else {
             // Bus: 
             if (lockedRoute) {
@@ -138,7 +176,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
     }, [mode, line, search, busStops, lockedRoute, originStation]);
 
     const handleSelect = (s: Station, routeId?: string) => {
-        if (mode === 'mnr') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') {
             if (!originStation) {
                 setOriginStation(s);
                 setSearch('');
@@ -151,17 +189,18 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
     };
 
     const getTitle = () => {
-        if (mode === 'mnr') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
-        return mode === 'lirr' ? 'LIRR Station' : (mode === 'path' ? 'PATH Station' : `${line} Station`);
+        return mode === 'path' ? 'PATH Station' : `${line || 'Train'} Station`;
+
     };
 
     const getPlaceholder = () => {
         if (mode === 'bus') {
             return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
         }
-        if (mode === 'mnr' && originStation) {
+        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') && originStation) {
             return "Select Arrival Station...";
         }
         return "Search station...";
@@ -174,10 +213,10 @@ export const StationSelector = ({ mode, line, onSelect, onBack }: Props) => {
                 <h2>{getTitle()}</h2>
             </div>
 
-            {mode === 'mnr' && originStation && (
+            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') && originStation && (
                 <div className="locked-header">
                     <span>From: <strong>{originStation.name}</strong></span>
-                    <button onClick={handleMNRReset} className="unlock-btn">Change</button>
+                    <button onClick={handleReset} className="unlock-btn">Change</button>
                 </div>
             )}
 

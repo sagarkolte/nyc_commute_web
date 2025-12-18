@@ -1,0 +1,1305 @@
+[
+  {
+    "id": "AM",
+    "name": "Aberdeen-Matawan",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "AB",
+    "name": "Absecon",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "AZ",
+    "name": "Allendale",
+    "lines": [
+      "Main Line",
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "AH",
+    "name": "Allenhurst",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "AS",
+    "name": "Anderson Street",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "AN",
+    "name": "Annandale",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "AP",
+    "name": "Asbury Park",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "AO",
+    "name": "Atco",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "AC",
+    "name": "Atlantic City Rail Terminal",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "AV",
+    "name": "Avenel",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "BA",
+    "name": "BWI Thurgood Marshall Airport",
+    "lines": [
+      "REGIONAL",
+      "Amtrak",
+      "AMTRAK"
+    ]
+  },
+  {
+    "id": "BL",
+    "name": "Baltimore Station",
+    "lines": [
+      "REGIONAL",
+      "Amtrak",
+      "AMTRAK",
+      "ACELA EXPRESS"
+    ]
+  },
+  {
+    "id": "BI",
+    "name": "Basking Ridge",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "BH",
+    "name": "Bay Head",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "MC",
+    "name": "Bay Street",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "BS",
+    "name": "Belmar",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "BY",
+    "name": "Berkeley Heights",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "BV",
+    "name": "Bernardsville",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "BM",
+    "name": "Bloomfield",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "BN",
+    "name": "Boonton",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "BK",
+    "name": "Bound Brook",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "BB",
+    "name": "Bradley Beach",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "BU",
+    "name": "Brick Church",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "BW",
+    "name": "Bridgewater",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "BF",
+    "name": "Broadway Fair Lawn",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "CB",
+    "name": "Campbell Hall",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "CM",
+    "name": "Chatham",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "CY",
+    "name": "Cherry Hill",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "IF",
+    "name": "Clifton",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "CN",
+    "name": "Convent Station",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "XC",
+    "name": "Cranford",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "DL",
+    "name": "Delawanna",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "DV",
+    "name": "Denville",
+    "lines": [
+      "Montclair-Boonton",
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "DO",
+    "name": "Dover",
+    "lines": [
+      "Morristown Line",
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "DN",
+    "name": "Dunellen",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "EO",
+    "name": "East Orange",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "ED",
+    "name": "Edison",
+    "lines": [
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "EH",
+    "name": "Egg Harbor City",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "EL",
+    "name": "Elberon",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "EZ",
+    "name": "Elizabeth",
+    "lines": [
+      "No Jersey Coast",
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "EN",
+    "name": "Emerson",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "EX",
+    "name": "Essex Street",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "FW",
+    "name": "Fanwood",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "FH",
+    "name": "Far Hills",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "GD",
+    "name": "Garfield",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "GW",
+    "name": "Garwood",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "GI",
+    "name": "Gillette",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "GL",
+    "name": "Gladstone",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "GG",
+    "name": "Glen Ridge",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "GK",
+    "name": "Glen Rock Boro Hall",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "RS",
+    "name": "Glen Rock Main Line",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "HQ",
+    "name": "Hackettstown",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "HL",
+    "name": "Hamilton",
+    "lines": [
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "HN",
+    "name": "Hammonton",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "RM",
+    "name": "Harriman",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "HW",
+    "name": "Hawthorne",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "HZ",
+    "name": "Hazlet",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "HG",
+    "name": "High Bridge",
+    "lines": [
+      "NJT"
+    ]
+  },
+  {
+    "id": "HI",
+    "name": "Highland Avenue",
+    "lines": [
+      "Gladstone Branch",
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "HD",
+    "name": "Hillsdale",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "HB",
+    "name": "Hoboken",
+    "lines": [
+      "Montclair-Boonton",
+      "Pascack Valley",
+      "Morristown Line",
+      "Bergen Co. Line ",
+      "Gladstone Branch",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "UF",
+    "name": "Hohokus",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "JA",
+    "name": "Jersey Avenue",
+    "lines": [
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "HP",
+    "name": "Lake Hopatcong",
+    "lines": [
+      "Morristown Line",
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "ON",
+    "name": "Lebanon",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "LP",
+    "name": "Lincoln Park",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "LI",
+    "name": "Linden",
+    "lines": [
+      "No Jersey Coast",
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "LW",
+    "name": "Lindenwold",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "FA",
+    "name": "Little Falls",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "LS",
+    "name": "Little Silver",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "LB",
+    "name": "Long Branch",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "LN",
+    "name": "Lyndhurst",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "LY",
+    "name": "Lyons",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "MA",
+    "name": "Madison",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "MZ",
+    "name": "Mahwah",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "SQ",
+    "name": "Manasquan",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "MW",
+    "name": "Maplewood",
+    "lines": [
+      "Gladstone Branch",
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "XU",
+    "name": "Meadowlands",
+    "lines": [
+      "NJT"
+    ]
+  },
+  {
+    "id": "MP",
+    "name": "Metropark",
+    "lines": [
+      "CRESCENT",
+      "Northeast Corrdr",
+      "REGIONAL",
+      "KEYSTONE",
+      "ACELA EXPRESS"
+    ]
+  },
+  {
+    "id": "MU",
+    "name": "Metuchen",
+    "lines": [
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "MI",
+    "name": "Middletown NJ",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "MD",
+    "name": "Middletown NY",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "MB",
+    "name": "Millburn",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "GO",
+    "name": "Millington",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "MK",
+    "name": "Monmouth Park",
+    "lines": [
+      "NJT"
+    ]
+  },
+  {
+    "id": "HS",
+    "name": "Montclair Heights",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "UV",
+    "name": "Montclair State U",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "ZM",
+    "name": "Montvale",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "MX",
+    "name": "Morris Plains",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "MR",
+    "name": "Morristown",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "HV",
+    "name": "Mount Arlington",
+    "lines": [
+      "Montclair-Boonton",
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "OL",
+    "name": "Mount Olive",
+    "lines": [
+      "Morristown Line",
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "TB",
+    "name": "Mount Tabor",
+    "lines": [
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "MS",
+    "name": "Mountain Avenue",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "ML",
+    "name": "Mountain Lakes",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "MT",
+    "name": "Mountain Station",
+    "lines": [
+      "Gladstone Branch",
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "MV",
+    "name": "Mountain View",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "MH",
+    "name": "Murray Hill",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "NN",
+    "name": "Nanuet",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "NT",
+    "name": "Netcong",
+    "lines": [
+      "Morristown Line",
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "NE",
+    "name": "Netherwood",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "NH",
+    "name": "New Bridge Landing",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "NB",
+    "name": "New Brunswick",
+    "lines": [
+      "Northeast Corrdr",
+      "KEYSTONE"
+    ]
+  },
+  {
+    "id": "NC",
+    "name": "New Carrollton Station",
+    "lines": [
+      "REGIONAL",
+      "Amtrak",
+      "AMTRAK"
+    ]
+  },
+  {
+    "id": "NV",
+    "name": "New Providence",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "NY",
+    "name": "New York Penn Station",
+    "lines": [
+      "Northeast Corrdr",
+      "Morristown Line",
+      "No Jersey Coast",
+      "ACELA EXPRESS",
+      "Gladstone Branch",
+      "REGIONAL",
+      "Montclair-Boonton",
+      "KEYSTONE"
+    ]
+  },
+  {
+    "id": "NA",
+    "name": "Newark Airport",
+    "lines": [
+      "No Jersey Coast",
+      "Northeast Corrdr",
+      "REGIONAL"
+    ]
+  },
+  {
+    "id": "ND",
+    "name": "Newark Broad Street",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch",
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "NP",
+    "name": "Newark Penn Station",
+    "lines": [
+      "CRESCENT",
+      "Raritan Valley",
+      "Northeast Corrdr",
+      "No Jersey Coast",
+      "REGIONAL",
+      "ACELA EXPRESS"
+    ]
+  },
+  {
+    "id": "OR",
+    "name": "North Branch",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "NZ",
+    "name": "North Elizabeth",
+    "lines": [
+      "No Jersey Coast",
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "NF",
+    "name": "North Philadelphia",
+    "lines": [
+      "Septa",
+      "KEYSTONE"
+    ]
+  },
+  {
+    "id": "OD",
+    "name": "Oradell",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "OG",
+    "name": "Orange",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "OS",
+    "name": "Otisville",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "PV",
+    "name": "Park Ridge",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "PS",
+    "name": "Passaic",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "RN",
+    "name": "Paterson",
+    "lines": [
+      "Main Line"
+    ]
+  },
+  {
+    "id": "PC",
+    "name": "Peapack",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "PQ",
+    "name": "Pearl River",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "PN",
+    "name": "Pennsauken",
+    "lines": [
+      "Atl. City Line"
+    ]
+  },
+  {
+    "id": "PE",
+    "name": "Perth Amboy",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "PH",
+    "name": "Philadelphia",
+    "lines": [
+      "Atl. City Line",
+      "Amtrak",
+      "AMTRAK",
+      "REGIONAL",
+      "ACELA EXPRESS"
+    ]
+  },
+  {
+    "id": "PF",
+    "name": "Plainfield",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "PL",
+    "name": "Plauderville",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "PP",
+    "name": "Point Pleasant Beach",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "PO",
+    "name": "Port Jervis",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "PR",
+    "name": "Princeton",
+    "lines": [
+      "Princeton Shuttle"
+    ]
+  },
+  {
+    "id": "PJ",
+    "name": "Princeton Junction",
+    "lines": [
+      "Northeast Corrdr",
+      "KEYSTONE",
+      "Princeton Shuttle",
+      "REGIONAL"
+    ]
+  },
+  {
+    "id": "FZ",
+    "name": "Radburn Fair Lawn",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "RH",
+    "name": "Rahway",
+    "lines": [
+      "No Jersey Coast",
+      "Northeast Corrdr"
+    ]
+  },
+  {
+    "id": "RY",
+    "name": "Ramsey Main St",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "17",
+    "name": "Ramsey Route 17",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "RA",
+    "name": "Raritan",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "RB",
+    "name": "Red Bank",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "RW",
+    "name": "Ridgewood",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "RG",
+    "name": "River Edge",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "RL",
+    "name": "Roselle Park",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "RF",
+    "name": "Rutherford",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "CW",
+    "name": "Salisbury Mills-Cornwall",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "SC",
+    "name": "Secaucus Concourse",
+    "lines": [
+      "NJT"
+    ]
+  },
+  {
+    "id": "TS",
+    "name": "Secaucus Lower Lvl",
+    "lines": [
+      "Main Line",
+      "Bergen Co. Line ",
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "SE",
+    "name": "Secaucus Upper Lvl",
+    "lines": [
+      "Montclair-Boonton",
+      "Northeast Corrdr",
+      "Morristown Line",
+      "No Jersey Coast",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "RT",
+    "name": "Short Hills",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "XG",
+    "name": "Sloatsburg",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "SM",
+    "name": "Somerville",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "CH",
+    "name": "South Amboy",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "SO",
+    "name": "South Orange",
+    "lines": [
+      "Gladstone Branch",
+      "Morristown Line"
+    ]
+  },
+  {
+    "id": "LA",
+    "name": "Spring Lake",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "SV",
+    "name": "Spring Valley",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "SG",
+    "name": "Stirling",
+    "lines": [
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "SF",
+    "name": "Suffern",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "ST",
+    "name": "Summit",
+    "lines": [
+      "Morristown Line",
+      "Gladstone Branch"
+    ]
+  },
+  {
+    "id": "TE",
+    "name": "Teterboro",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "TO",
+    "name": "Towaco",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "TR",
+    "name": "Trenton",
+    "lines": [
+      "KEYSTONE",
+      "Septa",
+      "Northeast Corrdr",
+      "REGIONAL",
+      "AMTRAK"
+    ]
+  },
+  {
+    "id": "TC",
+    "name": "Tuxedo",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "US",
+    "name": "Union",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "UM",
+    "name": "Upper Montclair",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "WK",
+    "name": "Waldwick",
+    "lines": [
+      "Bergen Co. Line ",
+      "Main Line"
+    ]
+  },
+  {
+    "id": "WA",
+    "name": "Walnut Street",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "WS",
+    "name": "Washington Station",
+    "lines": [
+      "AMTRAK",
+      "ACELA EXPRESS",
+      "REGIONAL",
+      "Amtrak"
+    ]
+  },
+  {
+    "id": "WG",
+    "name": "Watchung Avenue",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "WT",
+    "name": "Watsessing Avenue",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "23",
+    "name": "Wayne-Route 23",
+    "lines": [
+      "Montclair-Boonton"
+    ]
+  },
+  {
+    "id": "WM",
+    "name": "Wesmont",
+    "lines": [
+      "Bergen Co. Line "
+    ]
+  },
+  {
+    "id": "WF",
+    "name": "Westfield",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "WW",
+    "name": "Westwood",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "WH",
+    "name": "White House",
+    "lines": [
+      "Raritan Valley"
+    ]
+  },
+  {
+    "id": "WI",
+    "name": "Wilmington Station",
+    "lines": [
+      "REGIONAL",
+      "Amtrak",
+      "AMTRAK",
+      "ACELA EXPRESS"
+    ]
+  },
+  {
+    "id": "WR",
+    "name": "Wood Ridge",
+    "lines": [
+      "Pascack Valley"
+    ]
+  },
+  {
+    "id": "WB",
+    "name": "Woodbridge",
+    "lines": [
+      "No Jersey Coast"
+    ]
+  },
+  {
+    "id": "WL",
+    "name": "Woodcliff Lake",
+    "lines": [
+      "Pascack Valley"
+    ]
+  }
+]

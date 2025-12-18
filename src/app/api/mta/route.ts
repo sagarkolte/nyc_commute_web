@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { MtaService } from '@/lib/mta';
 import mnrStations from '@/lib/mnr_stations.json';
+import lirrStations from '@/lib/lirr_stations.json';
 
 export const dynamic = 'force-dynamic';
 
@@ -125,12 +126,8 @@ export async function GET(request: Request) {
                     if (routeMatches) {
                         routeIdMatchCount++;
 
-                        // DEBUG LOGGING for MNR
-                        if (routeId.startsWith('MNR')) {
-                            const stopIds = entity.tripUpdate.stopTimeUpdate.map((u: any) => u.stopId).join(', ');
-                            const headsign = entity.tripUpdate.trip.tripHeadsign;
-                            console.log(`[MNR Debug] Trip=${entityRouteId} Headsign=${headsign} Stops=${stopIds}`);
-                        }
+                        // DEBUG LOGGING (Can be toggled if needed, removing for prod)
+
                         const updates = entity.tripUpdate.stopTimeUpdate;
                         let originUpdate: any = null;
 
@@ -154,18 +151,23 @@ export async function GET(request: Request) {
                             if (arrivalTime && arrivalTime > now) {
                                 afterNowCount++;
 
-                                // Extract Track (Not available in current GTFS-RT feed)
+                                // Extract Track
                                 let track = 'TBD';
                                 const departure = originUpdate.departure || originUpdate.arrival;
-                                const ext = (departure as any)?.['extension'];
+                                // const ext = (departure as any)?.['extension']; // Track extraction logic if needed
 
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;
-                                if (!displayDest) {
+                                if (!displayDest || displayDest === '') {
                                     const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
                                     if (lastUpdate) {
-                                        const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
-                                        if (st) displayDest = st.name;
+                                        if (routeId.startsWith('MNR')) {
+                                            const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
+                                            if (st) displayDest = st.name;
+                                        } else if (routeId.startsWith('LIRR')) {
+                                            const st = (lirrStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                            if (st) displayDest = st.name;
+                                        }
                                     }
                                 }
 

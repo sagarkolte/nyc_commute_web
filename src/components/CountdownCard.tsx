@@ -33,9 +33,19 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             const direction = encodeURIComponent(tuple.direction);
             const destStopId = tuple.destinationStopId ? encodeURIComponent(tuple.destinationStopId) : '';
 
-            const res = await fetch(`/api/mta?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}&destStopId=${destStopId}`, {
-                headers
+            const isNjt = tuple.routeId === 'NJT';
+            const isNjtBus = tuple.mode === 'njt-bus';
+            let endpoint = '/api/mta';
+            if (isNjt) endpoint = '/api/njt';
+            if (isNjtBus) endpoint = '/api/njt-bus';
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
+
+            const res = await fetch(`${endpoint}?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}&destStopId=${destStopId}`, {
+                headers,
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
             if (!res.ok) {
                 const txt = await res.text();
                 throw new Error(`Status ${res.status}: ${txt}`);
@@ -47,6 +57,10 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
+            } else if (data.departures) {
+                // Fallback if API returns 'departures' instead of 'arrivals' (my NJT API might have returned departures before map)
+                // But I updated it to return arrivals.
+                setArrivals(data.departures);
             }
         } catch (e: any) {
             console.error(e);
@@ -62,8 +76,9 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
         return () => clearInterval(interval);
     }, []);
 
-    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') ? '#0039A6' : '#999'); // MNR default Blue
-    const isDeptureBoard = tuple.routeId.startsWith('MNR') && !!tuple.destinationStopId;
+    const isNjtBus = tuple.mode === 'njt-bus';
+    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') || tuple.routeId === 'LIRR' ? '#0039A6' : (tuple.routeId === 'NJT' || tuple.routeId === 'NJT Bus' || isNjtBus ? '#F7941D' : '#999')); // MNR/LIRR Blue, NJT Orange
+    const isDeptureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR' || tuple.routeId === 'NJT Bus' || isNjtBus) && !!tuple.destinationStopId;
 
     const formatTime = (ts: number) => {
         return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
@@ -119,7 +134,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                             <span className="th-dest">DESTINATION</span>
                             <span className="th-eta">ETA</span>
                         </div>
-                        {arrivals.map((arr, i) => (
+                        {arrivals.slice(0, 3).map((arr, i) => (
                             <div key={i} className="board-row">
                                 <span className="td-time">{formatTime(arr.time)}</span>
                                 <span className="td-dest">{toTitleCase(arr.destination || 'Unknown')}</span>

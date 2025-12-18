@@ -1,4 +1,4 @@
-export type CommuteMode = 'subway' | 'bus' | 'rail';
+export type CommuteMode = 'subway' | 'bus' | 'rail' | 'njt-bus' | 'njt-rail' | 'njt';
 export type CommuteDirection = 'N' | 'S' | 'E' | 'W';
 
 export interface CommuteTuple {
