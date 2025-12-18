@@ -176,7 +176,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     }, [mode, line, search, busStops, lockedRoute, originStation]);
 
     const handleSelect = (s: Station, routeId?: string) => {
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') {
             if (!originStation) {
                 setOriginStation(s);
                 setSearch('');
@@ -189,7 +189,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     };
 
     const getTitle = () => {
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
         return mode === 'path' ? 'PATH Station' : `${line || 'Train'} Station`;
@@ -200,7 +200,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         if (mode === 'bus') {
             return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
         }
-        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') && originStation) {
+        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') && originStation) {
             return "Select Arrival Station...";
         }
         return "Search station...";
@@ -213,7 +213,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 <h2>{getTitle()}</h2>
             </div>
 
-            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus') && originStation && (
+            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') && originStation && (
                 <div className="locked-header">
                     <span>From: <strong>{originStation.name}</strong></span>
                     <button onClick={handleReset} className="unlock-btn">Change</button>
