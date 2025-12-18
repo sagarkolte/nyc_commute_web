@@ -13,6 +13,26 @@ const OUTPUT_ROUTE_STOPS = path.join(RAW_DIR, 'njt_bus_route_stops.json');
 async function processData() {
     console.log('Starting NJT Bus Data Generation...');
 
+    // 0. Unzip Data if needed
+    if (!fs.existsSync(STOP_TIMES_FILE)) {
+        console.log('Stop times file not found. Unzipping njt_bus_data.zip...');
+        const zipFile = path.join(process.cwd(), 'njt_bus_data.zip');
+        if (fs.existsSync(zipFile)) {
+            const { execSync } = require('child_process');
+            try {
+                // Determine OS to use appropriate unzip command if necessary, but 'unzip' is standard on *nix
+                execSync(`unzip -o "${zipFile}" -d "${RAW_DIR}"`);
+                console.log('Unzip successful.');
+            } catch (e) {
+                console.error('Failed to unzip data:', e);
+                process.exit(1);
+            }
+        } else {
+            console.error('CRITICAL: njt_bus_stop_times.txt missing AND njt_bus_data.zip missing.');
+            process.exit(1);
+        }
+    }
+
     // 1. Parse Routes
     // route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
     console.log('Parsing Routes...');
