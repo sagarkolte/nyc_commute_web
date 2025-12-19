@@ -54,7 +54,7 @@ export default function AddPage() {
             setStep('station');
         } else {
             setLine('NJT Bus');
-            setStep('route');
+            setStep('station');
         }
         setSubModeStep(null);
     };

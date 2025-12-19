@@ -137,10 +137,8 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             data = njtBusStations;
             let res = (data as Station[]);
 
-            if (routeFilter && (njtBusRouteStops as any)[routeFilter]) {
-                const stopsOnRoute = (njtBusRouteStops as any)[routeFilter];
-                res = res.filter(s => stopsOnRoute.includes(s.id));
-            }
+            // Validated: No route filtering needed for generic search
+
 
             res = res.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -200,8 +198,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         if (mode === 'bus') {
             return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
         }
-        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') && originStation) {
+        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') && originStation) {
             return "Select Arrival Station...";
+        }
+        if (mode === 'njt-bus') {
+            return originStation ? "Select Arrival Station (Any Route)..." : "Search Start Point...";
         }
         return "Search station...";
     };
