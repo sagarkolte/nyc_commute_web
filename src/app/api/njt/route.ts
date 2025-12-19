@@ -64,7 +64,7 @@ export async function GET(request: Request) {
             line: d.line,
             status: d.status
         };
-    });
+    }).filter(a => a.minutesUntil > -15);
 
     return NextResponse.json({ arrivals });
 }
