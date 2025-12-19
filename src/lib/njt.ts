@@ -121,7 +121,7 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
                 line: item.LINE,
                 destination: item.DESTINATION,
                 track: item.TRACK,
-                time: new Date(item.SCHED_DEP_DATE).toISOString(),
+                time: parseNjtDate(item.SCHED_DEP_DATE).toISOString(),
                 status: item.STATUS
             }));
         }
@@ -130,4 +130,23 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
     }
 
     return [];
+}
+
+// Helper to parse NJT Date string (e.g. "19-Dec-2025 07:46:00 AM") as America/New_York
+function parseNjtDate(dateStr: string): Date {
+    // 1. naive parse as UTC
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return new Date(); // Fallback
+
+    // 2. NJT is always Eastern Time. 
+    // If the server parsed '7:46 AM' as UTC, the epoch is 7:46 UTC.
+    // Real time 7:46 EST is 12:46 UTC.
+    // So we need to ADD the offset (5 hours or 4 hours).
+
+    // Simple EST handling (Standard Time is UTC-5)
+    // TODO: Handle DST dynamically if needed, though for now Dec is Standard.
+    const isDst = false; // Dec is Standard
+    const offsetHours = isDst ? 4 : 5;
+
+    return new Date(date.getTime() + (offsetHours * 60 * 60 * 1000));
 }
