@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 
                     // 2. Transfer Match
                     // Check if any of the target station's lines are served by this train's line via transfer
-                    const isTransfer = targetLines.some(tl => {
+                    const isTransfer = targetLines.some((tl: string) => {
                         const allowed = TRANSFER_RULES[tl];
                         return allowed && allowed.includes(d.line);
                     });
