@@ -23,16 +23,35 @@ export async function GET(request: Request) {
             const targetName = destStation.name.toLowerCase();
             const targetLines = destStation.lines || [];
 
+            // Transfer Rules: Allow main line trains for branch destinations
+            // e.g. Raritan Valley (requires transfer at Newark) -> Allow NEC/NJCL trains
+            const TRANSFER_RULES: Record<string, string[]> = {
+                'Raritan Valley': ['Northeast Corrdr', 'No Jersey Coast'],
+                'Gladstone Branch': ['Morristown Line', 'Morris & Essex Line'],
+                'Montclair-Boonton': ['Morristown Line', 'Morris & Essex Line', 'Northeast Corrdr'] // Connecting at Newark/Secaucus
+            };
+
             departures = departures.filter(d => {
                 const dDest = d.destination.toLowerCase();
-                // 1. Name Match (bidirectional include for robustness)
+
+                // 0. Destination Name Match (Direct)
                 if (dDest === targetName || dDest.includes(targetName) || targetName.includes(dDest)) {
                     return true;
                 }
-                // 2. Line Match
-                if (d.line && targetLines.includes(d.line)) {
-                    return true;
+
+                if (d.line) {
+                    // 1. Line Match (Direct)
+                    if (targetLines.includes(d.line)) return true;
+
+                    // 2. Transfer Match
+                    // Check if any of the target station's lines are served by this train's line via transfer
+                    const isTransfer = targetLines.some(tl => {
+                        const allowed = TRANSFER_RULES[tl];
+                        return allowed && allowed.includes(d.line);
+                    });
+                    if (isTransfer) return true;
                 }
+
                 return false;
             });
         }
