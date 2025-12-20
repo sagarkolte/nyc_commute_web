@@ -18,10 +18,21 @@ export async function GET(request: Request) {
 
     if (destStopId) {
         const destStation = (njtStations as any[]).find(s => s.id === destStopId);
+
+        // Lookup Origin Station to check for common lines
+        const originStationCode = actualStation; // 'station' param or 'stopId'
+        const originStation = (njtStations as any[]).find(s => s.id === originStationCode);
+
         if (destStation) {
             // Filter by destination name AND/OR Line
             const targetName = destStation.name.toLowerCase();
-            const targetLines = destStation.lines || [];
+            const targetLines: string[] = destStation.lines || [];
+
+            // Check if Origin and Destination share a line (Direct trip possible)
+            // If yes, we SHOULD NOT use transfer rules (strict filtering)
+            // If no, we use transfer rules (allow feeder lines)
+            const originLines: string[] = originStation?.lines || [];
+            const hasDirectLine = targetLines.some(tl => originLines.includes(tl));
 
             // Transfer Rules: Allow main line trains for branch destinations
             // e.g. Raritan Valley (requires transfer at Newark) -> Allow NEC/NJCL trains
@@ -43,13 +54,14 @@ export async function GET(request: Request) {
                     // 1. Line Match (Direct)
                     if (targetLines.includes(d.line)) return true;
 
-                    // 2. Transfer Match
-                    // Check if any of the target station's lines are served by this train's line via transfer
-                    const isTransfer = targetLines.some((tl: string) => {
-                        const allowed = TRANSFER_RULES[tl];
-                        return allowed && allowed.includes(d.line);
-                    });
-                    if (isTransfer) return true;
+                    // 2. Transfer Match (Only if NO Direct Line exists)
+                    if (!hasDirectLine) {
+                        const isTransfer = targetLines.some((tl: string) => {
+                            const allowed = TRANSFER_RULES[tl];
+                            return allowed && allowed.includes(d.line);
+                        });
+                        if (isTransfer) return true;
+                    }
                 }
 
                 return false;
