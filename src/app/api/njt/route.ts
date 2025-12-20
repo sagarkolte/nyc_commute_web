@@ -18,50 +18,22 @@ export async function GET(request: Request) {
 
     if (destStopId) {
         const destStation = (njtStations as any[]).find(s => s.id === destStopId);
-
-        // Lookup Origin Station to check for common lines
-        const originStationCode = actualStation; // 'station' param or 'stopId'
-        const originStation = (njtStations as any[]).find(s => s.id === originStationCode);
-
         if (destStation) {
             // Filter by destination name AND/OR Line
             const targetName = destStation.name.toLowerCase();
             const targetLines: string[] = destStation.lines || [];
 
-            // Check if Origin and Destination share a line (Direct trip possible)
-            // If yes, we SHOULD NOT use transfer rules (strict filtering)
-            // If no, we use transfer rules (allow feeder lines)
-            const originLines: string[] = originStation?.lines || [];
-            const hasDirectLine = targetLines.some(tl => originLines.includes(tl));
-
-            // Transfer Rules: Allow main line trains for branch destinations
-            // e.g. Raritan Valley (requires transfer at Newark) -> Allow NEC/NJCL trains
-            const TRANSFER_RULES: Record<string, string[]> = {
-                'Raritan Valley': ['Northeast Corrdr', 'No Jersey Coast'],
-                'Gladstone Branch': ['Morristown Line', 'Morris & Essex Line'],
-                'Montclair-Boonton': ['Morristown Line', 'Morris & Essex Line', 'Northeast Corrdr'] // Connecting at Newark/Secaucus
-            };
-
             departures = departures.filter(d => {
                 const dDest = d.destination.toLowerCase();
 
-                // 0. Destination Name Match (Direct)
+                // 1. Name Match (bidirectional include for robustness)
                 if (dDest === targetName || dDest.includes(targetName) || targetName.includes(dDest)) {
                     return true;
                 }
 
-                if (d.line) {
-                    // 1. Line Match (Direct)
-                    if (targetLines.includes(d.line)) return true;
-
-                    // 2. Transfer Match (Only if NO Direct Line exists)
-                    if (!hasDirectLine) {
-                        const isTransfer = targetLines.some((tl: string) => {
-                            const allowed = TRANSFER_RULES[tl];
-                            return allowed && allowed.includes(d.line);
-                        });
-                        if (isTransfer) return true;
-                    }
+                // 2. Line Match (Direct Only)
+                if (d.line && targetLines.includes(d.line)) {
+                    return true;
                 }
 
                 return false;
