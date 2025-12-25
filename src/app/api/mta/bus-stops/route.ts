@@ -8,6 +8,10 @@ export async function GET(request: Request) {
     const serverApiKey = process.env.MTA_API_KEY || process.env.NEXT_PUBLIC_MTA_BUS_API_KEY;
     const effectiveKey = apiKey || serverApiKey;
 
+    const clientPrefix = apiKey ? apiKey.substring(0, 4) + '...' : 'none';
+    const serverPrefix = serverApiKey ? serverApiKey.substring(0, 4) + '...' : 'none';
+    console.log(`[BusStops API] Query: '${query}'. ClientKey: ${clientPrefix}, ServerKey: ${serverPrefix}`);
+
     if (!query || !effectiveKey) {
         return NextResponse.json({ error: 'Missing query or API Key' }, { status: 400 });
     }
