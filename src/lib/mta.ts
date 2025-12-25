@@ -64,19 +64,42 @@ export const MtaService = {
         // Step 1: Search for route. 
         // We use `routes-for-agency` because `search-for-route` is unreliable/404s on this server.
         const routeRes = await fetch(`${OBA_BASE}/routes-for-agency/MTA%20NYCT.json?key=${apiKey}`);
+
+        if (!routeRes.ok) {
+            console.warn(`[MTA] routes-for-agency failed: ${routeRes.status}`);
+            return [];
+        }
+
         const routeData = await routeRes.json();
-        const routes = routeData.data?.list || [];
+        if (!routeData || !routeData.data) {
+            console.warn('[MTA] Invalid data from routes-for-agency');
+            return [];
+        }
+
+        const routes = routeData.data.list || [];
         const matchedRoute = routes.find((r: any) => r.shortName.toLowerCase().startsWith(query.toLowerCase()));
 
         if (matchedRoute) {
             const stopsRes = await fetch(`${OBA_BASE}/stops-for-route/${encodeURIComponent(matchedRoute.id)}.json?key=${apiKey}&includePolylines=false`);
+
+            if (!stopsRes.ok) {
+                console.warn(`[MTA] stops-for-route failed: ${stopsRes.status}`);
+                return [];
+            }
+
             const stopsData = await stopsRes.json();
+
+            // Validate stopsData
+            if (!stopsData || !stopsData.data) {
+                console.warn('[MTA] Invalid data from stops-for-route');
+                return [];
+            }
 
             // OBA stops-for-route structure found:
             // data.stops: The actual stops array (flattened)
             // data.stopGroupings: groups stops by direction/destination
 
-            const stopGroupings = stopsData.data?.stopGroupings || [];
+            const stopGroupings = stopsData.data.stopGroupings || [];
             const stopHeadsignMap: Record<string, string> = {}; // StopID -> "To Destination"
 
             stopGroupings.forEach((grouping: any) => {
@@ -98,9 +121,7 @@ export const MtaService = {
                 });
             });
 
-            const stops = stopsData.data?.stops;
-
-
+            const stops = stopsData.data.stops;
 
             if (!stops) {
                 console.warn('OBA stops API returned no stops for match:', matchedRoute.id);
