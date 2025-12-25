@@ -13,7 +13,14 @@ export async function GET(request: Request) {
     }
 
     try {
-        const stops = await MtaService.fetchBusStops(query, effectiveKey);
+        let stops = await MtaService.fetchBusStops(query, effectiveKey);
+
+        // Retry with Server Key if Client Key failed (and they are different)
+        if (stops.length === 0 && apiKey && serverApiKey && apiKey !== serverApiKey) {
+            console.log('[BusStops API] Client key failed or found nothing, retrying with Server Key...');
+            stops = await MtaService.fetchBusStops(query, serverApiKey);
+        }
+
         return NextResponse.json({ stops });
     } catch (error) {
         console.error('Bus stop fetch error:', error);
