@@ -5,7 +5,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
     const apiKey = request.headers.get('x-mta-api-key');
-    const serverApiKey = process.env.MTA_API_KEY;
+    const serverApiKey = process.env.MTA_API_KEY || process.env.NEXT_PUBLIC_MTA_BUS_API_KEY;
     const effectiveKey = apiKey || serverApiKey;
 
     if (!query || !effectiveKey) {
