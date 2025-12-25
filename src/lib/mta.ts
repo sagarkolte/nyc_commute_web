@@ -72,7 +72,7 @@ export const MtaService = {
 
         const routeData = await routeRes.json();
         if (!routeData || !routeData.data) {
-            console.warn('[MTA] Invalid data from routes-for-agency');
+            console.warn(`[MTA] Invalid data from routes-for-agency. KeyLen: ${apiKey?.length}. Payload: ${JSON.stringify(routeData)}`);
             return [];
         }
 
