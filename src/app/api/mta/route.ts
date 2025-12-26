@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const stopId = searchParams.get('stopId');
     const direction = searchParams.get('direction'); // 'N' or 'S', or 'East'/'West' for LIRR?
     const clientApiKey = request.headers.get('x-mta-api-key') || undefined;
-    const serverApiKey = process.env.MTA_API_KEY;
+    const serverApiKey = process.env.MTA_API_KEY || process.env.NEXT_PUBLIC_MTA_BUS_API_KEY;
 
     if (!routeId || !stopId) {
         return NextResponse.json({ error: 'Missing required params' }, { status: 400 });
