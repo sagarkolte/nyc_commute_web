@@ -27,12 +27,28 @@ export async function GET(request: Request) {
         ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
 
     let effectiveKey: string | undefined = clientApiKey || serverApiKey;
-    // Keep key for all feeds just in case (MTA Portal often requires it for improved limits/access)
+
+    // Logging for debugging key mismatch
+    const clientKeyPrefix = clientApiKey ? clientApiKey.substring(0, 4) : 'none';
+    const serverKeyPrefix = serverApiKey ? serverApiKey.substring(0, 4) : 'none';
+    console.log(`[API] Route: ${routeId} Stop: ${stopId} ClientKey: ${clientKeyPrefix}, ServerKey: ${serverKeyPrefix}`);
 
     try {
         const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId));
         console.log(`[API] Fetching feed for routeId=${routeId} stopId=${stopId} type=${feedRouteId}`);
-        const feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId);
+
+        let feedResponse;
+        try {
+            feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId);
+        } catch (e: any) {
+            // If the initial fetch failed with a 403 (Forbidden) and we have a server key that's different from what we used, retry once.
+            if (e.message?.includes('403') && serverApiKey && effectiveKey !== serverApiKey) {
+                console.log(`[API] Client key failed with 403, retrying with Server Key...`);
+                feedResponse = await MtaService.fetchFeed(feedRouteId, serverApiKey, stopId);
+            } else {
+                throw e; // Rethrow if it wasn't a 403 or we have no fallback
+            }
+        }
 
         const now = Date.now() / 1000;
         const arrivals: any[] = [];
