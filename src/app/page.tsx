@@ -55,7 +55,12 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              whileDrag={{ scale: 1.05, boxShadow: "0 8px 20px rgba(0,0,0,0.2)" }}
+              whileDrag={{ scale: 1.08, boxShadow: "0 16px 32px rgba(0,0,0,0.3)", zIndex: 10 }}
+              onDragStart={() => {
+                if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                  navigator.vibrate(50);
+                }
+              }}
             >
               <CountdownCard tuple={t} onDelete={() => handleDelete(t.id)} />
             </Reorder.Item>

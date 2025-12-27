@@ -23,9 +23,11 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     const [error, setError] = useState<string | null>(null);
 
     // For swipe-to-delete
+    // For swipe-to-delete
     const x = useMotionValue(0);
-    const backgroundOpacity = useTransform(x, [-100, -50], [1, 0]);
-    const deleteScale = useTransform(x, [-100, -50], [1, 0.5]);
+    // Reveal background immediately (opacity 1) but scale the icon
+    const iconOpacity = useTransform(x, [-50, -10], [1, 0]);
+    const iconScale = useTransform(x, [-100, -20], [1, 0.5]);
 
     const handleDragEnd = (_: any, info: any) => {
         if (info.offset.x < -100) {
@@ -116,22 +118,21 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     return (
         <div className="card-container">
             {/* Delete Background */}
-            <motion.div
-                className="delete-background"
-                style={{ opacity: backgroundOpacity }}
-            >
-                <motion.div style={{ scale: deleteScale }}>
+            {/* Delete Background - Always visible behind, but icon animates */}
+            <div className="delete-background">
+                <motion.div style={{ opacity: iconOpacity, scale: iconScale }}>
                     <Trash2 size={24} color="white" />
                 </motion.div>
-                <span>Delete</span>
-            </motion.div>
+                <motion.span style={{ opacity: iconOpacity }}>Delete</motion.span>
+            </div>
 
             {/* Draggable Card */}
             <motion.div
                 className={`card ${isDeptureBoard ? 'mnr-card' : ''}`}
                 style={{ borderLeft: `6px solid ${lineColor}`, x }}
                 drag="x"
-                dragConstraints={{ left: -150, right: 0 }}
+                dragConstraints={{ left: -200, right: 0 }}
+                dragElastic={0.1}
                 onDragEnd={handleDragEnd}
             >
                 <div className="card-header">
@@ -148,9 +149,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         </p>
                     </div>
                     {/* Keep delete btn for desktop, but swipe is primary for mobile */}
-                    <button className="delete-btn" onClick={onDelete}>
-                        <Trash2 size={16} color="#666" />
-                    </button>
+                    {/* Replaced desktop delete with swipe only for cleaner UI */}
                 </div>
 
                 <div className="card-body">
