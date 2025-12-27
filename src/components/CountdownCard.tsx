@@ -215,7 +215,8 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 }
 
                 .card {
-                  background: var(--card-bg);
+                  background: var(--card-bg, #1C1C1E);
+                  background-color: #1C1C1E; /* Force opaque background */
                   border-radius: 12px;
                   padding: 12px;
                   display: flex;
