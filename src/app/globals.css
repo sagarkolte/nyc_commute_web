@@ -53,3 +53,194 @@ button {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 9999 !important;
 }
+
+/* Commute Card Styles */
+.commute-card-container {
+  position: relative;
+  margin-bottom: 12px;
+  border-radius: 12px;
+}
+
+.commute-card-delete-bg {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+  background: #ff3b30;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 24px;
+  gap: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 0;
+}
+
+.commute-card {
+  background: #1C1C1E !important;
+  width: 100%;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  min-height: 80px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.commute-card-header {
+  display: flex;
+  align-items: center;
+}
+
+.commute-card:not(.mnr-card) {
+  flex-direction: row;
+  align-items: center;
+}
+
+.commute-card:not(.mnr-card) .commute-card-header {
+  flex: 1;
+  min-width: 0;
+}
+
+.commute-card:not(.mnr-card) .commute-card-body {
+  flex: 0 0 auto;
+  width: auto;
+  padding-left: 4px;
+}
+
+.commute-card.mnr-card {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.commute-card.mnr-card .commute-card-header {
+  width: 100%;
+}
+
+.commute-card.mnr-card .commute-card-body {
+  width: 100%;
+}
+
+.commute-card-badge {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 11px;
+  margin-right: 12px;
+  color: white;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.commute-card-info {
+  flex: 1;
+  min-width: 0;
+  margin-right: 4px;
+}
+
+.commute-card-info h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.commute-card-info p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.commute-card-arrivals {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.commute-card-state {
+  font-size: 11px;
+  color: #666;
+  text-align: right;
+  width: 100%;
+}
+
+.commute-arrival-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+}
+
+.commute-arrival-min {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.commute-arrival-label {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* MNR Board Styles */
+.commute-board-container {
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 4px;
+}
+
+.commute-board-header {
+  display: flex;
+  border-bottom: 1px solid #333;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  color: #C41230;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.commute-board-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #FCCC0A;
+  font-size: 13px;
+}
+
+.commute-board-col-time {
+  width: 70px;
+  text-align: left;
+}
+
+.commute-board-col-dest {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.commute-board-col-eta {
+  width: 60px;
+  text-align: right;
+}
