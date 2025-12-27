@@ -129,7 +129,14 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             {/* Draggable Card */}
             <motion.div
                 className={`card ${isDeptureBoard ? 'mnr-card' : ''}`}
-                style={{ borderLeft: `6px solid ${lineColor}`, x }}
+                style={{
+                    borderLeft: `6px solid ${lineColor}`,
+                    x,
+                    background: '#1C1C1E', // Inline override to ensure opacity
+                    position: 'relative',
+                    zIndex: 2, // Explicitly higher than delete-background
+                    borderRadius: 12, // Ensure radius matches
+                }}
                 drag="x"
                 dragConstraints={{ left: -200, right: 0 }}
                 dragElastic={0.1}
