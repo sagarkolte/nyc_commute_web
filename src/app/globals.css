@@ -127,15 +127,22 @@ button {
   width: 100%;
 }
 
+/* Framer Motion Reorder List Resets */
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .commute-card-badge {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 14px;
   margin-right: 12px;
   color: white;
   white-space: nowrap;
