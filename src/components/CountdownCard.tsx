@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { CommuteTuple, Arrival } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { Trash2 } from 'lucide-react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 const COLORS: Record<string, string> = {
     '1': '#EE352E', '2': '#EE352E', '3': '#EE352E',
@@ -21,7 +22,19 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     const [debugInfo, setDebugInfo] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
 
+    // For swipe-to-delete
+    const x = useMotionValue(0);
+    const backgroundOpacity = useTransform(x, [-100, -50], [1, 0]);
+    const deleteScale = useTransform(x, [-100, -50], [1, 0.5]);
+
+    const handleDragEnd = (_: any, info: any) => {
+        if (info.offset.x < -100) {
+            onDelete();
+        }
+    };
+
     const fetchArrivals = async () => {
+        // ... rest of fetchArrivals ...
         try {
             setLoading(true);
             const apiKey = CommuteStorage.getApiKey();
@@ -101,69 +114,117 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     const badgeText = formatRouteId(tuple.routeId);
 
     return (
-        <div className={`card ${isDeptureBoard ? 'mnr-card' : ''}`} style={{ borderLeft: `6px solid ${lineColor}` }}>
-            <div className="card-header">
-                <div className="badge" style={{ backgroundColor: lineColor }}>
-                    {badgeText}
-                </div>
-                <div className="info">
-                    <h3>{toTitleCase(tuple.label)}</h3>
-                    <p>
-                        {tuple.destinationName ? toTitleCase(tuple.destinationName) :
-                            tuple.direction === 'N' ? 'Uptown / North' :
-                                tuple.direction === 'S' ? 'Downtown / South' :
-                                    `Direction: ${tuple.direction}`}
-                    </p>
-                </div>
-                <button className="delete-btn" onClick={onDelete}>
-                    <Trash2 size={16} color="#666" />
-                </button>
-            </div>
+        <div className="card-container">
+            {/* Delete Background */}
+            <motion.div
+                className="delete-background"
+                style={{ opacity: backgroundOpacity }}
+            >
+                <motion.div style={{ scale: deleteScale }}>
+                    <Trash2 size={24} color="white" />
+                </motion.div>
+                <span>Delete</span>
+            </motion.div>
 
-            <div className="card-body">
-                {loading && arrivals.length === 0 ? (
-                    <div className="state-msg">Loading...</div>
-                ) : error ? (
-                    <div className="state-msg error">{error}</div>
-                ) : arrivals.length === 0 ? (
-                    <div className="state-msg">No Info</div>
-                ) : isDeptureBoard ? (
-                    <div className="board-container">
-                        <div className="board-header-row">
-                            <span className="th-time">TIME</span>
-                            <span className="th-dest">DESTINATION</span>
-                            <span className="th-eta">ETA</span>
+            {/* Draggable Card */}
+            <motion.div
+                className={`card ${isDeptureBoard ? 'mnr-card' : ''}`}
+                style={{ borderLeft: `6px solid ${lineColor}`, x }}
+                drag="x"
+                dragConstraints={{ left: -150, right: 0 }}
+                onDragEnd={handleDragEnd}
+            >
+                <div className="card-header">
+                    <div className="badge" style={{ backgroundColor: lineColor }}>
+                        {badgeText}
+                    </div>
+                    <div className="info">
+                        <h3>{toTitleCase(tuple.label)}</h3>
+                        <p>
+                            {tuple.destinationName ? toTitleCase(tuple.destinationName) :
+                                tuple.direction === 'N' ? 'Uptown / North' :
+                                    tuple.direction === 'S' ? 'Downtown / South' :
+                                        `Direction: ${tuple.direction}`}
+                        </p>
+                    </div>
+                    {/* Keep delete btn for desktop, but swipe is primary for mobile */}
+                    <button className="delete-btn" onClick={onDelete}>
+                        <Trash2 size={16} color="#666" />
+                    </button>
+                </div>
+
+                <div className="card-body">
+                    {loading && arrivals.length === 0 ? (
+                        <div className="state-msg">Loading...</div>
+                    ) : error ? (
+                        <div className="state-msg error">{error}</div>
+                    ) : arrivals.length === 0 ? (
+                        <div className="state-msg">No Info</div>
+                    ) : isDeptureBoard ? (
+                        <div className="board-container">
+                            <div className="board-header-row">
+                                <span className="th-time">TIME</span>
+                                <span className="th-dest">DESTINATION</span>
+                                <span className="th-eta">ETA</span>
+                            </div>
+                            {arrivals.slice(0, 3).map((arr: any, i: number) => (
+                                <div key={i} className="board-row">
+                                    <span className="td-time">{formatTime(arr.time)}</span>
+                                    <span className="td-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
+                                    <span className="td-eta">{arr.minutesUntil} min</span>
+                                </div>
+                            ))}
                         </div>
-                        {arrivals.slice(0, 3).map((arr, i) => (
-                            <div key={i} className="board-row">
-                                <span className="td-time">{formatTime(arr.time)}</span>
-                                <span className="td-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
-                                <span className="td-eta">{arr.minutesUntil} min</span>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="arrivals-list">
-                        {arrivals.map((arrival, i) => (
-                            <div key={i} className="arrival-item">
-                                <span className="min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
-                                <span className="label">min</span>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                    ) : (
+                        <div className="arrivals-list">
+                            {arrivals.map((arrival: any, i: number) => (
+                                <div key={i} className="arrival-item">
+                                    <span className="min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
+                                    <span className="label">min</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </motion.div>
 
             <style jsx>{`
+                .card-container {
+                   position: relative;
+                   margin-bottom: 12px;
+                   overflow: hidden;
+                   border-radius: 12px;
+                }
+
+                .delete-background {
+                   position: absolute;
+                   top: 1px;
+                   right: 1px;
+                   bottom: 1px;
+                   left: 1px;
+                   background: #ff3b30;
+                   border-radius: 12px;
+                   display: flex;
+                   align-items: center;
+                   justify-content: flex-end;
+                   padding-right: 24px;
+                   gap: 8px;
+                   color: white;
+                   font-size: 14px;
+                   font-weight: 600;
+                   z-index: 0;
+                }
+
                 .card {
                   background: var(--card-bg);
                   border-radius: 12px;
                   padding: 12px;
-                  margin-bottom: 12px;
                   display: flex;
                   gap: 10px;
                   min-height: 80px;
                   position: relative;
+                  z-index: 1;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                 }
                 
                 .card-header {

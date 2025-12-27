@@ -7,6 +7,7 @@ import { Plus, Settings as SettingsIcon } from 'lucide-react';
 import { CommuteTuple } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { CountdownCard } from '@/components/CountdownCard';
+import { Reorder, motion } from 'framer-motion';
 
 export default function Home() {
   const [tuples, setTuples] = useState<CommuteTuple[]>([]);
@@ -17,11 +18,14 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  const handleReorder = (newOrder: CommuteTuple[]) => {
+    setTuples(newOrder);
+    CommuteStorage.saveTuples(newOrder);
+  };
+
   const handleDelete = (id: string) => {
-    if (confirm('Delete this route?')) {
-      CommuteStorage.removeTuple(id);
-      setTuples(CommuteStorage.getTuples());
-    }
+    CommuteStorage.removeTuple(id);
+    setTuples(CommuteStorage.getTuples());
   };
 
   if (!mounted) return null;
@@ -43,9 +47,20 @@ export default function Home() {
           <p>No routes added yet.</p>
         </div>
       ) : (
-        tuples.map(t => (
-          <CountdownCard key={t.id} tuple={t} onDelete={() => handleDelete(t.id)} />
-        ))
+        <Reorder.Group axis="y" values={tuples} onReorder={handleReorder}>
+          {tuples.map(t => (
+            <Reorder.Item
+              key={t.id}
+              value={t}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              whileDrag={{ scale: 1.05, boxShadow: "0 8px 20px rgba(0,0,0,0.2)" }}
+            >
+              <CountdownCard tuple={t} onDelete={() => handleDelete(t.id)} />
+            </Reorder.Item>
+          ))}
+        </Reorder.Group>
       )}
 
       <Link href="/add" className="add-fab">

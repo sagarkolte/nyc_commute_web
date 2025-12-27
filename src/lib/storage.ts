@@ -12,6 +12,10 @@ export const CommuteStorage = {
     addTuple: (tuple: CommuteTuple) => {
         const tuples = CommuteStorage.getTuples();
         tuples.push(tuple);
+        CommuteStorage.saveTuples(tuples);
+    },
+
+    saveTuples: (tuples: CommuteTuple[]) => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tuples));
     },
 
