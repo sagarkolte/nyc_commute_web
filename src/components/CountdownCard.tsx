@@ -194,7 +194,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 .card-container {
                    position: relative;
                    margin-bottom: 12px;
-                   overflow: hidden;
+                   /* overflow: hidden; Removed to show shadows */
                    border-radius: 12px;
                 }
 
