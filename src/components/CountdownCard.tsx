@@ -116,10 +116,9 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     const badgeText = formatRouteId(tuple.routeId);
 
     return (
-        <div className="card-container">
-            {/* Delete Background */}
+        <div className="commute-card-container">
             {/* Delete Background - Always visible behind, but icon animates */}
-            <div className="delete-background">
+            <div className="commute-card-delete-bg">
                 <motion.div style={{ opacity: iconOpacity, scale: iconScale }}>
                     <Trash2 size={24} color="white" />
                 </motion.div>
@@ -128,7 +127,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
 
             {/* Draggable Card */}
             <motion.div
-                className={`card ${isDeptureBoard ? 'mnr-card' : ''}`}
+                className={`commute-card ${isDeptureBoard ? 'mnr-card' : ''}`}
                 style={{
                     borderLeft: `6px solid ${lineColor}`,
                     x
@@ -138,11 +137,11 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 dragElastic={0.1}
                 onDragEnd={handleDragEnd}
             >
-                <div className="card-header">
-                    <div className="badge" style={{ backgroundColor: lineColor }}>
+                <div className="commute-card-header">
+                    <div className="commute-card-badge" style={{ backgroundColor: lineColor }}>
                         {badgeText}
                     </div>
-                    <div className="info">
+                    <div className="commute-card-info">
                         <h3>{toTitleCase(tuple.label)}</h3>
                         <p>
                             {tuple.destinationName ? toTitleCase(tuple.destinationName) :
@@ -151,169 +150,42 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                                         `Direction: ${tuple.direction}`}
                         </p>
                     </div>
-                    {/* Keep delete btn for desktop, but swipe is primary for mobile */}
-                    {/* Replaced desktop delete with swipe only for cleaner UI */}
                 </div>
 
-                <div className="card-body">
+                <div className="commute-card-body">
                     {loading && arrivals.length === 0 ? (
-                        <div className="state-msg">Loading...</div>
+                        <div className="commute-card-state">Loading...</div>
                     ) : error ? (
-                        <div className="state-msg error">{error}</div>
+                        <div className="commute-card-state error">{error}</div>
                     ) : arrivals.length === 0 ? (
-                        <div className="state-msg">No Info</div>
+                        <div className="commute-card-state">No Info</div>
                     ) : isDeptureBoard ? (
-                        <div className="board-container">
-                            <div className="board-header-row">
-                                <span className="th-time">TIME</span>
-                                <span className="th-dest">DESTINATION</span>
-                                <span className="th-eta">ETA</span>
+                        <div className="commute-board-container">
+                            <div className="commute-board-header">
+                                <span className="commute-board-col-time">TIME</span>
+                                <span className="commute-board-col-dest">DESTINATION</span>
+                                <span className="commute-board-col-eta">ETA</span>
                             </div>
                             {arrivals.slice(0, 3).map((arr: any, i: number) => (
-                                <div key={i} className="board-row">
-                                    <span className="td-time">{formatTime(arr.time)}</span>
-                                    <span className="td-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
-                                    <span className="td-eta">{arr.minutesUntil} min</span>
+                                <div key={i} className="commute-board-row">
+                                    <span className="commute-board-col-time">{formatTime(arr.time)}</span>
+                                    <span className="commute-board-col-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
+                                    <span className="commute-board-col-eta">{arr.minutesUntil} min</span>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="arrivals-list">
+                        <div className="commute-card-arrivals">
                             {arrivals.map((arrival: any, i: number) => (
-                                <div key={i} className="arrival-item">
-                                    <span className="min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
-                                    <span className="label">min</span>
+                                <div key={i} className="commute-arrival-item">
+                                    <span className="commute-arrival-min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
+                                    <span className="commute-arrival-label">min</span>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
             </motion.div>
-
-            <style jsx>{`
-                .card-container {
-                   position: relative;
-                   margin-bottom: 12px;
-                   /* overflow: hidden; Removed to show shadows */
-                   border-radius: 12px;
-                }
-
-                .delete-background {
-                   position: absolute;
-                   top: 1px;
-                   right: 1px;
-                   bottom: 1px;
-                   left: 1px;
-                   background: #ff3b30;
-                   border-radius: 12px;
-                   display: flex;
-                   align-items: center;
-                   justify-content: flex-end;
-                   padding-right: 24px;
-                   gap: 8px;
-                   color: white;
-                   font-size: 14px;
-                   font-weight: 600;
-                   z-index: 0;
-                }
-
-                .card {
-                  background: #1C1C1E !important; /* Force opaque background */
-                  width: 100%;
-                  border-radius: 12px;
-                  padding: 12px;
-                  display: flex;
-                  gap: 10px;
-                  min-height: 80px;
-                  position: relative;
-                  z-index: 2; /* Sit above delete layer */
-                  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                }
-                
-                .card-header {
-                   display: flex;
-                   align-items: center;
-                }
-
-                /* Standard Card (Row) */
-                .card:not(.mnr-card) {
-                    flex-direction: row;
-                    align-items: center;
-                }
-                .card:not(.mnr-card) .card-header {
-                    flex: 1; /* Take remaining width */
-                    min-width: 0; /* Allow text truncate */
-                }
-                .card:not(.mnr-card) .card-body {
-                    flex: 0 0 auto; /* Fit to content */
-                    width: auto;
-                    padding-left: 4px; /* Space from header */
-                }
-
-                /* MNR Card (Column) */
-                .card.mnr-card {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-                .card.mnr-card .card-header {
-                    width: 100%;
-                }
-                .card.mnr-card .card-body {
-                    width: 100%;
-                }
-
-                /* Badge/Info/Delete from original */
-                .badge {
-                  min-width: 32px; height: 32px; padding: 0 8px; border-radius: 16px;
-                  display: flex; align-items: center; justify-content: center;
-                  font-weight: bold; font-size: 11px; margin-right: 12px;
-                  color: white; white-space: nowrap; flex-shrink: 0;
-                }
-                
-                .info { flex: 1; min-width: 0; margin-right: 4px; }
-                .info h3 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-                .info p { margin: 2px 0 0; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .delete-btn { background: none; border: none; padding: 4px; cursor: pointer; opacity: 0.5; }
-
-                /* Standard Arrivals List */
-                .arrivals-list { 
-                  display: flex; gap: 8px; justify-content: flex-end;
-                }
-                
-                .state-msg { font-size: 11px; color: #666; text-align: right; width: 100%; }
-                
-                .arrival-item { display: flex; flex-direction: column; align-items: center; width: 28px; }
-                .min { font-size: 18px; font-weight: bold; line-height: 1.2; }
-                .label { font-size: 9px; color: var(--text-muted); }
-
-                /* MNR Board Styles */
-                .board-container {
-                    background: #000;
-                    border: 1px solid #333;
-                    border-radius: 8px;
-                    padding: 8px;
-                    margin-top: 4px;
-                }
-                .board-header-row {
-                    display: flex;
-                    border-bottom: 1px solid #333;
-                    padding-bottom: 4px;
-                    margin-bottom: 4px;
-                    color: #C41230; /* Red Header */
-                    font-size: 11px;
-                    font-weight: bold;
-                }
-                .board-row {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 4px;
-                    color: #FCCC0A; /* Gold Text */
-                    font-size: 13px;
-                }
-                .th-time, .td-time { width: 70px; text-align: left; }
-                .th-dest, .td-dest { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
-                .th-eta, .td-eta { width: 60px; text-align: right; }
-            `}</style>
         </div>
     );
 };
