@@ -131,11 +131,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 className={`card ${isDeptureBoard ? 'mnr-card' : ''}`}
                 style={{
                     borderLeft: `6px solid ${lineColor}`,
-                    x,
-                    background: '#1C1C1E', // Inline override to ensure opacity
-                    position: 'relative',
-                    zIndex: 2, // Explicitly higher than delete-background
-                    borderRadius: 12, // Ensure radius matches
+                    x
                 }}
                 drag="x"
                 dragConstraints={{ left: -200, right: 0 }}
@@ -222,15 +218,15 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 }
 
                 .card {
-                  background: var(--card-bg, #1C1C1E);
-                  background-color: #1C1C1E; /* Force opaque background */
+                  background: #1C1C1E !important; /* Force opaque background */
+                  width: 100%;
                   border-radius: 12px;
                   padding: 12px;
                   display: flex;
                   gap: 10px;
                   min-height: 80px;
                   position: relative;
-                  z-index: 1;
+                  z-index: 2; /* Sit above delete layer */
                   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                 }
                 
