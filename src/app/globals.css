@@ -128,19 +128,26 @@ button {
 }
 
 .commute-card-badge {
-  min-width: 32px;
+  width: 32px;
   height: 32px;
-  padding: 0 8px;
-  border-radius: 16px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 13px;
   margin-right: 12px;
   color: white;
   white-space: nowrap;
   flex-shrink: 0;
+  line-height: 1;
+}
+
+.commute-card-badge:not(:empty) {
+  min-width: 32px;
+  width: auto;
+  padding: 0 8px;
+  border-radius: 16px;
 }
 
 .commute-card-info {
