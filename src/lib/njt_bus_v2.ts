@@ -142,17 +142,37 @@ export const NjtBusV2Service = {
 
     parseMinutes(departureTime: string): number {
         // NJT returns "in 18 mins", "in 2 mins", "APPROACHING", "12:50 PM"
-        const clean = departureTime.toLowerCase();
+        const clean = departureTime.toLowerCase().trim();
         if (clean.includes('approaching')) return 0;
         if (clean.includes('in ')) {
             const match = clean.match(/in (\d+) mins/);
             if (match) return parseInt(match[1], 10);
         }
-        // If it's a timestamp "12:50 PM", we'd need to compare with current time.
-        // For now, let's assume if it has ":" it's a scheduled time.
+
+        // If it's a timestamp "12:50 PM"
         if (clean.includes(':')) {
-            // Simplified: return a guestimate or 999
-            return 99;
+            try {
+                const now = new Date();
+                // Estimate date context (today)
+                const [time, period] = clean.split(' ');
+                let [hours, minutes] = time.split(':').map(Number);
+
+                if (period === 'pm' && hours < 12) hours += 12;
+                if (period === 'am' && hours === 12) hours = 0;
+
+                const depDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+                // If the departure time is earlier than now, it might be for tomorrow (late night runs)
+                // but usually NJT Bus DV only shows upcoming same-day or very next few hours.
+                if (depDate.getTime() < now.getTime() - 30 * 60 * 1000) { // More than 30 mins ago
+                    depDate.setDate(depDate.getDate() + 1);
+                }
+
+                const diffMs = depDate.getTime() - now.getTime();
+                return Math.max(0, Math.floor(diffMs / (1000 * 60)));
+            } catch (e) {
+                return 99;
+            }
         }
         return 0;
     }

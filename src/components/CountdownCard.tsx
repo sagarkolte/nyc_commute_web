@@ -93,7 +93,10 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
 
     const isNjtBus = tuple.mode === 'njt-bus';
     const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') || tuple.routeId === 'LIRR' ? '#0039A6' : (tuple.routeId === 'NJT' || tuple.routeId === 'NJT Bus' || isNjtBus ? '#F7941D' : '#999')); // MNR/LIRR Blue, NJT Orange
-    const isDeptureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR' || tuple.routeId === 'NJT Bus' || isNjtBus) && !!tuple.destinationStopId;
+    // isDepartureBoard should be TRUE if we have a destinationStopId (like for Rail)
+    // For NJT Bus V2, it's stop-centric, so we don't usually have a destinationStopId unless explicitly picked.
+    // If it's FALSE, it shows the card's main label as the destination.
+    const isDepartureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR') && !!tuple.destinationStopId;
 
     const formatTime = (ts: number) => {
         return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
@@ -127,7 +130,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
 
             {/* Draggable Card */}
             <motion.div
-                className={`commute-card ${isDeptureBoard ? 'mnr-card' : ''}`}
+                className={`commute-card ${isDepartureBoard ? 'mnr-card' : ''}`}
                 style={{
                     borderLeft: `6px solid ${lineColor}`,
                     x
@@ -159,7 +162,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         <div className="commute-card-state error">{error}</div>
                     ) : arrivals.length === 0 ? (
                         <div className="commute-card-state">No Info</div>
-                    ) : isDeptureBoard ? (
+                    ) : isDepartureBoard ? (
                         <div className="commute-board-container">
                             <div className="commute-board-header">
                                 <span className="commute-board-col-time">TIME</span>
