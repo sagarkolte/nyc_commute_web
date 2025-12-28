@@ -73,8 +73,8 @@ export default function AddPage() {
         } else if ((mode === 'njt' || mode === 'njt-rail') && destStation) {
             saveTuple(s, 'N', 'NJT', destStation);
         } else if (mode === 'njt-bus') {
-            // NJ Transit BUS V2: Stop-centric selection
-            saveTuple(s, s.direction || 'N', routeId);
+            // NJ Transit BUS V2: Origin-Destination selection
+            saveTuple(s, s.direction || 'N', routeId, destStation);
         } else if (mode === 'lirr' && destStation) {
             saveTuple(s, 'N', 'LIRR', destStation);
         } else {
