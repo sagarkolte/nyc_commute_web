@@ -28,10 +28,36 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     const [hasKey, setHasKey] = useState(false);
     const [lockedRoute, setLockedRoute] = useState<string | null>(null);
     const [originStation, setOriginStation] = useState<Station | null>(null);
+    const [njtRoutes, setNjtRoutes] = useState<any[]>([]);
+    const [njtDirections, setNjtDirections] = useState<string[]>([]);
+    const [njtStops, setNjtStops] = useState<any[]>([]);
+    const [njtStep, setNjtStep] = useState<'route' | 'direction' | 'stop'>('route');
+    const [selectedNjtRoute, setSelectedNjtRoute] = useState<string | null>(null);
+    const [selectedNjtDirection, setSelectedNjtDirection] = useState<string | null>(null);
 
     useEffect(() => {
         setHasKey(!!CommuteStorage.getApiKey());
     }, []);
+
+    useEffect(() => {
+        // NJ Transit Bus V2 Initial Load: Routes
+        if (mode === 'njt-bus' && njtStep === 'route' && njtRoutes.length === 0) {
+            const fetchNjtRoutes = async () => {
+                setLoading(true);
+                try {
+                    // We'll call our api to proxy the request
+                    const res = await fetch('/api/njt-bus/routes');
+                    const data = await res.json();
+                    setNjtRoutes(data || []);
+                } catch (e) {
+                    console.error('Failed to fetch NJT routes', e);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchNjtRoutes();
+        }
+    }, [mode, njtStep, njtRoutes.length]);
 
     useEffect(() => {
         // Only fetch from API if we are NOT locked on a route
@@ -133,28 +159,19 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             }
             return res;
 
-        } else if (mode === 'njt-bus') {
-            data = njtBusStations;
-            let res = (data as Station[]);
-
-            // Validated: No route filtering needed for generic search
-
-
-            res = res.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
-
-            if (originStation) {
-                res = res.filter(s => s.id !== originStation.id);
-            }
-
-            // Deduplicate by name
-            const uniqueNames = new Set();
-            res = res.filter(s => {
-                if (uniqueNames.has(s.name)) return false;
-                uniqueNames.add(s.name);
-                return true;
-            });
-
             return res;
+        } else if (mode === 'njt-bus') {
+            if (njtStep === 'route') {
+                return njtRoutes.filter(r =>
+                    r.BusRouteID.toLowerCase().includes(search.toLowerCase()) ||
+                    r.BusRouteDescription.toLowerCase().includes(search.toLowerCase())
+                );
+            } else if (njtStep === 'direction') {
+                return njtDirections.filter(d => d.toLowerCase().includes(search.toLowerCase()));
+            } else if (njtStep === 'stop') {
+                return njtStops.filter(s => s.busstopdescription.toLowerCase().includes(search.toLowerCase()));
+            }
+            return [];
         } else {
             // Bus: 
             if (lockedRoute) {
@@ -173,8 +190,45 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         }
     }, [mode, line, search, busStops, lockedRoute, originStation]);
 
-    const handleSelect = (s: Station, routeId?: string) => {
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') {
+    const handleSelect = async (s: any, routeId?: string) => {
+        if (mode === 'njt-bus') {
+            if (njtStep === 'route') {
+                setSelectedNjtRoute(s.BusRouteID);
+                setSearch('');
+                setLoading(true);
+                try {
+                    const res = await fetch(`/api/njt-bus/directions?route=${s.BusRouteID}`);
+                    const dirs = await res.json();
+                    setNjtDirections(dirs);
+                    setNjtStep('direction');
+                } finally {
+                    setLoading(false);
+                }
+            } else if (njtStep === 'direction') {
+                setSelectedNjtDirection(s);
+                setSearch('');
+                setLoading(true);
+                try {
+                    const res = await fetch(`/api/njt-bus/stops?route=${selectedNjtRoute}&direction=${s}`);
+                    const stops = await res.json();
+                    setNjtStops(stops);
+                    setNjtStep('stop');
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                // Final stop selection
+                const station: Station = {
+                    id: s.busstopnumber,
+                    name: s.busstopdescription,
+                    lines: [selectedNjtRoute!],
+                    north_label: 'Arrivals',
+                    south_label: 'Arrivals',
+                    direction: selectedNjtDirection! // Pass full direction name
+                };
+                onSelect(station, selectedNjtRoute!, undefined);
+            }
+        } else if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') {
             if (!originStation) {
                 setOriginStation(s);
                 setSearch('');
@@ -187,7 +241,12 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     };
 
     const getTitle = () => {
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') {
+        if (mode === 'njt-bus') {
+            if (njtStep === 'route') return 'Select Bus Route';
+            if (njtStep === 'direction') return `Route ${selectedNjtRoute}: Direction`;
+            if (njtStep === 'stop') return `Route ${selectedNjtRoute}: Select Stop`;
+        }
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
         return mode === 'path' ? 'PATH Station' : `${line || 'Train'} Station`;
@@ -202,7 +261,9 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             return "Select Arrival Station...";
         }
         if (mode === 'njt-bus') {
-            return originStation ? "Select Arrival Station (Any Route)..." : "Search Start Point...";
+            if (njtStep === 'route') return "Search Bus Route (e.g. 158)...";
+            if (njtStep === 'direction') return "Select Direction...";
+            if (njtStep === 'stop') return "Search for your stop...";
         }
         return "Search station...";
     };
@@ -214,10 +275,17 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 <h2>{getTitle()}</h2>
             </div>
 
-            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-bus' || mode === 'njt-rail') && originStation && (
+            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') && originStation && (
                 <div className="locked-header">
                     <span>From: <strong>{originStation.name}</strong></span>
                     <button onClick={handleReset} className="unlock-btn">Change</button>
+                </div>
+            )}
+
+            {mode === 'njt-bus' && selectedNjtRoute && (
+                <div className="locked-header">
+                    <span>Route: <strong>{selectedNjtRoute}</strong> {selectedNjtDirection && `→ ${selectedNjtDirection}`}</span>
+                    <button onClick={() => { setNjtStep('route'); setSelectedNjtRoute(null); setSelectedNjtDirection(null); }} className="unlock-btn">Change</button>
                 </div>
             )}
 
@@ -262,13 +330,39 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                             </button>
                         ))}
                     </>
+                ) : mode === 'njt-bus' ? (
+                    <>
+                        {loading && <div style={{ padding: 16 }}>Loading...</div>}
+                        {filtered.map((s, i) => {
+                            if (njtStep === 'route') {
+                                return (
+                                    <button key={s.BusRouteID} className="item icon-item" onClick={() => handleSelect(s)}>
+                                        <span className="route-icon orange">{s.BusRouteID}</span>
+                                        <span className="route-desc">{s.BusRouteDescription}</span>
+                                    </button>
+                                );
+                            } else if (njtStep === 'direction') {
+                                return (
+                                    <button key={i} className="item" onClick={() => handleSelect(s)}>
+                                        {s}
+                                    </button>
+                                );
+                            } else {
+                                return (
+                                    <button key={s.busstopnumber} className="item" onClick={() => handleSelect(s)}>
+                                        {s.busstopdescription}
+                                    </button>
+                                );
+                            }
+                        })}
+                    </>
                 ) : (
                     filtered.map(s => {
                         let bestRoute: string | undefined;
                         if (mode === 'bus' && s.lines) {
                             const targetQuery = lockedRoute || search;
                             const cleanSearch = targetQuery.trim().toLowerCase();
-                            bestRoute = s.lines.find(l => l.toLowerCase().includes(cleanSearch));
+                            bestRoute = s.lines.find((l: string) => l.toLowerCase().includes(cleanSearch));
                             if (!bestRoute) bestRoute = s.lines[0];
                         }
 
@@ -322,6 +416,18 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             border-radius: 4px;
             font-weight: bold;
             margin-right: 12px;
+            min-width: 44px;
+            text-align: center;
+        }
+        .route-icon.orange {
+            background: #F7941D;
+        }
+        .route-desc {
+            font-size: 14px;
+            color: #ccc;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .route-count {
             color: #888;

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CommuteTuple, Station } from '@/types';
+import { CommuteTuple, Station, CommuteDirection } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { StationSelector } from '@/components/StationSelector';
 import Link from 'next/link';
@@ -68,39 +68,22 @@ export default function AddPage() {
         setStation(s);
         // For Bus, the station already implies direction (it's a specific stop)
         if (mode === 'bus') {
-            // Bus directions can be N, S, E, W, but also NE, NW, SE, SW.
-            // For the app's CommuteDirection type, we might want to keep robust types.
-            // But let's just pass what we have; checking strict types might be needed.
-            // We'll cast to any to be safe for now, as direction is just a label for Bus in our usage.
             saveTuple(s, (s.direction as any) || 'N', routeId);
         } else if (mode === 'mnr' && destStation) {
-            // Metro-North: Origin -> Destination flow (skip direction step)
-            // We use 'N' as a placeholder direction, but the filtering will use destId.
             saveTuple(s, 'N', undefined, destStation);
         } else if ((mode === 'njt' || mode === 'njt-rail') && destStation) {
-            // NJ Transit: Origin -> Destination flow
             saveTuple(s, 'N', 'NJT', destStation);
-        } else if (mode === 'njt-bus' && destStation) {
-            // NJ Transit BUS: Origin -> Destination flow
-            // Include Route Info in label?
-            // Maybe append route number to label or store it?
-            // The `routeId` argument is usually specific trip route, but here we have `selectedRoute`.
-            // We'll pass selectedRoute.shortName as the "Line"? Or just keep NJT Bus.
-            // Using selectedRoute.shortName as routeId for the tuple seems correct.
-            const rId = selectedRoute?.shortName || 'NJT Bus';
-            saveTuple(s, 'N', rId, destStation);
+        } else if (mode === 'njt-bus') {
+            // NJ Transit BUS V2: Stop-centric selection
+            saveTuple(s, s.direction || 'N', routeId);
         } else if (mode === 'lirr' && destStation) {
-            // LIRR: Origin -> Destination flow
             saveTuple(s, 'N', 'LIRR', destStation);
-        } else if (mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'njt-bus') {
-            // Fallback if somehow single select
-            setStep('station');
         } else {
             setStep('direction');
         }
     };
 
-    const saveTuple = (s: Station, dir: 'N' | 'S' | 'E' | 'W', specificRouteId?: string, destStation?: Station) => {
+    const saveTuple = (s: Station, dir: CommuteDirection, specificRouteId?: string, destStation?: Station) => {
         let finalMode: any = mode;
         if (['lirr', 'mnr', 'path', 'njt'].includes(mode)) {
             finalMode = 'rail';

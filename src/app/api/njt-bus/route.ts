@@ -1,26 +1,29 @@
 
 import { NextResponse } from 'next/server';
-import { NjtBusService } from '@/lib/njt_bus';
+import { NjtBusV2Service } from '@/lib/njt_bus_v2';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const stopId = searchParams.get('stopId');
-    const destStopId = searchParams.get('destStopId');
+    const routeId = searchParams.get('routeId');
+    const direction = searchParams.get('direction');
 
     if (!stopId) {
         return NextResponse.json({ error: 'Missing stopId' }, { status: 400 });
     }
 
     try {
-        const trips = await NjtBusService.getTripUpdates(stopId, destStopId || undefined);
+        // Use the new V2 Service
+        const trips = await NjtBusV2Service.getArrivals(stopId, routeId || '', direction || '');
 
         const arrivals = trips.map(t => ({
-            routeId: t.routeId || 'Bus',
-            time: Number(t.time),
-            destination: t.headsign || 'Unknown',
-            status: 'On Time' // GTFS-RT might have delay, but simple for now
+            routeId: t.public_route || 'Bus',
+            time: Date.now() / 1000 + (NjtBusV2Service.parseMinutes(t.departuretime) * 60),
+            minutesUntil: NjtBusV2Service.parseMinutes(t.departuretime),
+            destination: t.header || 'Unknown',
+            status: t.departuretime
         }));
 
         return NextResponse.json({ arrivals });

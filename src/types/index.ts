@@ -1,5 +1,5 @@
 export type CommuteMode = 'subway' | 'bus' | 'rail' | 'njt-bus' | 'njt-rail' | 'njt';
-export type CommuteDirection = 'N' | 'S' | 'E' | 'W';
+export type CommuteDirection = 'N' | 'S' | 'E' | 'W' | string;
 
 export interface CommuteTuple {
     id: string; // UUID
