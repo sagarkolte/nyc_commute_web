@@ -187,7 +187,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             }
             return []; // When not locked, we use uniqueRoutes instead
         }
-    }, [mode, line, search, busStops, lockedRoute, originStation]);
+    }, [mode, line, search, busStops, lockedRoute, originStation, njtStep, njtRoutes, njtDirections, njtStops]);
 
     const handleSelect = async (s: any, routeId?: string) => {
         if (mode === 'njt-bus') {
