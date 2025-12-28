@@ -166,7 +166,17 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     (r.BusRouteDescription || '').toLowerCase().includes(search.toLowerCase())
                 );
             } else if (njtStep === 'origin') {
-                return (njtStops || []).filter(s => (s.busstopdescription || '').toLowerCase().includes(search.toLowerCase()));
+                // Deduplicate origin list by name + direction for UI display
+                const seen = new Set();
+                return (njtStops || []).filter(s => {
+                    const match = (s.busstopdescription || '').toLowerCase().includes(search.toLowerCase());
+                    const key = `${s.busstopdescription.trim().toLowerCase()}-${s.njt_direction}`;
+                    if (match && !seen.has(key)) {
+                        seen.add(key);
+                        return true;
+                    }
+                    return false;
+                });
             } else if (njtStep === 'destination') {
                 const sameDirStops = njtStops.filter(st => st.njt_direction === selectedNjtDirection);
                 const originIdx = sameDirStops.findIndex(st => st.busstopnumber === originStation?.id);
@@ -211,17 +221,28 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     for (const dir of (Array.isArray(dirs) ? dirs : [])) {
                         const sRes = await fetch(`/api/njt-bus/stops?route=${encodeURIComponent(targetRouteId)}&direction=${encodeURIComponent(dir)}`);
                         const data = await sRes.json();
-                        if (Array.isArray(data)) {
-                            // Tag each stop with its direction so we know later
-                            allStops.push(...data.map(stop => ({ ...stop, njt_direction: dir })));
+                        if (Array.isArray(data) && data.length > 0) {
+                            // The last stop in the list is the terminal
+                            const terminal = data[data.length - 1].busstopdescription;
+                            // Tag each stop with its direction and terminal
+                            allStops.push(...data.map(stop => ({
+                                ...stop,
+                                njt_direction: dir,
+                                njt_destination: terminal
+                            })));
                         }
                     }
 
-                    // Deduplicate stops by name/ID for the origin selection, but keep direction info
-                    // Actually, if we want to determine direction later, we keep them all or unique them by ID.
-                    const uniqueStops = Array.from(new Map(allStops.map(item => [item.busstopnumber, item])).values());
+                    // Deduplicate stops by name + direction for the origin selection
+                    const uniqueStopsMap = new Map();
+                    allStops.forEach(stop => {
+                        const key = `${stop.busstopdescription.trim().toLowerCase()}-${stop.njt_direction}`;
+                        if (!uniqueStopsMap.has(key)) {
+                            uniqueStopsMap.set(key, stop);
+                        }
+                    });
 
-                    setNjtStops(allStops); // Keep full list with direction tags
+                    setNjtStops(allStops); // Keep full list with direction tags for destination filtering
                     setNjtStep('origin');
                 } catch (e: any) {
                     console.error('Failed to initialize NJT Bus stops:', e);
@@ -237,7 +258,8 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     lines: [selectedNjtRoute!],
                     north_label: 'Arrivals',
                     south_label: 'Arrivals',
-                    direction: targetOrigin.njt_direction
+                    direction: targetOrigin.njt_direction,
+                    njt_destination: targetOrigin.njt_destination
                 });
 
                 // Set the direction based on what was picked
@@ -343,7 +365,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
 
             {mode === 'njt-bus' && selectedNjtRoute && (
                 <div className="locked-header">
-                    <span>Route: <strong>{selectedNjtRoute}</strong> {selectedNjtDirection && `→ ${selectedNjtDirection}`}</span>
+                    <span>Route: <strong>{selectedNjtRoute}</strong> {originStation && ` ➔ ${originStation.njt_destination || selectedNjtDirection}`}</span>
                     <button onClick={() => { setNjtStep('route'); setSelectedNjtRoute(null); setSelectedNjtDirection(null); }} className="unlock-btn">Change</button>
                 </div>
             )}
@@ -402,7 +424,6 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                                     <button key={s.BusRouteID} className="item icon-item" onClick={() => handleSelect(s)}>
                                         <span className="route-icon orange">{s.BusRouteID}</span>
                                         <div className="item-info">
-                                            <div className="item-name" style={{ fontWeight: 'bold' }}>{s.BusRouteID}</div>
                                             <div className="route-desc">{s.BusRouteDescription}</div>
                                         </div>
                                     </button>
@@ -411,7 +432,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                                 return (
                                     <button key={s.busstopnumber + (s.njt_direction || '')} className="item" onClick={() => handleSelect(s)}>
                                         <div className="item-name">{s.busstopdescription}</div>
-                                        {njtStep === 'origin' && <div className="route-desc">Direction: {s.njt_direction}</div>}
+                                        {njtStep === 'origin' && (
+                                            <div className="route-desc">
+                                                Towards: <strong>{s.njt_destination}</strong> ({s.njt_direction})
+                                            </div>
+                                        )}
                                     </button>
                                 );
                             }

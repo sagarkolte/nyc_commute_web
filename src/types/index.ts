@@ -32,4 +32,5 @@ export interface Station {
     lat?: number;
     lon?: number;
     headsign?: string; // Terminal station name for Buses
+    njt_destination?: string; // NJT Bus Terminal Name
 }
