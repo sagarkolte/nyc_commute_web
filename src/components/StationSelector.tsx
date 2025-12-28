@@ -8,8 +8,6 @@ import lirrStations from '@/lib/lirr_stations.json';
 import mnrStations from '@/lib/mnr_stations.json';
 import pathStations from '@/lib/path_stations.json';
 import njtStations from '@/lib/njt_stations.json';
-import njtBusStations from '@/lib/njt_bus_stations.json';
-import njtBusRouteStops from '@/lib/njt_bus_route_stops.json'; // Import mapping
 
 interface StationSelectorProps {
     mode: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail';

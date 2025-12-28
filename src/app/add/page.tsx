@@ -6,7 +6,6 @@ import { CommuteTuple, Station, CommuteDirection } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { StationSelector } from '@/components/StationSelector';
 import Link from 'next/link';
-import RouteSelector from '@/components/RouteSelector';
 
 const LINES = [
     '1', '2', '3', '4', '5', '6', '7',
@@ -158,18 +157,6 @@ export default function AddPage() {
                 </>
             )}
 
-            {step === 'route' && (
-                <RouteSelector
-                    onSelect={(route) => {
-                        setSelectedRoute(route);
-                        setStep('station');
-                    }}
-                    onBack={() => {
-                        setStep('mode');
-                        setSubModeStep('njt');
-                    }}
-                />
-            )}
 
             {step === 'line' && (
                 <>
