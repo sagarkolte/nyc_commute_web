@@ -26,6 +26,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     const [hasKey, setHasKey] = useState(false);
     const [lockedRoute, setLockedRoute] = useState<string | null>(null);
     const [originStation, setOriginStation] = useState<Station | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [njtRoutes, setNjtRoutes] = useState<any[]>([]);
     const [njtDirections, setNjtDirections] = useState<string[]>([]);
     const [njtStops, setNjtStops] = useState<any[]>([]);
@@ -160,14 +161,14 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             return res;
         } else if (mode === 'njt-bus') {
             if (njtStep === 'route') {
-                return njtRoutes.filter(r =>
-                    r.BusRouteID.toLowerCase().includes(search.toLowerCase()) ||
-                    r.BusRouteDescription.toLowerCase().includes(search.toLowerCase())
+                return (njtRoutes || []).filter(r =>
+                    (r.BusRouteID || '').toLowerCase().includes(search.toLowerCase()) ||
+                    (r.BusRouteDescription || '').toLowerCase().includes(search.toLowerCase())
                 );
             } else if (njtStep === 'direction') {
-                return njtDirections.filter(d => d.toLowerCase().includes(search.toLowerCase()));
+                return (njtDirections || []).filter(d => (d || '').toLowerCase().includes(search.toLowerCase()));
             } else if (njtStep === 'stop') {
-                return njtStops.filter(s => s.busstopdescription.toLowerCase().includes(search.toLowerCase()));
+                return (njtStops || []).filter(s => (s.busstopdescription || '').toLowerCase().includes(search.toLowerCase()));
             }
             return [];
         } else {
@@ -191,26 +192,38 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     const handleSelect = async (s: any, routeId?: string) => {
         if (mode === 'njt-bus') {
             if (njtStep === 'route') {
-                setSelectedNjtRoute(s.BusRouteID);
+                const targetRouteId = s.BusRouteID;
+                setSelectedNjtRoute(targetRouteId);
                 setSearch('');
                 setLoading(true);
                 try {
-                    const res = await fetch(`/api/njt-bus/directions?route=${s.BusRouteID}`);
-                    const dirs = await res.json();
-                    setNjtDirections(dirs);
+                    const res = await fetch(`/api/njt-bus/directions?route=${encodeURIComponent(targetRouteId)}`);
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error);
+                    setNjtDirections(Array.isArray(data) ? data : []);
                     setNjtStep('direction');
+                } catch (e: any) {
+                    console.error('Failed to fetch directions:', e);
+                    setError(e.message);
                 } finally {
                     setLoading(false);
                 }
             } else if (njtStep === 'direction') {
-                setSelectedNjtDirection(s);
+                const targetDir = s;
+                setSelectedNjtDirection(targetDir);
                 setSearch('');
                 setLoading(true);
                 try {
-                    const res = await fetch(`/api/njt-bus/stops?route=${selectedNjtRoute}&direction=${s}`);
-                    const stops = await res.json();
-                    setNjtStops(stops);
+                    // Use targetRouteId from local variable if we want, but selectedNjtRoute should be set by now
+                    // since we transitioned to 'direction' step. 
+                    const res = await fetch(`/api/njt-bus/stops?route=${encodeURIComponent(selectedNjtRoute!)}&direction=${encodeURIComponent(targetDir)}`);
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error);
+                    setNjtStops(Array.isArray(data) ? data : []);
                     setNjtStep('stop');
+                } catch (e: any) {
+                    console.error('Failed to fetch stops:', e);
+                    setError(e.message);
                 } finally {
                     setLoading(false);
                 }
@@ -331,7 +344,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 ) : mode === 'njt-bus' ? (
                     <>
                         {loading && <div style={{ padding: 16 }}>Loading...</div>}
-                        {filtered.map((s, i) => {
+                        {error && <div style={{ padding: 16, color: 'var(--primary)' }}>{error}</div>}
+                        {!loading && !error && filtered.length === 0 && (
+                            <div style={{ padding: 16, color: '#888' }}>No results found</div>
+                        )}
+                        {Array.isArray(filtered) && filtered.map((s, i) => {
                             if (njtStep === 'route') {
                                 return (
                                     <button key={s.BusRouteID} className="item icon-item" onClick={() => handleSelect(s)}>
