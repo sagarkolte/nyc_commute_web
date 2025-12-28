@@ -152,25 +152,29 @@ export const NjtBusV2Service = {
         // If it's a timestamp "12:50 PM"
         if (clean.includes(':')) {
             try {
-                const now = new Date();
-                // Estimate date context (today)
+                // NJ Transit is always in America/New_York (EST/EDT)
+                // We need to compare "now" in EST with "departure" in EST
+                const njTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+                const nowNJ = new Date(njTime);
+
                 const [time, period] = clean.split(' ');
                 let [hours, minutes] = time.split(':').map(Number);
 
                 if (period === 'pm' && hours < 12) hours += 12;
                 if (period === 'am' && hours === 12) hours = 0;
 
-                const depDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+                // Construct dep date in NJ context
+                const depDate = new Date(nowNJ.getFullYear(), nowNJ.getMonth(), nowNJ.getDate(), hours, minutes);
 
-                // If the departure time is earlier than now, it might be for tomorrow (late night runs)
-                // but usually NJT Bus DV only shows upcoming same-day or very next few hours.
-                if (depDate.getTime() < now.getTime() - 30 * 60 * 1000) { // More than 30 mins ago
+                // If the departure time is earlier than now (e.g. it's 11 PM and dep is 1 AM)
+                if (depDate.getTime() < nowNJ.getTime() - 20 * 60 * 1000) {
                     depDate.setDate(depDate.getDate() + 1);
                 }
 
-                const diffMs = depDate.getTime() - now.getTime();
+                const diffMs = depDate.getTime() - nowNJ.getTime();
                 return Math.max(0, Math.floor(diffMs / (1000 * 60)));
             } catch (e) {
+                console.error('parseMinutes error:', e);
                 return 99;
             }
         }

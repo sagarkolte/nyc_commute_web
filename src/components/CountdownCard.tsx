@@ -179,7 +179,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         </div>
                     ) : (
                         <div className="commute-card-arrivals">
-                            {arrivals.map((arrival: any, i: number) => (
+                            {arrivals.slice(0, 3).map((arrival: any, i: number) => (
                                 <div key={i} className="commute-arrival-item">
                                     <span className="commute-arrival-min">{arrival.minutesUntil < 0 ? 0 : arrival.minutesUntil}</span>
                                     <span className="commute-arrival-label">min</span>
