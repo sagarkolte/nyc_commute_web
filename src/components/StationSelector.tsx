@@ -179,8 +179,8 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 });
             } else if (njtStep === 'destination') {
                 const sameDirStops = njtStops.filter(st => st.njt_direction === selectedNjtDirection);
-                const originIdx = sameDirStops.findIndex(st => st.busstopnumber === originStation?.id);
-                const availableDestinations = sameDirStops.slice(originIdx + 1);
+                // REMOVE SLICE: NJT API stop order is unreliable. Show all stops except current origin.
+                const availableDestinations = sameDirStops.filter(st => st.busstopnumber !== originStation?.id);
                 return availableDestinations.filter(s => (s.busstopdescription || '').toLowerCase().includes(search.toLowerCase()));
             }
             return [];
@@ -266,12 +266,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 setSelectedNjtDirection(targetOrigin.njt_direction);
 
                 setSearch('');
-                // For destination, we show stops in the same direction that appear AFTER this stop
-                const sameDirStops = njtStops.filter(st => st.njt_direction === targetOrigin.njt_direction);
-                // Find index of origin to show subsequent
-                const originIdx = sameDirStops.findIndex(st => st.busstopnumber === targetOrigin.busstopnumber);
-                const destinations = sameDirStops.slice(originIdx + 1);
-
+                // Since stop order is unreliable, we show ALL stops for the chosen direction as targets.
                 setNjtStep('destination');
             } else {
                 // Final destination selection
@@ -365,8 +360,8 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
 
             {mode === 'njt-bus' && selectedNjtRoute && (
                 <div className="locked-header">
-                    <span>Route: <strong>{selectedNjtRoute}</strong> {originStation && ` ➔ ${originStation.njt_destination || selectedNjtDirection}`}</span>
-                    <button onClick={() => { setNjtStep('route'); setSelectedNjtRoute(null); setSelectedNjtDirection(null); }} className="unlock-btn">Change</button>
+                    <span>Route: <strong>{selectedNjtRoute}</strong> {originStation && ` ➔ To: ${originStation.njt_destination}`}</span>
+                    <button onClick={() => { setNjtStep('route'); setSelectedNjtRoute(null); setSelectedNjtDirection(null); setOriginStation(null); }} className="unlock-btn">Change</button>
                 </div>
             )}
 
@@ -421,11 +416,9 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                         {Array.isArray(filtered) && filtered.map((s, i) => {
                             if (njtStep === 'route') {
                                 return (
-                                    <button key={s.BusRouteID} className="item icon-item" onClick={() => handleSelect(s)}>
-                                        <span className="route-icon orange">{s.BusRouteID}</span>
-                                        <div className="item-info">
-                                            <div className="route-desc">{s.BusRouteDescription}</div>
-                                        </div>
+                                    <button key={s.BusRouteID} className="item route-list-item" onClick={() => handleSelect(s)}>
+                                        <div className="route-badge orange">{s.BusRouteID}</div>
+                                        <div className="route-desc">{s.BusRouteDescription}</div>
                                     </button>
                                 );
                             } else {
@@ -434,7 +427,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                                         <div className="item-name">{s.busstopdescription}</div>
                                         {njtStep === 'origin' && (
                                             <div className="route-desc">
-                                                Towards: <strong>{s.njt_destination}</strong> ({s.njt_direction})
+                                                Towards: <strong>{s.njt_destination}</strong>
                                             </div>
                                         )}
                                     </button>
@@ -495,18 +488,23 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             cursor: pointer;
             font-size: 12px;
         }
-        .route-icon {
+        .route-badge {
             background: #444;
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
             font-weight: bold;
             margin-right: 12px;
-            min-width: 44px;
+            min-width: 50px;
             text-align: center;
+            font-size: 14px;
         }
-        .route-icon.orange {
+        .route-badge.orange {
             background: #F7941D;
+        }
+        .route-list-item {
+            display: flex;
+            align-items: center;
         }
         .route-desc {
             font-size: 14px;
