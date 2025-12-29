@@ -166,11 +166,14 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     (r.BusRouteDescription || '').toLowerCase().includes(search.toLowerCase())
                 );
             } else if (njtStep === 'origin') {
-                // Deduplicate origin list by name + direction for UI display
+                // Deduplicate origin list by name + destination for UI display
                 const seen = new Set();
                 return (njtStops || []).filter(s => {
-                    const match = (s.busstopdescription || '').toLowerCase().includes(search.toLowerCase());
-                    const key = `${s.busstopdescription.trim().toLowerCase()}-${s.njt_direction}`;
+                    const cleanName = (s.busstopdescription || '').toLowerCase();
+                    const cleanSearch = search.toLowerCase().replace('harbour', 'harbor');
+                    const match = cleanName.includes(cleanSearch) || cleanName.replace('harbour', 'harbor').includes(cleanSearch);
+
+                    const key = `${s.busstopdescription.trim().toLowerCase()}-${(s.njt_destination || '').trim().toLowerCase()}`;
                     if (match && !seen.has(key)) {
                         seen.add(key);
                         return true;
@@ -181,7 +184,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 const sameDirStops = njtStops.filter(st => st.njt_direction === selectedNjtDirection);
                 // REMOVE SLICE: NJT API stop order is unreliable. Show all stops except current origin.
                 const availableDestinations = sameDirStops.filter(st => st.busstopnumber !== originStation?.id);
-                return availableDestinations.filter(s => (s.busstopdescription || '').toLowerCase().includes(search.toLowerCase()));
+                return availableDestinations.filter(s => {
+                    const cleanName = (s.busstopdescription || '').toLowerCase();
+                    const cleanSearch = search.toLowerCase().replace('harbour', 'harbor');
+                    return cleanName.includes(cleanSearch) || cleanName.replace('harbour', 'harbor').includes(cleanSearch);
+                });
             }
             return [];
         } else {
@@ -427,7 +434,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                                         <div className="item-name">{s.busstopdescription}</div>
                                         {njtStep === 'origin' && (
                                             <div className="route-desc">
-                                                Towards: <strong>{s.njt_destination}</strong>
+                                                Towards: <strong>{s.njt_destination}</strong> ({s.njt_direction})
                                             </div>
                                         )}
                                     </button>
