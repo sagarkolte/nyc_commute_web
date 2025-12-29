@@ -173,7 +173,8 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     const cleanSearch = search.toLowerCase().replace('harbour', 'harbor');
                     const match = cleanName.includes(cleanSearch) || cleanName.replace('harbour', 'harbor').includes(cleanSearch);
 
-                    const key = `${s.busstopdescription.trim().toLowerCase()}-${(s.njt_destination || '').trim().toLowerCase()}`;
+                    // Deduplicate by name + direction name to ensure Inbound and Outbound are both shown
+                    const key = `${s.busstopdescription.trim().toLowerCase()}-${s.njt_direction.trim().toLowerCase()}`;
                     if (match && !seen.has(key)) {
                         seen.add(key);
                         return true;
@@ -229,13 +230,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                         const sRes = await fetch(`/api/njt-bus/stops?route=${encodeURIComponent(targetRouteId)}&direction=${encodeURIComponent(dir)}`);
                         const data = await sRes.json();
                         if (Array.isArray(data) && data.length > 0) {
-                            // The last stop in the list is the terminal
-                            const terminal = data[data.length - 1].busstopdescription;
-                            // Tag each stop with its direction and terminal
+                            // Tag each stop with its direction name as the destination label
                             allStops.push(...data.map(stop => ({
                                 ...stop,
                                 njt_direction: dir,
-                                njt_destination: terminal
+                                njt_destination: dir // Use API direction name (e.g. "Fort Lee", "New York")
                             })));
                         }
                     }
@@ -434,7 +433,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                                         <div className="item-name">{s.busstopdescription}</div>
                                         {njtStep === 'origin' && (
                                             <div className="route-desc">
-                                                Towards: <strong>{s.njt_destination}</strong> ({s.njt_direction})
+                                                Towards: <strong>{s.njt_destination}</strong>
                                             </div>
                                         )}
                                     </button>
