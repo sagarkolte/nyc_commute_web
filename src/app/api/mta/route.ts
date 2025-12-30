@@ -2,6 +2,25 @@ import { NextResponse } from 'next/server';
 import { MtaService } from '@/lib/mta';
 import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
+import * as protobuf from 'protobufjs';
+import path from 'path';
+
+let cachedRoot: protobuf.Root | null = null;
+
+async function getProtobufRoot() {
+    if (cachedRoot) return cachedRoot;
+    const protoPath = path.join(process.cwd(), 'src/lib/proto');
+    try {
+        cachedRoot = await protobuf.load([
+            path.join(protoPath, 'gtfs-realtime.proto'),
+            path.join(protoPath, 'gtfs-realtime-MTARR.proto')
+        ]);
+        return cachedRoot;
+    } catch (e) {
+        console.error('[API] Failed to load protobuf:', e);
+        return null;
+    }
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -34,19 +53,31 @@ export async function GET(request: Request) {
     console.log(`[API] Route: ${routeId} Stop: ${stopId} ClientKey: ${clientKeyPrefix}, ServerKey: ${serverKeyPrefix}`);
 
     try {
+        const isRail = routeId.startsWith('LIRR') || routeId.startsWith('MNR');
         const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId));
         console.log(`[API] Fetching feed for routeId=${routeId} stopId=${stopId} type=${feedRouteId}`);
 
         let feedResponse;
         try {
-            feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId);
+            feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId, isRail);
         } catch (e: any) {
-            // If the initial fetch failed with a 403 (Forbidden) and we have a server key that's different from what we used, retry once.
             if (e.message?.includes('403') && serverApiKey && effectiveKey !== serverApiKey) {
                 console.log(`[API] Client key failed with 403, retrying with Server Key...`);
-                feedResponse = await MtaService.fetchFeed(feedRouteId, serverApiKey, stopId);
+                feedResponse = await MtaService.fetchFeed(feedRouteId, serverApiKey, stopId, isRail);
             } else {
-                throw e; // Rethrow if it wasn't a 403 or we have no fallback
+                throw e;
+            }
+        }
+
+        if (isRail && feedResponse.type === 'gtfs-raw') {
+            const root = await getProtobufRoot();
+            if (root) {
+                const FeedMessage = root.lookupType('transit_realtime.FeedMessage');
+                const decoded = FeedMessage.decode(new Uint8Array(feedResponse.data)) as any;
+                feedResponse = { type: 'gtfs', data: decoded };
+            } else {
+                // Fallback to standard if protobuf fails
+                feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId, false);
             }
         }
 
@@ -169,8 +200,11 @@ export async function GET(request: Request) {
 
                                 // Extract Track
                                 let track = 'TBD';
-                                const departure = originUpdate.departure || originUpdate.arrival;
-                                // const ext = (departure as any)?.['extension']; // Track extraction logic if needed
+                                const extKey = '.transit_realtime.mtaRailroadStopTimeUpdate';
+                                const ext = originUpdate[extKey] || originUpdate.mtaRailroadStopTimeUpdate || originUpdate.mta_railroad_stop_time_update;
+                                if (ext && ext.track) {
+                                    track = ext.track;
+                                }
 
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;

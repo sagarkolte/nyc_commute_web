@@ -142,7 +142,7 @@ export const MtaService = {
         return [];
     },
 
-    fetchFeed: async (routeId: string, apiKey?: string, stopId?: string) => {
+    fetchFeed: async (routeId: string, apiKey?: string, stopId?: string, returnRaw: boolean = false) => {
         let url = FEED_URLS[routeId];
 
         // Dynamic Bus URL generation if route ID looks like a bus (e.g. M15) and isn't in static map
@@ -199,6 +199,9 @@ export const MtaService = {
                 throw new Error(`HTTP error! status: ${response.status} - ${errorText.substring(0, 100)}`);
             }
             const buffer = await response.arrayBuffer();
+            if (returnRaw) {
+                return { type: 'gtfs-raw', data: buffer };
+            }
             // @ts-ignore
             const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
             // console.log(`[MTA] Parsed ${feed.entity.length} entities from feed`);

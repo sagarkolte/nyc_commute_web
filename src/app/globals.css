@@ -222,39 +222,40 @@ ol {
   margin-top: 4px;
 }
 
+.commute-board-header,
+.commute-board-row {
+  display: grid;
+  grid-template-columns: 65px 1fr 45px 50px;
+  gap: 4px;
+}
+
 .commute-board-header {
-  display: flex;
   border-bottom: 1px solid #333;
   padding-bottom: 4px;
   margin-bottom: 4px;
   color: #C41230;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
 }
 
 .commute-board-row {
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 4px;
   color: #FCCC0A;
   font-size: 13px;
 }
 
 .commute-board-col-time {
-  width: 70px;
   text-align: left;
 }
 
 .commute-board-col-dest {
-  flex: 1;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-right: 8px;
 }
 
+.commute-board-col-track,
 .commute-board-col-eta {
-  width: 60px;
   text-align: right;
 }
