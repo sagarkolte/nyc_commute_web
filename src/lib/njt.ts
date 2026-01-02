@@ -53,6 +53,7 @@ export interface NjtDeparture {
     track: string;
     time: string; // SCHED_DEP_DATE
     status: string;
+    stops?: any[];
 }
 
 export async function getNjtDepartures(stationCode: string): Promise<NjtDeparture[]> {
@@ -122,7 +123,8 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
                 destination: item.DESTINATION,
                 track: item.TRACK,
                 time: parseNjtDate(item.SCHED_DEP_DATE).toISOString(),
-                status: item.STATUS
+                status: item.STATUS,
+                stops: item.STOPS
             }));
         }
     } catch (error: any) {

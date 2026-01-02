@@ -67,15 +67,18 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             }
             const data = await res.json();
             if (data.arrivals) {
-                setArrivals(data.arrivals);
+                // Sorting logic: if destinationArrivalTime exists, sort by that.
+                // Otherwise sort by departure time.
+                const sorted = [...data.arrivals].sort((a, b) => {
+                    const timeA = a.destinationArrivalTime || a.time;
+                    const timeB = b.destinationArrivalTime || b.time;
+                    return timeA - timeB;
+                });
+                setArrivals(sorted);
                 setDebugInfo(null);
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
-            } else if (data.departures) {
-                // Fallback if API returns 'departures' instead of 'arrivals' (my NJT API might have returned departures before map)
-                // But I updated it to return arrivals.
-                setArrivals(data.departures);
             }
         } catch (e: any) {
             console.error(e);
@@ -168,6 +171,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                                 <span className="commute-board-col-time">TIME</span>
                                 <span className="commute-board-col-dest">DESTINATION</span>
                                 <span className="commute-board-col-track">TRACK</span>
+                                <span className="commute-board-col-arrives">ARRIVES</span>
                                 <span className="commute-board-col-eta">ETA</span>
                             </div>
                             {arrivals.slice(0, 3).map((arr: any, i: number) => (
@@ -175,6 +179,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                                     <span className="commute-board-col-time">{formatTime(arr.time)}</span>
                                     <span className="commute-board-col-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
                                     <span className="commute-board-col-track">{arr.track || 'TBD'}</span>
+                                    <span className="commute-board-col-arrives">{arr.destinationArrivalTime ? formatTime(arr.destinationArrivalTime) : '--'}</span>
                                     <span className="commute-board-col-eta">{arr.minutesUntil} min</span>
                                 </div>
                             ))}

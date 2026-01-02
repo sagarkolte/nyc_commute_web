@@ -225,7 +225,7 @@ ol {
 .commute-board-header,
 .commute-board-row {
   display: grid;
-  grid-template-columns: 65px 1fr 45px 50px;
+  grid-template-columns: 60px 1fr 40px 60px 45px;
   gap: 4px;
 }
 
@@ -234,14 +234,14 @@ ol {
   padding-bottom: 4px;
   margin-bottom: 4px;
   color: #C41230;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: bold;
 }
 
 .commute-board-row {
   margin-bottom: 4px;
   color: #FCCC0A;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .commute-board-col-time {
@@ -256,6 +256,7 @@ ol {
 }
 
 .commute-board-col-track,
+.commute-board-col-arrives,
 .commute-board-col-eta {
   text-align: right;
 }

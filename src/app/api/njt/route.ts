@@ -58,9 +58,22 @@ export async function GET(request: Request) {
             .replace(/&nbsp;/g, ' ')
             .trim();
 
+        let destinationArrivalTime = null;
+        if (destStopId && d.stops) {
+            const destStop = d.stops.find((s: any) => s.STATION_2CHAR === destStopId);
+            if (destStop) {
+                // NJT stop time is typically like "01-Jan-2026 06:42:00 PM"
+                const parsed = new Date(destStop.TIME);
+                if (!isNaN(parsed.getTime())) {
+                    destinationArrivalTime = parsed.getTime() / 1000;
+                }
+            }
+        }
+
         return {
             routeId: d.line, // e.g. "Northeast Corridor"
             time: dTime / 1000,
+            destinationArrivalTime: destinationArrivalTime,
             minutesUntil,
             destination: cleanDest,
             track: d.track,

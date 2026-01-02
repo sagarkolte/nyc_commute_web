@@ -206,6 +206,15 @@ export async function GET(request: Request) {
                                     track = ext.track;
                                 }
 
+                                // Extract Destination Arrival Time
+                                let destinationArrivalTime = null;
+                                if (destStopId) {
+                                    const destUpdate = updates.find((u: any) => u.stopId === destStopId);
+                                    if (destUpdate) {
+                                        destinationArrivalTime = getTime(destUpdate.arrival?.time);
+                                    }
+                                }
+
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;
                                 if (!displayDest || displayDest === '') {
@@ -224,6 +233,7 @@ export async function GET(request: Request) {
                                 arrivals.push({
                                     routeId: entityRouteId,
                                     time: arrivalTime,
+                                    destinationArrivalTime: destinationArrivalTime,
                                     minutesUntil: Math.floor((arrivalTime - now) / 60),
                                     destination: displayDest || 'Unknown',
                                     track: track
