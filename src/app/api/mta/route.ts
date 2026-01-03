@@ -186,6 +186,19 @@ export async function GET(request: Request) {
 
                             if (originIdx !== -1 && destIdx !== -1 && originIdx < destIdx) {
                                 originUpdate = updates[originIdx];
+                            } else if (routeId === 'PATH' && originIdx !== -1) {
+                                // Relaxed matching for sparse PATH feed
+                                // 0: NYC-bound (Towards WTC or 33rd), 1: NJ-bound (Towards NWK, JSQ, HOB)
+                                const tripDir = entity.tripUpdate.trip.directionId;
+                                const nycStops = ['26734', '26724', '26723', '26722', '26725', '26726'];
+                                const njStops = ['26733', '26731', '26730', '26728', '26729', '26727', '26732'];
+
+                                const destIsNyc = nycStops.includes(destStopId);
+                                const destIsNj = njStops.includes(destStopId);
+
+                                if ((destIsNyc && tripDir === 0) || (destIsNj && tripDir === 1)) {
+                                    originUpdate = updates[originIdx];
+                                }
                             }
                         } else {
                             // Standard single-stop filtering
@@ -260,7 +273,7 @@ export async function GET(request: Request) {
                 stopMatchCount,
                 afterNowCount,
                 serverTime: now,
-                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR')) ? stopId : `${stopId}${direction}`,
+                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`,
                 firstLineRef,
                 debugRaw
             }

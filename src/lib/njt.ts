@@ -25,23 +25,32 @@ async function getNjtToken(): Promise<string | null> {
         return null;
     }
 
-    try {
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
+    const endpoints = [
+        'https://raildata.njtransit.com/api/TrainData/getToken',
+        'https://railservice.njtransit.com/api/getToken'
+    ];
 
-        const res = await axios.post(`${NJT_BASE_URL}/getToken`, params.toString(), {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+    for (const url of endpoints) {
+        try {
+            console.log(`[NJT] Attempting getToken at: ${url}`);
+            const params = new URLSearchParams();
+            params.append('username', username);
+            params.append('password', password);
 
-        if (res.data && res.data.UserToken) {
-            cachedToken = res.data.UserToken;
-            tokenExpiry = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
-            console.log('Refreshed NJT Token');
-            return cachedToken;
+            const res = await axios.post(url, params.toString(), {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                timeout: 10000 // 10s timeout
+            });
+
+            if (res.data && res.data.UserToken) {
+                cachedToken = res.data.UserToken;
+                tokenExpiry = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
+                console.log(`[NJT] Refreshed NJT Token via ${url}`);
+                return cachedToken;
+            }
+        } catch (error: any) {
+            console.warn(`[NJT] Failed to get NJT Token from ${url}:`, error.response?.status || error.message);
         }
-    } catch (error: any) {
-        console.error('Failed to get NJT Token:', error.message);
     }
     return null;
 }

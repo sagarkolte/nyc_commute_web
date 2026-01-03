@@ -101,6 +101,7 @@ export default function AddPage() {
         if (['lirr', 'mnr', 'path', 'njt', 'njt-rail', 'njt-bus'].includes(mode)) {
             if (destStation) {
                 newTuple.label = `${s.name} ➔ ${destStation.name}`;
+                newTuple.destinationName = destStation.name;
             } else {
                 newTuple.label = `${s.name} - ${dir === 'N' ? 'NYC Bound' : 'NJ/Outbound'}`;
                 if (mode === 'lirr' || mode === 'mnr') {
