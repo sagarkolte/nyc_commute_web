@@ -199,6 +199,32 @@ export async function GET(request: Request) {
                                 if ((destIsNyc && tripDir === 0) || (destIsNj && tripDir === 1)) {
                                     originUpdate = updates[originIdx];
                                 }
+                            } else if (routeId === 'PATH' && originIdx === -1 && destStopId) {
+                                // Terminal Departure Proxy Logic
+                                // If the user is at a terminal (e.g. 33rd) and the trip has no 33rd stop 
+                                // but its FIRST reported stop is the very next stop (e.g. 23rd).
+                                const tripDir = entity.tripUpdate.trip.directionId;
+                                const nycStops = ['26734', '26724', '26723', '26722', '26725', '26726'];
+                                const njStops = ['26733', '26731', '26730', '26728', '26729', '26727', '26732'];
+                                const destIsNyc = nycStops.includes(destStopId);
+                                const destIsNj = njStops.includes(destStopId);
+
+                                const isCorrectDir = (destIsNyc && tripDir === 0) || (destIsNj && tripDir === 1);
+                                if (isCorrectDir && updates.length > 0) {
+                                    const firstStopId = updates[0].stopId;
+                                    const adjacents: Record<string, string[]> = {
+                                        '26724': ['26723'], // 33rd -> 23rd
+                                        '26734': ['26727'], // WTC -> Exchange
+                                        '26733': ['26729'], // NWK -> Harrison
+                                        '26730': ['26726', '26732', '26727'], // HOB -> Christopher/Newport/Exchange
+                                        '26731': ['26728', '26727', '26729'], // JSQ -> Grove/Exchange/Harrison
+                                    };
+
+                                    if (adjacents[stopId]?.includes(firstStopId)) {
+                                        // Use the first reported stop (the adjacent one) as a proxy
+                                        originUpdate = updates[0];
+                                    }
+                                }
                             }
                         } else {
                             // Standard single-stop filtering
@@ -232,17 +258,25 @@ export async function GET(request: Request) {
                                 // Determine Headsign for display
                                 let displayDest = entity.tripUpdate.trip.tripHeadsign;
                                 if (!displayDest || displayDest === '') {
-                                    const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
-                                    if (lastUpdate) {
-                                        if (routeId.startsWith('MNR')) {
-                                            const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
-                                            if (st) displayDest = st.name;
-                                        } else if (routeId.startsWith('LIRR')) {
-                                            const st = (lirrStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
-                                            if (st) displayDest = st.name;
-                                        } else if (routeId === 'PATH') {
-                                            const st = (pathStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
-                                            if (st) displayDest = st.name;
+                                    // Use user's selected destination name if available and it's a PATH route
+                                    if (routeId === 'PATH' && destStopId) {
+                                        const st = (pathStations as any[]).find((s: any) => s.id === destStopId);
+                                        if (st) displayDest = st.name;
+                                    }
+
+                                    if (!displayDest || displayDest === '') {
+                                        const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
+                                        if (lastUpdate) {
+                                            if (routeId.startsWith('MNR')) {
+                                                const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
+                                                if (st) displayDest = st.name;
+                                            } else if (routeId.startsWith('LIRR')) {
+                                                const st = (lirrStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                                if (st) displayDest = st.name;
+                                            } else if (routeId === 'PATH') {
+                                                const st = (pathStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                                if (st) displayDest = st.name;
+                                            }
                                         }
                                     }
                                 }
