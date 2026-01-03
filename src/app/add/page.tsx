@@ -68,15 +68,12 @@ export default function AddPage() {
         // For Bus, the station already implies direction (it's a specific stop)
         if (mode === 'bus') {
             saveTuple(s, (s.direction as any) || 'N', routeId);
-        } else if (mode === 'mnr' && destStation) {
-            saveTuple(s, 'N', undefined, destStation);
-        } else if ((mode === 'njt' || mode === 'njt-rail') && destStation) {
-            saveTuple(s, 'N', 'NJT', destStation);
         } else if (mode === 'njt-bus') {
             // NJ Transit BUS V2: Origin-Destination selection
             saveTuple(s, s.direction || 'N', routeId, destStation);
-        } else if (mode === 'lirr' && destStation) {
-            saveTuple(s, 'N', 'LIRR', destStation);
+        } else if ((mode === 'lirr' || mode === 'mnr' || mode === 'path' || mode === 'njt' || mode === 'njt-rail') && destStation) {
+            const specificRouteId = (mode === 'njt' || mode === 'njt-rail') ? 'NJT' : (mode === 'lirr' ? 'LIRR' : (mode === 'mnr' ? 'MNR' : undefined));
+            saveTuple(s, 'N', specificRouteId, destStation);
         } else {
             setStep('direction');
         }

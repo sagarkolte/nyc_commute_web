@@ -99,7 +99,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     // isDepartureBoard should be TRUE if we have a destinationStopId (like for Rail)
     // For NJT Bus V2, it's stop-centric, so we don't usually have a destinationStopId unless explicitly picked.
     // If it's FALSE, it shows the card's main label as the destination.
-    const isDepartureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR') && !!tuple.destinationStopId;
+    const isDepartureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR' || tuple.routeId === 'PATH') && !!tuple.destinationStopId;
 
     const formatTime = (ts: number) => {
         return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();

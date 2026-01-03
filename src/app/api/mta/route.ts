@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { MtaService } from '@/lib/mta';
 import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
+import pathStations from '@/lib/path_stations.json';
 import * as protobuf from 'protobufjs';
 import path from 'path';
 
@@ -225,6 +226,9 @@ export async function GET(request: Request) {
                                             if (st) displayDest = st.name;
                                         } else if (routeId.startsWith('LIRR')) {
                                             const st = (lirrStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                            if (st) displayDest = st.name;
+                                        } else if (routeId === 'PATH') {
+                                            const st = (pathStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
                                             if (st) displayDest = st.name;
                                         }
                                     }

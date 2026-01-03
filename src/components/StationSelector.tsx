@@ -149,7 +149,11 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             return res;
         } else if (mode === 'path') {
             data = pathStations;
-            return (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            if (originStation) {
+                return res.filter(s => s.id !== originStation.id);
+            }
+            return res;
         } else if (mode === 'njt' || mode === 'njt-rail') {
             data = njtStations;
             const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
@@ -287,7 +291,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 onSelect(originStation!, selectedNjtRoute!, destStation);
             }
         }
-        else if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') {
+        else if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') {
             if (!originStation) {
                 setOriginStation(s);
                 setSearch('');
@@ -305,10 +309,10 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             if (njtStep === 'origin') return `Route ${selectedNjtRoute}: Starting Point`;
             if (njtStep === 'destination') return `Route ${selectedNjtRoute}: Ending Point`;
         }
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
-        return mode === 'path' ? 'PATH Station' : `${line || 'Train'} Station`;
+        return `${line || 'Train'} Station`;
 
     };
 
@@ -316,7 +320,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         if (mode === 'bus') {
             return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
         }
-        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') && originStation) {
+        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') && originStation) {
             return "Select Arrival Station...";
         }
         if (mode === 'njt-bus') {
@@ -341,7 +345,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 return;
             }
         }
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') {
             if (originStation) {
                 setOriginStation(null);
                 return;
@@ -357,7 +361,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 <h2>{getTitle()}</h2>
             </div>
 
-            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail') && originStation && (
+            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') && originStation && (
                 <div className="locked-header">
                     <span>From: <strong>{originStation.name}</strong></span>
                     <button onClick={handleReset} className="unlock-btn">Change</button>
