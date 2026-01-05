@@ -137,8 +137,12 @@ export default function AddPage() {
     };
 
     const handleDirectionSelect = (dir: 'N' | 'S') => {
-        if (!station) return;
-        saveTuple(station, dir);
+        if (mode === 'si-ferry') {
+            saveTuple({ id: 'dummy', name: 'SI Ferry', lines: [] } as any, dir);
+        } else {
+            if (!station) return;
+            saveTuple(station, dir);
+        }
     };
 
     return (
@@ -213,11 +217,11 @@ export default function AddPage() {
                 />
             )}
 
-            {step === 'direction' && station && (
+            {step === 'direction' && (station || mode === 'si-ferry') && (
                 <div className="direction-step">
-                    <button className="back-btn" onClick={() => setStep('station')}>← Back</button>
+                    <button className="back-btn" onClick={() => setStep(mode === 'si-ferry' ? 'mode' : 'station')}>← Back</button>
                     <h2>Select Direction</h2>
-                    <p style={{ color: '#888', marginBottom: 32 }}>{station.name}</p>
+                    {station && <p style={{ color: '#888', marginBottom: 32 }}>{station.name}</p>}
 
                     <button className="dir-btn" onClick={() => handleDirectionSelect('N')}>
                         {mode === 'lirr' || mode === 'mnr' ? 'Toward NYC / Westbound' : (mode === 'path' ? 'Toward NYC (33rd St / WTC)' : (mode === 'si-ferry' ? 'To Manhattan' : `Toward ${station?.north_label || 'Uptown / Northbound'}`))}
