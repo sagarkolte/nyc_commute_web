@@ -213,6 +213,10 @@ export async function GET(request: Request) {
                                 if ((destIsNyc && tripDir === 0) || (destIsNj && tripDir === 1)) {
                                     originUpdate = updates[originIdx];
                                 }
+                            } else if (routeId === 'nyc-ferry' && originIdx !== -1) {
+                                // Permissive matching for Ferry: if we are at origin, show it even if dest is missing
+                                // since ferry feeds are very sparse and sometimes only show next 2 stops.
+                                originUpdate = updates[originIdx];
                             } else if (routeId === 'PATH' && originIdx === -1 && destStopId) {
                                 // Terminal Departure Proxy Logic
                                 // If the user is at a terminal (e.g. 33rd) and the trip has no 33rd stop 
