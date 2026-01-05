@@ -162,6 +162,7 @@ export async function GET(request: Request) {
             const feed = feedResponse.data;
             const targetStopId = (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`;
             const destStopId = searchParams.get('destStopId');
+            console.log(`[GTFS] Processing ${feed.entity?.length || 0} entities for ${routeId}. Target: ${targetStopId} Dest: ${destStopId || 'none'}. Now: ${now}`);
 
             const getTime = (t: any) => {
                 if (t === null || t === undefined) return null;
@@ -317,6 +318,8 @@ export async function GET(request: Request) {
         // Sort by time
         arrivals.sort((a, b) => a.time - b.time);
 
+        console.log(`[GTFS] Done. Matches: ${stopMatchCount}, AfterNow: ${afterNowCount}, Total: ${arrivals.length}`);
+
         return NextResponse.json({
             arrivals: arrivals.slice(0, 3),
             debugInfo: {
@@ -328,8 +331,13 @@ export async function GET(request: Request) {
                 targetStopId: (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`,
                 firstLineRef,
                 debugRaw,
-                foundStopIds: Array.from(foundStopIds).slice(0, 50),
-                sampleEntity: routeId === 'nyc-ferry' ? sampleEntity : null
+                foundStopIds: Array.from(foundStopIds).slice(0, 100),
+                sampleEntity: routeId === 'nyc-ferry' ? sampleEntity : null,
+                metrics: {
+                    stopMatchCount,
+                    afterNowCount,
+                    totalArrivalsRaw: arrivals.length
+                }
             }
         });
     } catch (error) {
