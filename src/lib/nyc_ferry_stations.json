@@ -1,0 +1,362 @@
+[
+  {
+    "id": "4",
+    "name": "Hunters Point South",
+    "lines": [
+      "East River"
+    ]
+  },
+  {
+    "id": "8",
+    "name": "South Williamsburg",
+    "lines": [
+      "East River"
+    ]
+  },
+  {
+    "id": "11",
+    "name": "Atlantic Ave/BBP Pier 6",
+    "lines": [
+      "South Brooklyn",
+      "St. George"
+    ]
+  },
+  {
+    "id": "16",
+    "name": "Beach Channel Dr/Beach 108th Street",
+    "lines": [
+      "Rockaway East",
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "17",
+    "name": "East 34th Street",
+    "lines": [
+      "Astoria",
+      "East River",
+      "Rockaway-Soundview",
+      "South Brooklyn"
+    ]
+  },
+  {
+    "id": "18",
+    "name": "Greenpoint",
+    "lines": [
+      "East River"
+    ]
+  },
+  {
+    "id": "19",
+    "name": "North Williamsburg",
+    "lines": [
+      "East River"
+    ]
+  },
+  {
+    "id": "20",
+    "name": "Dumbo/Fulton Ferry",
+    "lines": [
+      "East River"
+    ]
+  },
+  {
+    "id": "23",
+    "name": "Bay Ridge",
+    "lines": [
+      "St. George"
+    ]
+  },
+  {
+    "id": "24",
+    "name": "Red Hook/Atlantic Basin",
+    "lines": [
+      "South Brooklyn"
+    ]
+  },
+  {
+    "id": "25",
+    "name": "Roosevelt Island",
+    "lines": [
+      "Astoria"
+    ]
+  },
+  {
+    "id": "37",
+    "name": "Beach Channel Dr/Beach 54th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "39",
+    "name": "Rockaway Beach Boulevard & Beach 86th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "43",
+    "name": "Rockaway Beach Boulevard & Beach 86th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "45",
+    "name": "Beach Channel Dr/Beach 54th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "46",
+    "name": "Beach Channel Dr/Beach 41st Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "48",
+    "name": "Rockaway Point Boulevard & Beach 169th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "49",
+    "name": "Jacob Riis Park Road/Bath House",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "50",
+    "name": "Rockaway Beach Boulevard & Beach 149th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "51",
+    "name": "Rockaway Beach Boulevard & Beach 135th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "52",
+    "name": "Rockaway Beach Boulevard & Beach 127th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "55",
+    "name": "Rockaway Beach Boulevard & Beach 118th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "56",
+    "name": "Rockaway Beach Boulevard & Beach 127th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "57",
+    "name": "Rockaway Beach Boulevard & Beach 135th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "58",
+    "name": "Rockaway Beach Boulevard & Beach 149th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "61",
+    "name": "Beach Channel Dr/Beach 41st Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "62",
+    "name": "Beach Channel Dr/Beach 36th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "87",
+    "name": "Wall St/Pier 11",
+    "lines": [
+      "Astoria",
+      "East River",
+      "Rockaway-Soundview",
+      "South Brooklyn",
+      "St. George"
+    ]
+  },
+  {
+    "id": "88",
+    "name": "Rockaway",
+    "lines": [
+      "Rockaway-Soundview"
+    ]
+  },
+  {
+    "id": "89",
+    "name": "Astoria",
+    "lines": [
+      "Astoria"
+    ]
+  },
+  {
+    "id": "90",
+    "name": "Long Island City",
+    "lines": [
+      "Astoria"
+    ]
+  },
+  {
+    "id": "103",
+    "name": "Rockaway Beach Boulevard & Beach 67th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "104",
+    "name": "Rockaway Beach Boulevard & Beach 96th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "105",
+    "name": "Rockaway Beach Boulevard & Beach 77th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "111",
+    "name": "Gov. Island/Yankee Pier",
+    "lines": [
+      "South Brooklyn"
+    ]
+  },
+  {
+    "id": "112",
+    "name": "Soundview",
+    "lines": [
+      "Rockaway-Soundview"
+    ]
+  },
+  {
+    "id": "113",
+    "name": "East 90th St",
+    "lines": [
+      "Astoria",
+      "Rockaway-Soundview"
+    ]
+  },
+  {
+    "id": "114",
+    "name": "Stuyvesant Cove",
+    "lines": [
+      "Rockaway-Soundview"
+    ]
+  },
+  {
+    "id": "115",
+    "name": "Corlears Hook",
+    "lines": [
+      "South Brooklyn"
+    ]
+  },
+  {
+    "id": "118",
+    "name": "Sunset Park/BAT",
+    "lines": [
+      "Rockaway-Soundview"
+    ]
+  },
+  {
+    "id": "120",
+    "name": "Brooklyn Navy Yard",
+    "lines": [
+      "Astoria"
+    ]
+  },
+  {
+    "id": "136",
+    "name": "Battery Park City/Vesey St.",
+    "lines": [
+      "St. George"
+    ]
+  },
+  {
+    "id": "137",
+    "name": "St. George",
+    "lines": [
+      "St. George"
+    ]
+  },
+  {
+    "id": "138",
+    "name": "Midtown West/W 39th St-Pier 79",
+    "lines": [
+      "St. George"
+    ]
+  },
+  {
+    "id": "141",
+    "name": "Ferry Point Park",
+    "lines": [
+      "Rockaway-Soundview"
+    ]
+  },
+  {
+    "id": "142",
+    "name": "Rockaway Beach Boulevard & Beach 102nd Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "145",
+    "name": "Rockaway Beach Boulevard & Beach 118th Street",
+    "lines": [
+      "Rockaway West"
+    ]
+  },
+  {
+    "id": "149",
+    "name": "Rockaway Beach Boulevard & Beach 96th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "150",
+    "name": "Rockaway Beach Boulevard & Beach 79th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  },
+  {
+    "id": "151",
+    "name": "Rockaway Beach Boulevard & Beach 67th Street",
+    "lines": [
+      "Rockaway East"
+    ]
+  }
+]

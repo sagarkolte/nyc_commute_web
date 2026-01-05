@@ -8,9 +8,10 @@ import lirrStations from '@/lib/lirr_stations.json';
 import mnrStations from '@/lib/mnr_stations.json';
 import pathStations from '@/lib/path_stations.json';
 import njtStations from '@/lib/njt_stations.json';
+import nycFerryStations from '@/lib/nyc_ferry_stations.json';
 
 interface StationSelectorProps {
-    mode: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail';
+    mode: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail' | 'nyc-ferry';
 
     line?: string; // Made optional as it's not always used
     onSelect: (station: Station, routeId?: string, destStation?: Station) => void;
@@ -154,6 +155,13 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 return res.filter(s => s.id !== originStation.id);
             }
             return res;
+        } else if (mode === 'nyc-ferry') {
+            data = nycFerryStations;
+            const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+            if (originStation) {
+                return res.filter(s => s.id !== originStation.id);
+            }
+            return res;
         } else if (mode === 'njt' || mode === 'njt-rail') {
             data = njtStations;
             const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
@@ -291,7 +299,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 onSelect(originStation!, selectedNjtRoute!, destStation);
             }
         }
-        else if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') {
+        else if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') {
             if (!originStation) {
                 setOriginStation(s);
                 setSearch('');
@@ -309,7 +317,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             if (njtStep === 'origin') return `Route ${selectedNjtRoute}: Starting Point`;
             if (njtStep === 'destination') return `Route ${selectedNjtRoute}: Ending Point`;
         }
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
         return `${line || 'Train'} Station`;
@@ -320,7 +328,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         if (mode === 'bus') {
             return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
         }
-        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') && originStation) {
+        if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') && originStation) {
             return "Select Arrival Station...";
         }
         if (mode === 'njt-bus') {
@@ -345,7 +353,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 return;
             }
         }
-        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') {
+        if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') {
             if (originStation) {
                 setOriginStation(null);
                 return;
@@ -361,7 +369,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 <h2>{getTitle()}</h2>
             </div>
 
-            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path') && originStation && (
+            {(mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') && originStation && (
                 <div className="locked-header">
                     <span>From: <strong>{originStation.name}</strong></span>
                     <button onClick={handleReset} className="unlock-btn">Change</button>

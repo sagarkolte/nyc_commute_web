@@ -18,20 +18,23 @@ type Step = 'mode' | 'line' | 'station' | 'direction' | 'route';
 export default function AddPage() {
     const router = useRouter();
     const [step, setStep] = useState<Step>('mode');
-    const [subModeStep, setSubModeStep] = useState<string | null>(null); // For handling NJT Train vs Bus
-    const [mode, setMode] = useState<CommuteTuple['mode'] | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail'>('subway');
+    const [subModeStep, setSubModeStep] = useState<string | null>(null); // For handling NJT Train vs Bus, or Ferry types
+    const [mode, setMode] = useState<CommuteTuple['mode'] | 'lirr' | 'mnr' | 'path' | 'njt' | 'njt-bus' | 'njt-rail' | 'nyc-ferry' | 'si-ferry'>('subway');
     const [line, setLine] = useState('');
     const [station, setStation] = useState<Station | null>(null);
     const [selectedRoute, setSelectedRoute] = useState<{ id: string, shortName: string } | null>(null);
 
-    const handleModeSelect = (m: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt') => {
+    const handleModeSelect = (m: 'subway' | 'bus' | 'lirr' | 'mnr' | 'path' | 'njt' | 'ferry') => {
         if (m === 'njt') {
             setSubModeStep('njt');
-            setMode('njt'); // Temporary
+            return;
+        }
+        if (m === 'ferry') {
+            setSubModeStep('ferry');
             return;
         }
 
-        setMode(m);
+        setMode(m as any);
         if (m === 'subway') setStep('line');
         else if (m === 'lirr') {
             setLine('LIRR');
@@ -46,14 +49,20 @@ export default function AddPage() {
         else setStep('station'); // Bus
     };
 
-    const handleSubModeSelect = (sm: 'njt-rail' | 'njt-bus') => {
+    const handleSubModeSelect = (sm: 'njt-rail' | 'njt-bus' | 'nyc-ferry' | 'si-ferry') => {
         setMode(sm);
         if (sm === 'njt-rail') {
             setLine('NJT'); // Rail
             setStep('station');
-        } else {
+        } else if (sm === 'njt-bus') {
             setLine('NJT Bus');
             setStep('station');
+        } else if (sm === 'nyc-ferry') {
+            setLine('NYC Ferry');
+            setStep('station');
+        } else if (sm === 'si-ferry') {
+            setLine('SI Ferry');
+            setStep('direction'); // Directly to direction for SI Ferry as it's just the two terminals
         }
         setSubModeStep(null);
     };
@@ -71,6 +80,8 @@ export default function AddPage() {
         } else if (mode === 'njt-bus') {
             // NJ Transit BUS V2: Origin-Destination selection
             saveTuple(s, s.direction || 'N', routeId, destStation);
+        } else if (mode === 'nyc-ferry' && destStation) {
+            saveTuple(s, 'N', 'nyc-ferry', destStation);
         } else if ((mode === 'lirr' || mode === 'mnr' || mode === 'path' || mode === 'njt' || mode === 'njt-rail') && destStation) {
             const specificRouteId = (mode === 'njt' || mode === 'njt-rail') ? 'NJT' : (mode === 'lirr' ? 'LIRR' : (mode === 'mnr' ? 'MNR' : undefined));
             saveTuple(s, 'N', specificRouteId, destStation);
@@ -81,7 +92,7 @@ export default function AddPage() {
 
     const saveTuple = (s: Station, dir: CommuteDirection, specificRouteId?: string, destStation?: Station) => {
         let finalMode: any = mode;
-        if (['lirr', 'mnr', 'path', 'njt'].includes(mode)) {
+        if (['lirr', 'mnr', 'path', 'njt', 'nyc-ferry', 'si-ferry'].includes(mode)) {
             finalMode = 'rail';
         }
         // njt-bus and njt-rail should represent themselves
@@ -98,10 +109,17 @@ export default function AddPage() {
             createdAt: Date.now()
         };
 
-        if (['lirr', 'mnr', 'path', 'njt', 'njt-rail', 'njt-bus'].includes(mode)) {
+        if (['lirr', 'mnr', 'path', 'njt', 'njt-rail', 'njt-bus', 'nyc-ferry', 'si-ferry'].includes(mode)) {
             if (destStation) {
                 newTuple.label = `${s.name} ➔ ${destStation.name}`;
                 newTuple.destinationName = destStation.name;
+            } else if (mode === 'si-ferry') {
+                const destName = dir === 'N' ? 'Manhattan' : 'St. George';
+                const originName = dir === 'N' ? 'St. George' : 'Manhattan';
+                newTuple.label = `${originName} ➔ ${destName}`;
+                newTuple.destinationName = destName;
+                newTuple.stopId = dir === 'N' ? 'st-george' : 'whitehall';
+                newTuple.destinationStopId = dir === 'N' ? 'whitehall' : 'st-george';
             } else {
                 newTuple.label = `${s.name} - ${dir === 'N' ? 'NYC Bound' : 'NJ/Outbound'}`;
                 if (mode === 'lirr' || mode === 'mnr') {
@@ -137,6 +155,7 @@ export default function AddPage() {
                         <button className="mode-btn" onClick={() => handleModeSelect('mnr')}>Metro-North</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('njt')}>NJ Transit</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('path')}>PATH</button>
+                        <button className="mode-btn" onClick={() => handleModeSelect('ferry')}>Ferry</button>
                         <button className="mode-btn" onClick={() => handleModeSelect('bus')}>Bus</button>
                     </div>
                 </>
@@ -151,6 +170,19 @@ export default function AddPage() {
                     <div className="grid">
                         <button className="mode-btn" onClick={() => handleSubModeSelect('njt-rail')}>Train</button>
                         <button className="mode-btn" onClick={() => handleSubModeSelect('njt-bus')}>Bus</button>
+                    </div>
+                </>
+            )}
+
+            {step === 'mode' && subModeStep === 'ferry' && (
+                <>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+                        <button onClick={() => setSubModeStep(null)} className="back-btn">← Back</button>
+                        <h1>Ferry Mode</h1>
+                    </div>
+                    <div className="grid">
+                        <button className="mode-btn" onClick={() => handleSubModeSelect('nyc-ferry')}>NYC Ferry - Real Time</button>
+                        <button className="mode-btn" onClick={() => handleSubModeSelect('si-ferry')}>Staten Island Ferry - Schedule Only</button>
                     </div>
                 </>
             )}
@@ -188,11 +220,11 @@ export default function AddPage() {
                     <p style={{ color: '#888', marginBottom: 32 }}>{station.name}</p>
 
                     <button className="dir-btn" onClick={() => handleDirectionSelect('N')}>
-                        {mode === 'lirr' || mode === 'mnr' ? 'Toward NYC / Westbound' : (mode === 'path' ? 'Toward NYC (33rd St / WTC)' : `Toward ${station.north_label || 'Uptown / Northbound'}`)}
+                        {mode === 'lirr' || mode === 'mnr' ? 'Toward NYC / Westbound' : (mode === 'path' ? 'Toward NYC (33rd St / WTC)' : (mode === 'si-ferry' ? 'To Manhattan' : `Toward ${station?.north_label || 'Uptown / Northbound'}`))}
                     </button>
 
                     <button className="dir-btn" onClick={() => handleDirectionSelect('S')}>
-                        {mode === 'lirr' || mode === 'mnr' ? 'Toward LI/CT / Eastbound' : (mode === 'path' ? 'Toward NJ (Newark / Hoboken)' : `Toward ${station.south_label || 'Downtown / Southbound'}`)}
+                        {mode === 'lirr' || mode === 'mnr' ? 'Toward LI/CT / Eastbound' : (mode === 'path' ? 'Toward NJ (Newark / Hoboken)' : (mode === 'si-ferry' ? 'To Staten Island' : `Toward ${station?.south_label || 'Downtown / Southbound'}`))}
                     </button>
                 </div>
             )}

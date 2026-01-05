@@ -3,6 +3,7 @@ import { MtaService } from '@/lib/mta';
 import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
 import pathStations from '@/lib/path_stations.json';
+import nycFerryStations from '@/lib/nyc_ferry_stations.json';
 import * as protobuf from 'protobufjs';
 import path from 'path';
 
@@ -44,6 +45,7 @@ export async function GET(request: Request) {
     const isSubwayOrRail = routeId.startsWith('LIRR') ||
         routeId.startsWith('MNR') ||
         routeId === 'PATH' ||
+        routeId === 'nyc-ferry' ||
         ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'N', 'Q', 'R', 'W', 'J', 'Z', 'L', 'G', 'S', 'SIR'].includes(routeId);
 
     let effectiveKey: string | undefined = clientApiKey || serverApiKey;
@@ -54,8 +56,8 @@ export async function GET(request: Request) {
     console.log(`[API] Route: ${routeId} Stop: ${stopId} ClientKey: ${clientKeyPrefix}, ServerKey: ${serverKeyPrefix}`);
 
     try {
-        const isRail = routeId.startsWith('LIRR') || routeId.startsWith('MNR');
-        const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId));
+        const isRail = routeId.startsWith('LIRR') || routeId.startsWith('MNR') || routeId === 'nyc-ferry';
+        const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId === 'nyc-ferry' ? 'NYC_FERRY' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId)));
         console.log(`[API] Fetching feed for routeId=${routeId} stopId=${stopId} type=${feedRouteId}`);
 
         let feedResponse;
@@ -75,8 +77,10 @@ export async function GET(request: Request) {
             if (root) {
                 const FeedMessage = root.lookupType('transit_realtime.FeedMessage');
                 const decoded = FeedMessage.decode(new Uint8Array(feedResponse.data)) as any;
+                console.log(`[API] Decoded protobuf rail feed: ${decoded.entity?.length || 0} entities`);
                 feedResponse = { type: 'gtfs', data: decoded };
             } else {
+                console.warn(`[API] Protobuf root failed, falling back to standard fetch`);
                 // Fallback to standard if protobuf fails
                 feedResponse = await MtaService.fetchFeed(feedRouteId, effectiveKey, stopId, false);
             }
@@ -154,7 +158,7 @@ export async function GET(request: Request) {
         } else {
             // GTFS handling
             const feed = feedResponse.data;
-            const targetStopId = (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`;
+            const targetStopId = (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`;
             const destStopId = searchParams.get('destStopId');
 
             const getTime = (t: any) => {
@@ -168,7 +172,7 @@ export async function GET(request: Request) {
             feed.entity.forEach((entity: any) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
                     const entityRouteId = entity.tripUpdate.trip.routeId;
-                    const isRail = routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
+                    const isRail = routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
                     const routeMatches = isRail ? true : entityRouteId === routeId;
 
                     if (routeMatches) {
@@ -276,13 +280,16 @@ export async function GET(request: Request) {
                                             } else if (routeId === 'PATH') {
                                                 const st = (pathStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
                                                 if (st) displayDest = st.name;
+                                            } else if (routeId === 'nyc-ferry') {
+                                                const st = (nycFerryStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                                if (st) displayDest = st.name;
                                             }
                                         }
                                     }
                                 }
 
                                 arrivals.push({
-                                    routeId: entityRouteId,
+                                    routeId: entityRouteId || (routeId === 'nyc-ferry' ? 'Ferry' : ''),
                                     time: arrivalTime,
                                     destinationArrivalTime: destinationArrivalTime,
                                     minutesUntil: Math.floor((arrivalTime - now) / 60),
@@ -307,7 +314,7 @@ export async function GET(request: Request) {
                 stopMatchCount,
                 afterNowCount,
                 serverTime: now,
-                targetStopId: (routeId === 'PATH' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`,
+                targetStopId: (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`,
                 firstLineRef,
                 debugRaw
             }

@@ -37,6 +37,7 @@ const FEED_URLS: Record<string, string> = {
     'LIRR': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr%2Fgtfs-lirr',
     'MNR': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/mnr%2Fgtfs-mnr',
     'PATH': 'https://path.transitdata.nyc/gtfsrt',
+    'NYC_FERRY': 'http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/tripupdate',
 };
 
 // Bus requires API Key and uses a different base URL usually, but let's try the modern endpoint scheme first.
@@ -177,6 +178,8 @@ export const MtaService = {
             url = FEED_URLS['MNR'];
         } else if (routeId === 'PATH') {
             url = FEED_URLS['PATH'];
+        } else if (routeId === 'NYC_FERRY') {
+            url = FEED_URLS['NYC_FERRY'];
         }
 
         if (!url) {
@@ -199,12 +202,13 @@ export const MtaService = {
                 throw new Error(`HTTP error! status: ${response.status} - ${errorText.substring(0, 100)}`);
             }
             const buffer = await response.arrayBuffer();
+            console.log(`[MTA] Raw buffer size: ${buffer.byteLength} bytes`);
             if (returnRaw) {
                 return { type: 'gtfs-raw', data: buffer };
             }
             // @ts-ignore
             const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
-            // console.log(`[MTA] Parsed ${feed.entity.length} entities from feed`);
+            console.log(`[MTA] Parsed ${feed.entity?.length || 0} entities from feed`);
             return { type: 'gtfs', data: feed };
         } catch (error) {
             console.error('Error fetching/parsing GTFS feed:', error);

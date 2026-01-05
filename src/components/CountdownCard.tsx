@@ -53,6 +53,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
             let endpoint = '/api/mta';
             if (isNjt) endpoint = '/api/njt';
             if (isNjtBus) endpoint = '/api/njt-bus';
+            if (tuple.routeId === 'SI Ferry') endpoint = '/api/si-ferry';
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
 
@@ -95,11 +96,12 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     }, []);
 
     const isNjtBus = tuple.mode === 'njt-bus';
-    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') || tuple.routeId === 'LIRR' ? '#0039A6' : (tuple.routeId === 'NJT' || tuple.routeId === 'NJT Bus' || isNjtBus ? '#F7941D' : '#999')); // MNR/LIRR Blue, NJT Orange
+    const isFerry = tuple.routeId === 'NYC Ferry' || tuple.routeId === 'nyc-ferry' || tuple.routeId === 'SI Ferry' || tuple.routeId === 'si-ferry';
+    const lineColor = COLORS[tuple.routeId] || (tuple.routeId.startsWith('MNR') || tuple.routeId === 'LIRR' ? '#0039A6' : (tuple.routeId === 'NJT' || tuple.routeId === 'NJT Bus' || isNjtBus ? '#F7941D' : (isFerry ? '#00839C' : '#999'))); // MNR/LIRR Blue, NJT Orange
     // isDepartureBoard should be TRUE if we have a destinationStopId (like for Rail)
     // For NJT Bus V2, it's stop-centric, so we don't usually have a destinationStopId unless explicitly picked.
     // If it's FALSE, it shows the card's main label as the destination.
-    const isDepartureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR' || tuple.routeId === 'PATH') && !!tuple.destinationStopId;
+    const isDepartureBoard = (tuple.routeId.startsWith('MNR') || tuple.routeId === 'NJT' || tuple.routeId === 'LIRR' || tuple.routeId === 'PATH' || tuple.routeId === 'NYC Ferry' || tuple.routeId === 'nyc-ferry') && !!tuple.destinationStopId;
 
     const formatTime = (ts: number) => {
         return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
@@ -155,6 +157,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                                     tuple.direction === 'S' ? 'Downtown / South' :
                                         `Direction: ${tuple.direction}`}
                         </p>
+                        {tuple.routeId === 'SI Ferry' && <div className="schedule-badge">SCHEDULE ONLY</div>}
                     </div>
                 </div>
 

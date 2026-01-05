@@ -1,0 +1,45 @@
+{
+    "service": "Staten Island Ferry",
+    "description": "Schedule-only data for Whitehall (Manhattan) to St. George (Staten Island)",
+    "stops": [
+        {
+            "id": "whitehall",
+            "name": "Whitehall Terminal (Manhattan)"
+        },
+        {
+            "id": "st-george",
+            "name": "St. George Terminal (Staten Island)"
+        }
+    ],
+    "patterns": {
+        "weekday": {
+            "peak": {
+                "start": "06:00",
+                "end": "09:30",
+                "frequency": 15
+            },
+            "midday": {
+                "start": "09:30",
+                "end": "15:30",
+                "frequency": 30
+            },
+            "evening_peak": {
+                "start": "15:30",
+                "end": "20:00",
+                "frequency": 15
+            },
+            "night": {
+                "start": "20:00",
+                "end": "06:00",
+                "frequency": 30
+            }
+        },
+        "weekend": {
+            "all_day": {
+                "start": "00:00",
+                "end": "23:59",
+                "frequency": 30
+            }
+        }
+    }
+}
