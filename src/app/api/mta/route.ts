@@ -96,6 +96,8 @@ export async function GET(request: Request) {
         let feedEntityCount = (feedResponse.type === 'gtfs' && feedResponse.data.entity) ? feedResponse.data.entity.length : 0;
         let firstLineRef = ''; // Declare firstLineRef here
         let debugRaw = 'Init;';
+        const foundStopIds = new Set<string>();
+        let sampleEntity: any = null;
 
         if (feedResponse.type === 'siri') {
             debugRaw += 'Type=Siri;';
@@ -169,11 +171,18 @@ export async function GET(request: Request) {
                 return null;
             };
 
-            feed.entity.forEach((entity: any) => {
+            feed.entity.forEach((entity: any, idx: number) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
                     const entityRouteId = entity.tripUpdate.trip.routeId;
                     const isRail = routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
                     const routeMatches = isRail ? true : entityRouteId === routeId;
+
+                    if (entity.tripUpdate.stopTimeUpdate) {
+                        entity.tripUpdate.stopTimeUpdate.forEach((u: any) => {
+                            if (u.stopId) foundStopIds.add(String(u.stopId));
+                        });
+                    }
+                    if (!sampleEntity) sampleEntity = entity;
 
                     if (routeMatches) {
                         routeIdMatchCount++;
@@ -185,8 +194,8 @@ export async function GET(request: Request) {
 
                         if (destStopId) {
                             // Origin-Destination filtering
-                            const originIdx = updates.findIndex((u: any) => u.stopId === stopId);
-                            const destIdx = updates.findIndex((u: any) => u.stopId === destStopId);
+                            const originIdx = updates.findIndex((u: any) => String(u.stopId) === String(stopId));
+                            const destIdx = updates.findIndex((u: any) => String(u.stopId) === String(destStopId));
 
                             if (originIdx !== -1 && destIdx !== -1 && originIdx < destIdx) {
                                 originUpdate = updates[originIdx];
@@ -232,12 +241,14 @@ export async function GET(request: Request) {
                             }
                         } else {
                             // Standard single-stop filtering
-                            originUpdate = updates.find((u: any) => isRail ? u.stopId === stopId : u.stopId === targetStopId);
+                            originUpdate = updates.find((u: any) => isRail ? String(u.stopId) === String(stopId) : String(u.stopId) === String(targetStopId));
                         }
 
                         if (originUpdate) {
                             stopMatchCount++;
                             const arrivalTime = getTime(originUpdate.arrival?.time) || getTime(originUpdate.departure?.time);
+
+                            if (idx === 0) debugRaw += `FirstMatchTime=${arrivalTime};Now=${now};`;
 
                             if (arrivalTime && arrivalTime > now) {
                                 afterNowCount++;
@@ -253,7 +264,7 @@ export async function GET(request: Request) {
                                 // Extract Destination Arrival Time
                                 let destinationArrivalTime = null;
                                 if (destStopId) {
-                                    const destUpdate = updates.find((u: any) => u.stopId === destStopId);
+                                    const destUpdate = updates.find((u: any) => String(u.stopId) === String(destStopId));
                                     if (destUpdate) {
                                         destinationArrivalTime = getTime(destUpdate.arrival?.time);
                                     }
@@ -316,7 +327,9 @@ export async function GET(request: Request) {
                 serverTime: now,
                 targetStopId: (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`,
                 firstLineRef,
-                debugRaw
+                debugRaw,
+                foundStopIds: Array.from(foundStopIds).slice(0, 50),
+                sampleEntity: routeId === 'nyc-ferry' ? sampleEntity : null
             }
         });
     } catch (error) {
