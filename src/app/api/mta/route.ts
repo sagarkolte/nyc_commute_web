@@ -571,7 +571,23 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
     const isWeekend = day === 0 || day === 6;
 
     // 1. Resolve Line Name
-    const schedule = FERRY_SCHEDULE[routeId];
+    let schedule = FERRY_SCHEDULE[routeId];
+
+    // If generic 'nyc-ferry', try to find which line this stop belongs to
+    if (!schedule && routeId === 'nyc-ferry') {
+        const lineName = Object.keys(FERRY_SCHEDULE).find(key => {
+            const s = FERRY_SCHEDULE[key];
+            // Check if this line services the stop
+            // We can check Weekday trips.
+            const sampleTrip = s.Weekday[0];
+            return sampleTrip && sampleTrip.stops[stopId];
+        });
+        if (lineName) {
+            schedule = FERRY_SCHEDULE[lineName];
+            // console.log(`[Schedule] Inferred ${lineName} for stop ${stopId}`);
+        }
+    }
+
     if (!schedule) return [];
 
     const trips = isWeekend ? schedule.Weekend : schedule.Weekday;
