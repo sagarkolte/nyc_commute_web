@@ -3,18 +3,13 @@ import axios from 'axios';
 
 const NJT_BASE_URL = 'https://raildata.njtransit.com/api/TrainData';
 
-// Cache token in memory (note: this resets on server restart/lambda cold start)
-let cachedToken: string | null = null;
-let tokenExpiry: number = 0; // Timestamp
+// Cache token in a way that survives some serverless warm starts
+const globalAny = global as any;
+const tokenCache = globalAny._njt_rail_token || { token: null, expiry: 0 };
 
 async function getNjtToken(): Promise<string | null> {
-    // If token exists and is fresh (arbitrary 1 hour cache, daily limit is strict)
-    // Actually documentation says limit 10/day for creating token? Or using? 
-    // "10 accesses per day is imposed for obtaining the full schedule" - implies getTrainSchedule?
-    // But common belief is fetching the token itself is rate limited.
-    // We'll cache it for 12 hours to be safe.
-    if (cachedToken && Date.now() < tokenExpiry) {
-        return cachedToken;
+    if (tokenCache.token && Date.now() < tokenCache.expiry) {
+        return tokenCache.token;
     }
 
     const username = process.env.NJT_USERNAME;
@@ -43,10 +38,11 @@ async function getNjtToken(): Promise<string | null> {
             });
 
             if (res.data && res.data.UserToken) {
-                cachedToken = res.data.UserToken;
-                tokenExpiry = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
+                tokenCache.token = res.data.UserToken;
+                tokenCache.expiry = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
+                globalAny._njt_rail_token = tokenCache;
                 console.log(`[NJT] Refreshed NJT Token via ${url}`);
-                return cachedToken;
+                return tokenCache.token;
             }
         } catch (error: any) {
             console.warn(`[NJT] Failed to get NJT Token from ${url}:`, error.response?.status || error.message);
@@ -71,43 +67,44 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
     const password = process.env.NJT_PASSWORD;
 
     if (!token) {
-        console.warn('[NJT] Token fetch failed (likely rate limited). Returning MOCK data.');
-        if (stationCode === 'NY') {
-            const nextHour = new Date();
-            nextHour.setMinutes(nextHour.getMinutes() + 10);
-            const later = new Date();
-            later.setMinutes(later.getMinutes() + 25);
-            const later2 = new Date();
-            later2.setMinutes(later2.getMinutes() + 45);
+        console.warn(`[NJT] Token fetch failed for ${stationCode}. Returning generic MOCK data.`);
 
-            return [
-                {
-                    train_id: '1234',
-                    line: 'No Jersey Coast',
-                    destination: 'Bay Head -SEC',
-                    track: '12',
-                    time: nextHour.toISOString(),
-                    status: 'BOARDING'
-                },
-                {
-                    train_id: '5678',
-                    line: 'Northeast Corrdr',
-                    destination: 'Trenton',
-                    track: '8',
-                    time: later.toISOString(),
-                    status: 'ON TIME'
-                },
-                {
-                    train_id: '9012',
-                    line: 'No Jersey Coast',
-                    destination: 'Long Branch -SEC &#9992',
-                    track: 'TRK',
-                    time: later2.toISOString(),
-                    status: 'ON TIME'
-                }
-            ];
-        }
-        return [];
+        const station = (njtStations as any[]).find(s => s.id === stationCode);
+        const stationName = station ? station.name : stationCode;
+
+        const now = new Date();
+        const baseMin = now.getMinutes() < 30 ? 30 : 60;
+
+        const m1 = new Date(now); m1.setMinutes(baseMin + 5);
+        const m2 = new Date(now); m2.setMinutes(baseMin + 25);
+        const m3 = new Date(now); m3.setMinutes(baseMin + 45);
+
+        return [
+            {
+                train_id: 'MOCK-1',
+                line: 'Transit Pulse Recovery',
+                destination: 'New York Penn Station',
+                track: '-',
+                time: m1.toISOString(),
+                status: 'SCHEDULED'
+            },
+            {
+                train_id: 'MOCK-2',
+                line: 'Transit Pulse Recovery',
+                destination: 'Newark Penn Station',
+                track: '-',
+                time: m2.toISOString(),
+                status: 'SCHEDULED'
+            },
+            {
+                train_id: 'MOCK-3',
+                line: 'Transit Pulse Recovery',
+                destination: 'Hoboken Terminal',
+                track: '-',
+                time: m3.toISOString(),
+                status: 'SCHEDULED'
+            }
+        ];
     }
 
     if (!username || !password) {
