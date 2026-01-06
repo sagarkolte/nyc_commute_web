@@ -3,8 +3,8 @@ const fetch = require('node-fetch');
 
 const FEED_URL = 'http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/tripupdate';
 
-// Simulate route.ts logic for routeId='nyc-ferry'
-async function testFallback() {
+// Simulate route.ts logic for routeId='nyc-ferry' with DESTINATION
+async function testFallbackWithDest() {
     console.log(`Fetching feed...`);
     const response = await fetch(FEED_URL);
     let buffer;
@@ -16,10 +16,9 @@ async function testFallback() {
     const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
     const tripUpdates = feed.entity.filter(e => e.tripUpdate);
 
-    const now = Math.floor(Date.now() / 1000);
-    const stopId = '4';
-    const destStopId = '19';
-    const routeId = 'nyc-ferry'; // Generic
+    const stopId = '4'; // Hunters Point South
+    const destStopId = '19'; // North Williamsburg
+    const routeId = 'nyc-ferry'; // User's generic card
 
     console.log(`Simulating Request: routeId=${routeId}, stopId=${stopId}, destStopId=${destStopId}`);
 
@@ -30,20 +29,18 @@ async function testFallback() {
 
         let originUpdate = null;
 
-        // LOGIC FROM route.ts (Simplified)
-        // 1. No FERRY_ROUTES[routeId] match.
+        const originIdx = updates.findIndex(u => String(u.stopId) === String(stopId));
 
-        // 2. Fallback block
-        if (destStopId) {
-            const originIdx = updates.findIndex(u => String(u.stopId) === String(stopId));
-            const destIdx = updates.findIndex(u => String(u.stopId) === String(destStopId));
-
-            if (originIdx !== -1 && destIdx !== -1 && originIdx < destIdx) {
-                // Strict Match
-                originUpdate = updates[originIdx];
-            } else if (routeId === 'nyc-ferry' && originIdx !== -1) {
-                // Permissive Match
-                originUpdate = updates[originIdx];
+        // NEW LOGIC SIMULATION
+        if (destStopId && routeId === 'nyc-ferry') {
+            if (originIdx !== -1) {
+                const destIdx = updates.findIndex(u => String(u.stopId) === String(destStopId));
+                if (destIdx !== -1) {
+                    if (originIdx < destIdx) originUpdate = updates[originIdx];
+                } else {
+                    // RELAXED!
+                    originUpdate = updates[originIdx];
+                }
             }
         }
 
@@ -51,9 +48,12 @@ async function testFallback() {
             const arrivalTime = (originUpdate.arrival && originUpdate.arrival.time) ? originUpdate.arrival.time :
                 (originUpdate.departure && originUpdate.departure.time) ? originUpdate.departure.time : null;
 
-            if (arrivalTime && arrivalTime > now) {
+            // Time check
+            // const now = Math.floor(Date.now() / 1000);
+            // if (arrivalTime > now)
+            if (arrivalTime) {
                 count++;
-                console.log(`MATCHED Trip ${t.tripUpdate.trip.tripId}. Time: ${new Date(arrivalTime * 1000).toLocaleTimeString()}`);
+                console.log(`MATCHED Trip ${t.tripUpdate.trip.tripId} (Dest in feed? ${updateStops.includes(destStopId)})`);
             }
         }
     });
@@ -61,4 +61,4 @@ async function testFallback() {
     console.log(`Total Matches: ${count}`);
 }
 
-testFallback();
+testFallbackWithDest();

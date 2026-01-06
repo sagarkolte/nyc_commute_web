@@ -284,6 +284,24 @@ export async function GET(request: Request) {
                                         originUpdate = updates[0];
                                     }
                                 }
+                            } else if ((routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) && destStopId) {
+                                // NYC FERRY RELAXED FILTERING
+                                // Standard logic above requires trip to contain [Origin ... Dest].
+                                // But ferry feeds are sparse. If we see [Origin ...], we should accept it.
+
+                                if (originIdx !== -1) {
+                                    // If destination is also there, check order
+                                    const destIdx = updates.findIndex((u: any) => String(u.stopId) === String(destStopId));
+                                    if (destIdx !== -1) {
+                                        // Both present. Ensure Origin < Dest
+                                        if (originIdx < destIdx) {
+                                            originUpdate = updates[originIdx];
+                                        }
+                                    } else {
+                                        // Dest missing. Relaxed match -> Accept Origin.
+                                        originUpdate = updates[originIdx];
+                                    }
+                                }
                             }
                         } else {
                             // Standard single-stop filtering
@@ -329,22 +347,52 @@ export async function GET(request: Request) {
                                 if (isMatch) {
                                     // It IS an East River boat (or at least compatible).
                                     // Override entityRouteId so it passes the check
-                                    // entityRouteId is const, so we rely on 'routeMatches' logic below.
-                                    // Actually, we must force routeMatches = true if it matches.
-                                    // But 'routeMatches' was calculated earlier.
 
-                                    // Let's re-eval routeMatches for Ferry
-                                    if (originUpdate) {
-                                        // If we found the origin, we are good.
-                                        // But wait, earlier 'routeMatches' was: const routeMatches = isRail ? true : entityRouteId === routeId;
-                                        // For Ferry, isRail is true (in this code's logic? No, check line 63/182)
-                                        // Line 182: const isRail = ... || routeId === 'nyc-ferry' ...
-                                        // So routeMatches is ALWAYS TRUE for nyc-ferry in the original code. 
-                                        // The filtering happens via 'originUpdate' presence.
+                                    // RELAXED FILTERING:
+                                    // If we are dealing with a generic 'nyc-ferry' request (where we inferred the route),
+                                    // OR even a specific request where the feed is sparse:
+                                    // We MUST keep the trip if the ORIGIN is present, even if the destination is missing.
 
-                                        // The ISSUE: originUpdate is found, BUT destUpdate might be missing.
-                                        // We need to keep this trip IF origin found AND inferred route matches.
-                                        // And we need to Fabricate a destination arrival if missing.
+                                    const originInStops = updates.some((u: any) => String(u.stopId) === String(stopId));
+                                    if (originInStops) {
+                                        // Force match. The standard filtering below might kill it if destStopId is missing from updates.
+                                        // But we can't easily skip standard filtering from here.
+                                        // However, standard filtering uses: if (destStopId) { ... }
+
+                                        // If we want to support "No Info" fix, we simply need to ensure we don't return early?
+                                        // Actually, the main loop continues.
+                                        // But 'entityRouteId' needs to match 'routeId'.
+                                        // For generic 'nyc-ferry', routeId is 'nyc-ferry'.
+                                        // We need to set entityRouteId to 'nyc-ferry' to pass the "routeMatches" check later?
+                                        // Wait, 'routeMatches' is calculated at the top: const routeMatches = ...
+                                        // If routeId is 'nyc-ferry', routeMatches is ALREADY true.
+
+                                        // The problem is likely that later on, 'stopMatchCount' is only incremented if originUpdate is found.
+                                        // And then if destStopId is set, does it filter?
+                                        // Line 372: if (destStopId) { ... destinationArrivalTime = ... }
+                                        // It DOES NOT filter. It just tries to find arrival time.
+
+                                        // So where is it being filtered?
+                                        // Ah! 'originUpdate' calculation.
+                                        // Line ~290: 
+                                        // if (destStopId) { ... if (originIdx < destIdx) ... else if (routeId === 'nyc-ferry') ... }
+
+                                        // This BLOCK (lines 282-300 in original?) handles finding 'originUpdate'.
+                                        // If destStopId is set, it REQUIRES destIdx !== -1 unless routeId === 'nyc-ferry'.
+
+                                        // MY NEW CODE IS BELOW THAT BLOCK.
+                                        // So 'originUpdate' is ALREADY null if dest was missing and routeId != 'nyc-ferry'.
+                                        // BUT routeId IS 'nyc-ferry' for the user!
+
+                                        // Wait, if routeId === 'nyc-ferry', the logic at 296 says:
+                                        // } else if (routeId === 'nyc-ferry' && originIdx !== -1) { originUpdate = ... }
+
+                                        // So it SHOULD have worked.
+
+                                        // UNLESS... 'checkRoute(entity)' returned false?
+                                        // routeId='nyc-ferry'. isRail=true. routeMatches=true.
+
+                                        // Let's re-read the "Find Origin" block CAREFULLY.
                                     }
                                 }
                             }
