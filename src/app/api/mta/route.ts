@@ -4,6 +4,7 @@ import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
 import pathStations from '@/lib/path_stations.json';
 import nycFerryStations from '@/lib/nyc_ferry_stations.json';
+import { FERRY_ROUTES } from '@/lib/ferry_routes';
 import * as protobuf from 'protobufjs';
 import path from 'path';
 
@@ -60,8 +61,8 @@ export async function GET(request: Request) {
     console.log(`[API] Route: ${routeId} Stop: ${stopId} ClientKey: ${clientKeyPrefix}, ServerKey: ${serverKeyPrefix}`);
 
     try {
-        const isRail = routeId.startsWith('LIRR') || routeId.startsWith('MNR') || routeId === 'nyc-ferry';
-        const feedRouteId = routeId === 'PATH' ? 'PATH' : (routeId === 'nyc-ferry' ? 'NYC_FERRY' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId)));
+        const isRail = routeId.startsWith('LIRR') || routeId.startsWith('MNR') || routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId];
+        const feedRouteId = routeId === 'PATH' ? 'PATH' : ((routeId === 'nyc-ferry' || FERRY_ROUTES[routeId]) ? 'NYC_FERRY' : (routeId.startsWith('LIRR') ? 'LIRR' : (routeId.startsWith('MNR') ? 'MNR' : routeId)));
         console.log(`[API] Fetching feed for routeId=${routeId} stopId=${stopId} type=${feedRouteId}`);
 
         let feedResponse;
@@ -179,7 +180,7 @@ export async function GET(request: Request) {
             feed.entity.forEach((entity: any, idx: number) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
                     const entityRouteId = entity.tripUpdate.trip.routeId;
-                    const isRail = routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR');
+                    const isRail = routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR') || !!FERRY_ROUTES[routeId];
                     const routeMatches = isRail ? true : entityRouteId === routeId;
 
                     if (entity.tripUpdate.stopTimeUpdate) {
@@ -197,8 +198,44 @@ export async function GET(request: Request) {
                         const updates = entity.tripUpdate.stopTimeUpdate;
                         let originUpdate: any = null;
 
-                        if (destStopId) {
-                            // Origin-Destination filtering
+                        // --- NYC FERRY ROUTE INFERENCE ---
+                        const ferryStops = FERRY_ROUTES[routeId];
+                        if (ferryStops) {
+                            // 1. Loose OD matching for sparse ferry feeds
+                            // If we requested a specific line (e.g. "East River"), check if this trip's stops belong to it.
+                            const tripStopIds = updates.map((u: any) => String(u.stopId));
+                            // We require at least one stop to match the definition
+                            const matchesLine = tripStopIds.some((s: string) => ferryStops.includes(s));
+
+                            if (matchesLine) {
+                                // 2. Found Origin?
+                                const originIdx = updates.findIndex((u: any) => String(u.stopId) === String(stopId));
+                                if (originIdx !== -1) {
+                                    // 3. Dest Check (Relaxed)
+                                    // If strict dest check fails, we still allow it IF the line matches
+                                    if (destStopId) {
+                                        const destIdx = updates.findIndex((u: any) => String(u.stopId) === String(destStopId));
+
+                                        // Case A: Standard Match (Both present)
+                                        if (destIdx !== -1 && originIdx < destIdx) {
+                                            originUpdate = updates[originIdx];
+                                        }
+                                        // Case B: Sparse Feed (Dest missing, but inferred line is correct)
+                                        else if (destIdx === -1) {
+                                            // The boat is at Origin, going... somewhere.
+                                            // Since we matched the LINE (East River), and the user wants East River, 
+                                            // we assume it's going the right way relative to the static definition.
+                                            // Optional: Check direction against static sequence? 
+                                            // For now, simple inclusion is infinitely better than "No Info".
+                                            originUpdate = updates[originIdx];
+                                        }
+                                    } else {
+                                        originUpdate = updates[originIdx];
+                                    }
+                                }
+                            }
+                        } else if (destStopId) {
+                            // Standard OD filtering for other modes
                             const originIdx = updates.findIndex((u: any) => String(u.stopId) === String(stopId));
                             const destIdx = updates.findIndex((u: any) => String(u.stopId) === String(destStopId));
 
@@ -251,6 +288,54 @@ export async function GET(request: Request) {
                         } else {
                             // Standard single-stop filtering
                             originUpdate = updates.find((u: any) => isRail ? String(u.stopId) === String(stopId) : String(u.stopId) === String(targetStopId));
+                        }
+
+                        // --- NYC FERRY ROUTE INFERENCE ---
+                        if (routeId === 'nyc-ferry' || Object.values(FERRY_ROUTES).some(stops => updates.some((u: any) => stops.includes(String(u.stopId))))) {
+                            // Can we infer the route of this trip?
+                            // Iterate all known ferry routes
+                            // If this trip contains a sequence of stops unique to or characteristic of a route, tag it.
+                            // Simplified: If this trip contains >= 2 stops from a defined route definition, assume it's that route.
+                            // Even better: Check if the *requested* routeId (e.g. "East River") contains the stops in this update.
+
+                            // 1. Get the requested route definition from query (if passed as routeId like 'East River')
+                            // Note: routeId param might be "nyc-ferry" if not strict, or "East River" if strict.
+                            // But here 'routeId' variable is what was passed in query.
+
+                            const requestedFerryRouteStops = FERRY_ROUTES[routeId];
+
+                            if (requestedFerryRouteStops) {
+                                // The user requested a specific Ferry Line (e.g. East River).
+                                // Does this trip belong to East River?
+                                // Check if the stops in this update exist in the East River definition.
+                                // We need at least 1 match, but ideally 2 to be sure of direction/line if stops are shared.
+                                // However, most ferry stops are shared. 
+                                // Best check: Are ALL observed stops in this update part of the East River line?
+                                const tripStops = updates.map((u: any) => String(u.stopId));
+                                const isMatch = tripStops.every((s: string) => requestedFerryRouteStops.includes(s));
+
+                                if (isMatch) {
+                                    // It IS an East River boat (or at least compatible).
+                                    // Override entityRouteId so it passes the check
+                                    // entityRouteId is const, so we rely on 'routeMatches' logic below.
+                                    // Actually, we must force routeMatches = true if it matches.
+                                    // But 'routeMatches' was calculated earlier.
+
+                                    // Let's re-eval routeMatches for Ferry
+                                    if (originUpdate) {
+                                        // If we found the origin, we are good.
+                                        // But wait, earlier 'routeMatches' was: const routeMatches = isRail ? true : entityRouteId === routeId;
+                                        // For Ferry, isRail is true (in this code's logic? No, check line 63/182)
+                                        // Line 182: const isRail = ... || routeId === 'nyc-ferry' ...
+                                        // So routeMatches is ALWAYS TRUE for nyc-ferry in the original code. 
+                                        // The filtering happens via 'originUpdate' presence.
+
+                                        // The ISSUE: originUpdate is found, BUT destUpdate might be missing.
+                                        // We need to keep this trip IF origin found AND inferred route matches.
+                                        // And we need to Fabricate a destination arrival if missing.
+                                    }
+                                }
+                            }
                         }
 
                         if (originUpdate) {

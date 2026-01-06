@@ -157,7 +157,8 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             data = nycFerryStations;
             const res = (data as Station[]).filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
             if (originStation) {
-                return res.filter(s => s.id !== originStation.id);
+                // Determine valid destinations based on shared lines
+                return res.filter(s => s.id !== originStation.id && s.lines.some(l => originStation.lines.includes(l)));
             }
             return res;
         } else if (mode === 'njt' || mode === 'njt-rail') {
@@ -302,7 +303,12 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 setOriginStation(s);
                 setSearch('');
             } else {
-                onSelect(originStation, undefined, s);
+                let inferredRoute = undefined;
+                if (mode === 'nyc-ferry') {
+                    // Find common line
+                    inferredRoute = s.lines.find((l: string) => originStation.lines.includes(l));
+                }
+                onSelect(originStation, inferredRoute, s);
             }
         } else {
             onSelect(s, routeId);
