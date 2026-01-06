@@ -302,7 +302,19 @@ export async function GET(request: Request) {
                             // Note: routeId param might be "nyc-ferry" if not strict, or "East River" if strict.
                             // But here 'routeId' variable is what was passed in query.
 
-                            const requestedFerryRouteStops = FERRY_ROUTES[routeId];
+                            let requestedFerryRouteStops = FERRY_ROUTES[routeId];
+
+                            // Dynamic Inference for generic 'nyc-ferry' requests
+                            if (!requestedFerryRouteStops && routeId === 'nyc-ferry') {
+                                const tripStops = updates.map((u: any) => String(u.stopId));
+                                // Find first route def that allows all these stops
+                                const matchName = Object.keys(FERRY_ROUTES).find(key => {
+                                    const def = FERRY_ROUTES[key];
+                                    if (tripStops.length === 0) return false;
+                                    return tripStops.every((s: string) => def.includes(s));
+                                });
+                                if (matchName) requestedFerryRouteStops = FERRY_ROUTES[matchName];
+                            }
 
                             if (requestedFerryRouteStops) {
                                 // The user requested a specific Ferry Line (e.g. East River).

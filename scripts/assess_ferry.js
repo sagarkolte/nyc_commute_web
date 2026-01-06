@@ -18,11 +18,6 @@ async function assessFerry() {
     console.log(`Fetching NYC Ferry feed from: ${FEED_URL}`);
     try {
         const response = await fetch(FEED_URL);
-        if (!response.ok) {
-            console.error(`Fetch failed: ${response.status} ${response.statusText}`);
-            return;
-        }
-
         let buffer;
         if (typeof response.arrayBuffer === 'function') {
             buffer = await response.arrayBuffer();
@@ -33,37 +28,48 @@ async function assessFerry() {
         const tripUpdates = feed.entity.filter(e => e.tripUpdate);
         console.log(`Fetched ${tripUpdates.length} trip updates.`);
 
-        console.log('\n--- Simulation: Inferring "East River" trips & Destinations ---');
-        const routeId = 'East River';
-        const requestedFerryRouteStops = FERRY_ROUTES[routeId];
+        console.log('\n--- Simulation: Generic "nyc-ferry" Request with Dynamic Inference ---');
+        const routeId = 'nyc-ferry'; // Generic request
 
         let matchCount = 0;
         tripUpdates.forEach((t, i) => {
             const updates = t.tripUpdate.stopTimeUpdate || [];
             const tripStops = updates.map(u => String(u.stopId));
 
-            const matchesLine = tripStops.every(s => requestedFerryRouteStops.includes(s));
+            // Dynamic Inference Logic
+            let ferryStops = null;
+            if (routeId === 'nyc-ferry') {
+                // Try to find matching route by checking ALL definitions
+                const matchName = Object.keys(FERRY_ROUTES).find(key => {
+                    const def = FERRY_ROUTES[key];
+                    return tripStops.length > 0 && tripStops.every(s => def.includes(s));
+                });
+                if (matchName) {
+                    ferryStops = FERRY_ROUTES[matchName];
+                }
+            }
 
-            if (matchesLine && tripStops.length > 0) {
+            if (ferryStops && tripStops.length > 0) {
                 matchCount++;
 
+                // Destination Inference Logic (using inferred ferryStops)
                 let inferredDest = "Unknown";
                 const firstStopId = String(updates[0].stopId);
                 const lastStopId = String(updates[updates.length - 1].stopId);
-                const firstIdx = requestedFerryRouteStops.indexOf(firstStopId);
-                const lastIdx = requestedFerryRouteStops.indexOf(lastStopId);
+                const firstIdx = ferryStops.indexOf(firstStopId);
+                const lastIdx = ferryStops.indexOf(lastStopId);
 
                 if (firstIdx !== -1 && lastIdx !== -1) {
                     if (firstIdx <= lastIdx) {
-                        const destId = requestedFerryRouteStops[requestedFerryRouteStops.length - 1];
-                        inferredDest = `End of Line Forward (ID: ${destId})`;
+                        const destId = ferryStops[ferryStops.length - 1]; // Forward
+                        inferredDest = `Inferred Forward Dest (ID: ${destId})`;
                     } else {
-                        const destId = requestedFerryRouteStops[0];
-                        inferredDest = `End of Line Reverse (ID: ${destId})`;
+                        const destId = ferryStops[0]; // Backward
+                        inferredDest = `Inferred Reverse Dest (ID: ${destId})`;
                     }
                 }
 
-                if (i < 10) {
+                if (i < 15) {
                     console.log(`TRIP ${t.tripUpdate.trip.tripId}`);
                     // console.log(`   Stops: ${tripStops.join(' -> ')}`);
                     console.log(`   Inferred Dest: ${inferredDest}`);
@@ -71,7 +77,7 @@ async function assessFerry() {
             }
         });
 
-        console.log(`\nTotal Inferred Matches for East River: ${matchCount}`);
+        console.log(`\nTotal Trips Inferred from 'nyc-ferry' request: ${matchCount}`);
 
     } catch (error) {
         console.error('Error assessing ferry feed:', error);
