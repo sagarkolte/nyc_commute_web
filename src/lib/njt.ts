@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import njtStations from './njt_stations.json';
 
 const NJT_BASE_URL = 'https://raildata.njtransit.com/api/TrainData';
 
