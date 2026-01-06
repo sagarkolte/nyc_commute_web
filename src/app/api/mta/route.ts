@@ -5,6 +5,7 @@ import lirrStations from '@/lib/lirr_stations.json';
 import pathStations from '@/lib/path_stations.json';
 import nycFerryStations from '@/lib/nyc_ferry_stations.json';
 import { FERRY_ROUTES } from '@/lib/ferry_routes';
+import { FERRY_SCHEDULE, FerryScheduleItem } from '@/lib/ferry_schedule';
 import * as protobuf from 'protobufjs';
 import path from 'path';
 
@@ -92,7 +93,20 @@ export async function GET(request: Request) {
         }
 
         const now = Date.now() / 1000;
-        const arrivals: any[] = [];
+        let arrivals: any[] = [];
+
+        // HYBRID FERRY: Pre-fill with Schedule
+        if (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) {
+            // We need to support 'nyc-ferry' (generic) too? 
+            // getScheduledFerryArrivals handles generic via FERRY_SCHEDULE lookup.
+            // But we only have 'East River' schedule.
+            // If routeId is 'nyc-ferry', we can't reliably guess schedule unless we assume East River.
+            // But existing route inference logic infers it LATER.
+
+            // Strategy: Only pre-fill if specific route is requested OR if we want to default generic to something.
+            // Given user specifically asked for "East River" in UI, routeId should be 'East River'.
+            arrivals = getScheduledFerryArrivals(routeId, stopId, now, direction);
+        }
 
         // Debug stats
         let routeIdMatchCount = 0;
@@ -478,18 +492,45 @@ export async function GET(request: Request) {
                                     }
                                 }
 
-                                arrivals.push({
+                                const newArrival = {
                                     routeId: entityRouteId || (routeId === 'nyc-ferry' ? 'Ferry' : routeId),
                                     time: arrivalTime,
                                     destinationArrivalTime: destinationArrivalTime,
                                     minutesUntil: Math.floor((arrivalTime - now) / 60),
                                     destination: displayDest || 'Unknown',
-                                    track: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? '' : track
-                                });
+                                    track: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? '' : track,
+                                    status: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? 'Live' : undefined
+                                };
+
+                                // HYBRID MERGE for Ferry
+                                let matched = false;
+                                if (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) {
+                                    const matchIdx = arrivals.findIndex(a => a.type === 'schedule' && Math.abs(a.time - arrivalTime) < 1200);
+                                    if (matchIdx !== -1) {
+                                        // Update Schedule Slot
+                                        arrivals[matchIdx] = { ...newArrival, type: 'realtime', status: 'Live' };
+                                        matched = true;
+                                    }
+                                }
+
+                                if (!matched) {
+                                    arrivals.push(newArrival);
+                                }
                             }
                         }
                     }
                 }
+            });
+        }
+
+        // Filter out stale scheduled trips (Ferry only)
+        if (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) {
+            arrivals = arrivals.filter(a => {
+                if (a.type === 'schedule') {
+                    // Keep only future scheduled trips. Past ones that didn't match are assumed departed.
+                    return a.time >= now;
+                }
+                return true;
             });
         }
 
@@ -522,4 +563,67 @@ export async function GET(request: Request) {
         console.error('[API] Error in MTA route:', error);
         return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
     }
+}
+
+// Helper for Hybrid Ferry Schedule
+function getScheduledFerryArrivals(routeId: string, stopId: string, now: number, direction: string | null): any[] {
+    const day = new Date(now * 1000).getDay();
+    const isWeekend = day === 0 || day === 6;
+
+    // 1. Resolve Line Name
+    const schedule = FERRY_SCHEDULE[routeId];
+    if (!schedule) return [];
+
+    const trips = isWeekend ? schedule.Weekend : schedule.Weekday;
+    const scheduledArrivals: any[] = [];
+
+    trips.forEach(trip => {
+        // Filter by Direction: 
+        // User's 'direction' param for Ferry is weird. Usually 'N' or 'S'.
+        // FERRY_SCHEDULE uses 0 (North/Forward) and 1 (South/Forward).
+        // Let's rely on stop sequence order in schedule vs user request? 
+        // Or if user provided direction...
+        // Actually, user selects Origin -> Dest directly. 
+        // We can just check if this Trip contains the Origin.
+        // AND check if it matches the implied direction if we knew it?
+
+        // For now, simpler: Just check if this trip stops at 'stopId'
+        const stopTimeStr = trip.stops[stopId];
+        if (stopTimeStr) {
+            const [h, m] = stopTimeStr.split(':').map(Number);
+            const date = new Date(now * 1000);
+            date.setHours(h, m, 0, 0);
+            let time = date.getTime() / 1000;
+
+            // Handle wrap-around? Assume schedule is "today".
+
+            // Include if in relevant window (e.g. -30 mins to +4 hours)
+            if (time > now - 1800 && time < now + 14400) {
+                // Determine Destination
+                const routeStops = FERRY_ROUTES[routeId];
+                let destName = 'Scheduled';
+                if (routeStops) {
+                    const destId = trip.directionId === 0
+                        ? routeStops[routeStops.length - 1]
+                        : routeStops[0];
+                    const st = (nycFerryStations as any[]).find((s: any) => s.id === destId);
+                    if (st) destName = st.name;
+                }
+
+                scheduledArrivals.push({
+                    routeId: routeId,
+                    time: time,
+                    destinationArrivalTime: null,
+                    minutesUntil: Math.floor((time - now) / 60),
+                    destination: destName,
+                    type: 'schedule',
+                    tripId: trip.tripId,
+                    status: 'Scheduled',
+                    track: ''
+                });
+            }
+        }
+    });
+
+    return scheduledArrivals;
 }
