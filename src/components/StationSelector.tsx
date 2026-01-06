@@ -35,6 +35,10 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     const [selectedNjtRoute, setSelectedNjtRoute] = useState<string | null>(null);
     const [selectedNjtDirection, setSelectedNjtDirection] = useState<string | null>(null);
 
+    // New Bus Logic
+    const [busStep, setBusStep] = useState<'route' | 'stop'>('route');
+    const [busRoutes, setBusRoutes] = useState<any[]>([]);
+
     useEffect(() => {
         setHasKey(!!CommuteStorage.getApiKey());
     }, []);
@@ -60,39 +64,57 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     }, [mode, njtStep, njtRoutes.length]);
 
     useEffect(() => {
-        // Only fetch from API if we are NOT locked on a route
-        if (mode === 'bus' && !lockedRoute && search.length > 2) {
-            const apiKey = CommuteStorage.getApiKey();
-            // Server will handle auth if apiKey is missing
-
+        // Bus Search Logic (Routes)
+        if (mode === 'bus' && !lockedRoute && search.length >= 1) {
             const delayDebounceFn = setTimeout(async () => {
                 setLoading(true);
                 try {
+                    const res = await fetch(`/api/mta/bus-routes?q=${encodeURIComponent(search)}`);
+                    const data = await res.json();
+                    setBusRoutes(data.routes || []);
+                } catch (e) {
+                    console.error('Failed to search bus routes', e);
+                } finally {
+                    setLoading(false);
+                }
+            }, 600); // 600ms debounce
+            return () => clearTimeout(delayDebounceFn);
+        } else if (mode === 'bus' && lockedRoute) {
+            // Fetch stops for locked route
+            if (busStops.length > 0) return;
+
+            const fetchStops = async () => {
+                setLoading(true);
+                try {
+                    const apiKey = CommuteStorage.getApiKey();
                     const headers: any = {};
                     if (apiKey) headers['x-mta-api-key'] = apiKey;
 
-                    const res = await fetch(`/api/mta/bus-stops?q=${search}`, {
-                        headers
-                    });
+                    const res = await fetch(`/api/mta/bus-stops?routeId=${encodeURIComponent(lockedRoute)}`, { headers });
                     const data = await res.json();
-                    if (data.stops) {
-                        setBusStops(data.stops);
-                    }
+                    setBusStops(data.stops || []);
                 } catch (e) {
                     console.error(e);
                 } finally {
                     setLoading(false);
                 }
-            }, 1000);
-
-            return () => clearTimeout(delayDebounceFn);
+            };
+            fetchStops();
         }
-    }, [mode, search, lockedRoute]);
+    }, [mode, search, lockedRoute, busStops.length]);
 
     const handleUnlock = () => {
         setLockedRoute(null);
-        setSearch(''); // Clear search to allow finding new route
-        setBusStops([]); // Clear stops to restart
+        setBusStep('route');
+        setSearch('');
+        setBusStops([]);
+        setBusRoutes([]);
+    };
+
+    const handleBusRouteSelect = (route: any) => {
+        setLockedRoute(route.id);
+        setBusStep('stop');
+        setSearch('');
     };
 
     const handleReset = () => {
@@ -100,40 +122,16 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         setSearch('');
     };
 
-    const uniqueRoutes = useMemo(() => {
-        if (mode !== 'bus' || lockedRoute) return [];
-        // Extract unique routes from fetched stops
-        const routesMap = new Map<string, number>();
-        busStops.forEach(s => {
-            s.lines.forEach(id => {
-                // Only include the route matching the search query closely?
-                // Or just show all? The API "search-for-route" usually returns relevant stops.
-                // We show all lines associated with these stops.
-                // But we should prioritize the one matching the query.
-                // Filter: Only show matches to query?
-                if (!id) return;
-                const count = routesMap.get(id) || 0;
-                routesMap.set(id, count + 1);
-            });
-        });
-
-        // Convert to array and sort by relevance (exact match first, then length)
-        return Array.from(routesMap.entries())
-            .map(([id, count]) => ({ id, count }))
-            .filter(r => r.id.toLowerCase().includes(search.toLowerCase().trim())) // Only show relevant routes
-            .sort((a, b) => {
-                const q = search.toLowerCase().trim();
-                const aName = a.id.toLowerCase();
-                const bName = b.id.toLowerCase();
-                if (aName === q) return -1;
-                if (bName === q) return 1;
-                return aName.length - bName.length;
-            });
-    }, [busStops, lockedRoute, search, mode]);
+    // Simplified uniqueRoutes since we use API for bus routes now
+    const uniqueRoutes: any[] = [];
 
     const filtered = useMemo(() => {
         let data: any[] = [];
-        if (mode === 'subway') {
+        if (mode === 'bus') {
+            data = busStops;
+            return (data as Station[])
+                .filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+        } else if (mode === 'subway') {
             data = subwayStations;
             return (data as Station[])
                 .filter(s => line ? s.lines.includes(line) : true)
@@ -410,17 +408,16 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                             </div>
                         )}
                         {loading && <div style={{ padding: 16 }}>Searching Routes...</div>}
-                        {uniqueRoutes.map(route => (
+
+                        {/* New API Route List */}
+                        {busRoutes.map(route => (
                             <button
                                 key={route.id}
                                 className="item icon-item"
-                                onClick={() => {
-                                    setLockedRoute(route.id);
-                                    setSearch('');
-                                }}
+                                onClick={() => handleBusRouteSelect(route)}
                             >
-                                <span className="route-icon">{route.id.replace('MTA NYCT_', '').replace('+', '')}</span>
-                                <span className="route-count">{route.count} stops</span>
+                                <span className="route-icon">{route.shortName}</span>
+                                <span className="route-desc" style={{ marginLeft: 10, color: '#aaa', fontSize: '0.9em' }}>{route.longName}</span>
                             </button>
                         ))}
                     </>

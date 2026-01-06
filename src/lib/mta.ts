@@ -49,76 +49,81 @@ const OBA_BASE = 'http://bustime.mta.info/api/where';
 const SIRI_BASE = 'http://bustime.mta.info/api/siri';
 
 export const MtaService = {
-    fetchBusStops: async (query: string, apiKey: string) => {
-        // OneBusAway - Stops for location (or search)
-        // Actually, OBA search API is better: /api/where/stops-for-location.json?lat=...&lon=...
-        // But we want search by name. OBA has no direct "search by name" for stops easily documented in standard OBA without location.
-        // However, we can try searching for route first, then listing stops.
-        // Simplifying: We'll use the 'stops-for-route' if the user types a route name (e.g. M15),
-        // or we might need a different strategy.
-
-        // Actually, let's use the 'stops-for-location' with a wide radius if we had lat/lon.
-        // Without location, searching is hard.
-        // Let's implement 'stops-for-route' as the primary "search" for now.
-        // User types "M15" -> we fetch route "MTA NYCT_M15" -> then fetch stops.
-
+    searchBusRoutes: async (query: string, apiKey: string) => {
         const agencies = ['MTA NYCT', 'MTABC'];
-        let routes: any[] = [];
+        let allRoutes: any[] = [];
 
-        for (const agency of agencies) {
+        // 1. Parallel fetch for speed
+        await Promise.all(agencies.map(async (agency) => {
             try {
-                const routeRes = await fetch(`${OBA_BASE}/routes-for-agency/${encodeURIComponent(agency)}.json?key=${apiKey}`);
-                if (routeRes.ok) {
-                    const routeData = await routeRes.json();
-                    if (routeData?.data?.list) {
-                        routes = [...routes, ...routeData.data.list];
+                // Determine URL based on agency if needed, but OBA handles it via param
+                const url = `${OBA_BASE}/routes-for-agency/${encodeURIComponent(agency)}.json?key=${apiKey}`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data?.data?.list) {
+                        allRoutes.push(...data.data.list);
                     }
                 }
             } catch (e) {
-                console.warn(`[MTA] Failed to fetch routes for agency ${agency}:`, e);
+                console.warn(`[MTA] Failed to fetch routes for ${agency}`, e);
             }
-        }
+        }));
 
-        const queryLower = query.toLowerCase();
-        // Priority match: startsWith, then includes
-        let matchedRoute = routes.find((r: any) => r.shortName.toLowerCase().startsWith(queryLower));
-        if (!matchedRoute) {
-            matchedRoute = routes.find((r: any) => r.shortName.toLowerCase().includes(queryLower));
-        }
+        const queryLower = query.toLowerCase().trim();
+        if (!queryLower) return [];
 
-        if (matchedRoute) {
-            const stopsRes = await fetch(`${OBA_BASE}/stops-for-route/${encodeURIComponent(matchedRoute.id)}.json?key=${apiKey}&includePolylines=false`);
+        // 2. Filter matches
+        // Exact match -> Starts with -> Includes
+        const matches = allRoutes.filter((r: any) => {
+            const short = (r.shortName || '').toLowerCase();
+            const long = (r.longName || '').toLowerCase();
+            const id = (r.id || '').toLowerCase();
+            return short.includes(queryLower) || id.includes(queryLower) || long.includes(queryLower);
+        });
 
-            if (!stopsRes.ok) {
-                console.warn(`[MTA] stops-for-route failed: ${stopsRes.status}`);
-                return [];
-            }
+        // 3. Sort for relevance
+        return matches.sort((a, b) => {
+            const aShort = (a.shortName || '').toLowerCase();
+            const bShort = (b.shortName || '').toLowerCase();
 
-            const stopsData = await stopsRes.json();
+            // Exact matches to top
+            if (aShort === queryLower && bShort !== queryLower) return -1;
+            if (bShort === queryLower && aShort !== queryLower) return 1;
 
-            // Validate stopsData
-            if (!stopsData || !stopsData.data) {
-                console.warn('[MTA] Invalid data from stops-for-route');
-                return [];
-            }
+            // Starts-with to top
+            const aStarts = aShort.startsWith(queryLower);
+            const bStarts = bShort.startsWith(queryLower);
+            if (aStarts && !bStarts) return -1;
+            if (bStarts && !aStarts) return 1;
 
-            // OBA stops-for-route structure found:
-            // data.stops: The actual stops array (flattened)
-            // data.stopGroupings: groups stops by direction/destination
+            // Alphanumeric sort
+            return aShort.localeCompare(bShort, undefined, { numeric: true });
+        }).slice(0, 50); // Limit results
+    },
 
-            const stopGroupings = stopsData.data.stopGroupings || [];
-            const stopHeadsignMap: Record<string, string> = {}; // StopID -> "To Destination"
+    getBusStops: async (routeId: string, apiKey: string) => {
+        // Stops for specific route
+        const url = `${OBA_BASE}/stops-for-route/${encodeURIComponent(routeId)}.json?key=${apiKey}&includePolylines=false`;
 
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`OBA API Error: ${res.status}`);
+
+            const data = await res.json();
+            if (!data?.data?.stops) return [];
+
+            const stops = data.data.stops;
+            const stopGroupings = data.data.stopGroupings || [];
+            const stopHeadsignMap: Record<string, string> = {};
+
+            // Map stops to destinations
             stopGroupings.forEach((grouping: any) => {
                 grouping.stopGroups?.forEach((sg: any) => {
                     const destName = sg.name?.name;
                     if (destName) {
-                        // "SELECT BUS CHELSEA PIERS..." -> "To Chelsea Piers"
-                        // Heuristic: Remove "SELECT BUS " and " CROSSTOWN"?
-                        // Or just use the raw name for now, let UI format it?
-                        // Let's clean it up slightly: Title Case + strip "SELECT BUS" if present.
                         let cleanName = destName.replace('SELECT BUS ', '').trim();
-                        // Capitalize first letter of each word (simple title case)
+                        // Title case
                         cleanName = cleanName.toLowerCase().replace(/(?:^|\s|["'([{])+\S/g, (match: string) => match.toUpperCase());
 
                         sg.stopIds?.forEach((stopId: string) => {
@@ -128,13 +133,6 @@ export const MtaService = {
                 });
             });
 
-            const stops = stopsData.data.stops;
-
-            if (!stops) {
-                console.warn('OBA stops API returned no stops for match:', matchedRoute.id);
-                return [];
-            }
-
             return stops.map((s: any) => ({
                 id: s.id,
                 name: s.name,
@@ -142,10 +140,28 @@ export const MtaService = {
                 lat: s.lat,
                 lon: s.lon,
                 lines: s.routeIds || s.routes?.map((r: any) => r.id) || [],
-                headsign: stopHeadsignMap[s.id]
+                headsign: stopHeadsignMap[s.id] || 'Bus Stop'
             }));
+        } catch (e) {
+            console.error(`[MTA] Failed to get stops for route ${routeId}`, e);
+            throw e;
         }
-        return [];
+    },
+
+    // Legacy support (redirects to search + get first match logic, or just deprecated)
+    // We'll keep a simplified version that mimics old behavior if anything else uses it, 
+    // but the UI will switch to the new methods.
+    fetchBusStops: async (query: string, apiKey: string) => {
+        // Re-implement using new methods to save code
+        // 1. Search
+        const routes = await MtaService.searchBusRoutes(query, apiKey);
+        if (routes.length === 0) return [];
+
+        // 2. Pick first match
+        const bestMatch = routes[0];
+
+        // 3. Get stops
+        return MtaService.getBusStops(bestMatch.id, apiKey);
     },
 
     fetchFeed: async (routeId: string, apiKey?: string, stopId?: string, returnRaw: boolean = false) => {
