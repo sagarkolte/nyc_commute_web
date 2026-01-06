@@ -607,9 +607,104 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
         const stopTimeStr = trip.stops[stopId];
         if (stopTimeStr) {
             const [h, m] = stopTimeStr.split(':').map(Number);
+
+            // TIMEZONE FIX:
+            // 'now' is UTC on Vercel. 'stopTimeStr' is NYC Local.
             const date = new Date(now * 1000);
-            date.setHours(h, m, 0, 0);
-            let time = date.getTime() / 1000;
+
+            // Get NYC date parts from 'now'
+            const nycFormatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/New_York',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                timeZoneName: 'shortOffset'
+            });
+
+            const parts = nycFormatter.formatToParts(date);
+            const year = parts.find(p => p.type === 'year')?.value;
+            const month = parts.find(p => p.type === 'month')?.value;
+            const day = parts.find(p => p.type === 'day')?.value;
+
+            // Construct ISO string for NYC time: YYYY-MM-DDTHH:MM:00-05:00
+            // We need the CURRENT NYC offset.
+            // Intl 'timeZoneName' gives "GMT-5" or "EST". Only longOffset/shortOffset gives reliable parseable string?
+            // Actually, construct string without offset, then parse as NYC? No standard JS way.
+            // Workaround: Use the offset from Intl.
+            const tzPart = parts.find(p => p.type === 'timeZoneName')?.value; // "GMT-5"
+            let offset = '-05:00';
+            if (tzPart) {
+                const match = tzPart.match(/([+-]\d+)/);
+                if (match) {
+                    offset = `${match[1]}:00`.replace('::', ':'); // handle simple GMT-5
+                    if (offset.length === 3) offset = offset.replace('+', '+0').replace('-', '-0') + ':00'; // -5 -> -05:00
+                }
+            }
+
+            // Re-format to ensure ISO8601 compatibility
+            // Getting offset is tricky without a library.
+            // ALTERNATIVE: Use the UTC date, set UTC hours to (h + 5)? No, DST.
+
+            // SIMPLEST PROXY:
+            // 1. Create a Date object in Server Local Time that matches the "Wall Clock" of NYC.
+            // 2. Adjust it by the difference between Server Time and NYC Time?
+
+            // Let's use string manipulation which is safer.
+            // "1/6/2026, 5:00:21 PM" (NYC)
+            // We want to set hours to h, m.
+
+            // A robust way without libraries:
+            // 1. Get current time in NYC as string.
+            // 2. Replace the HH:MM part with our target schedule HH:MM.
+            // 3. Parse it back relative to NYC timezone? WE CAN'T without library.
+
+            // WAIT. If we just use `date.toLocaleString('en-US', { timeZone: 'America/New_York' })`
+            // We get "1/6/2026, 5:00:21 PM".
+            // We can replace time with "07:00:00 AM".
+            // Then `new Date("1/6/2026, 07:00:00 AM")` -> Interprets as Server Local.
+            // If Server is UTC, this is interpreted as 7 AM UTC.
+            // But 7 AM NYC is 12 PM UTC.
+            // So we are OFF by exactly (Server - NYC) offset.
+
+            // Correct approach:
+            // 1. Construct `targetDate = new Date(now * 1000)`.
+            // 2. Shift `targetDate` so that `getUTCHours()` matches `h`.
+            //    (This effectively treats the UTC slot as a scratchpad).
+            //    targetDate.setUTCHours(h, m, 0, 0);
+            // 3. Now `targetDate` is "YYYY-MM-DDTHH:MM:00Z".
+            // 4. We want to convert this "NYC Wall Time" to "True UTC Timestamp".
+            //    True UTC = NYC Wall Time + Offset (e.g. +5 hours).
+            //    timestamp = targetDate.getTime() + (5 * 3600 * 1000).
+            //    BUT Offset varies (DST).
+
+            //    We can Find the offset dynamically:
+            //    Calculate offset = (True UTC of X - Unix of X-as-NYC).
+            //    Let X = now.
+            //    nycStr = new Date(X).toLocaleString('en-US', { timeZone: 'America/New_York' });
+            //    nycDateAsLocal = new Date(nycStr); // Local interpretation of NYC time
+            //    offset = X - nycDateAsLocal.getTime();
+            //    (If Server is UTC: X is UTC. nycDateAsLocal is X-5h interpreted as UTC. X - (X-5) = +5h).
+
+            //    So: True Schedule UTC = (Date(Schedule HH:MM) interpreted as Local) + offset.
+
+            const targetLocal = new Date(now * 1000);
+            targetLocal.setHours(h, m, 0, 0); // Set wall clock hours (e.g. 5:30 PM)
+
+            const nycStr = new Date(now * 1000).toLocaleString('en-US', { timeZone: 'America/New_York' });
+            const nycDateAsLocal = new Date(nycStr);
+            const serverNow = new Date(now * 1000);
+
+            // Calculate offset in ms: (Real UTC - Interpretation of NYC String as Local)
+            // Example:
+            // Real UTC: 10:00 PM.
+            // NYC String: "5:00 PM".
+            // Local Interpretation ("5:00 PM"): 5:00 PM UTC.
+            // Diff: 10:00 - 5:00 = +5 hours.
+            const tzOffsetMs = serverNow.getTime() - nycDateAsLocal.getTime();
+
+            // We accepted targetLocal as "Local Interpretation of Stop Time".
+            // So we Add Offset.
+            let time = (targetLocal.getTime() + tzOffsetMs) / 1000;
 
             // Handle wrap-around? Assume schedule is "today".
 
