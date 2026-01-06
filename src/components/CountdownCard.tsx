@@ -146,12 +146,15 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 onDragEnd={handleDragEnd}
             >
                 <div className="commute-card-header">
-                    <div className="commute-card-badge" style={{ backgroundColor: lineColor }}>
+                    <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: isFerry && badgeText.length > 4 ? 'auto' : '40px', padding: isFerry && badgeText.length > 4 ? '0 10px' : '0' }}>
                         {badgeText}
                     </div>
                     <div className="commute-card-info">
                         <h3>{toTitleCase(tuple.label)}</h3>
                         <p>
+                            {isFerry && tuple.routeId !== 'NYC Ferry' && tuple.routeId !== 'nyc-ferry' ? (
+                                <span style={{ fontWeight: 600, color: lineColor, marginRight: '8px' }}>{tuple.routeId}</span>
+                            ) : null}
                             {tuple.destinationName ? toTitleCase(tuple.destinationName) :
                                 tuple.direction === 'N' ? 'Uptown / North' :
                                     tuple.direction === 'S' ? 'Downtown / South' :
@@ -173,7 +176,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                             <div className="commute-board-header">
                                 <span className="commute-board-col-time">TIME</span>
                                 <span className="commute-board-col-dest">DESTINATION</span>
-                                <span className="commute-board-col-track">TRACK</span>
+                                {!isFerry && <span className="commute-board-col-track">TRACK</span>}
                                 <span className="commute-board-col-arrives">ARRIVES</span>
                                 <span className="commute-board-col-eta">ETA</span>
                             </div>
@@ -181,7 +184,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                                 <div key={i} className="commute-board-row">
                                     <span className="commute-board-col-time">{formatTime(arr.time)}</span>
                                     <span className="commute-board-col-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
-                                    <span className="commute-board-col-track">{arr.track || 'TBD'}</span>
+                                    {!isFerry && <span className="commute-board-col-track">{arr.track || 'TBD'}</span>}
                                     <span className="commute-board-col-arrives">{arr.destinationArrivalTime ? formatTime(arr.destinationArrivalTime) : '--'}</span>
                                     <span className="commute-board-col-eta">{arr.minutesUntil} min</span>
                                 </div>

@@ -374,32 +374,57 @@ export async function GET(request: Request) {
                                     }
 
                                     if (!displayDest || displayDest === '') {
-                                        const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
-                                        if (lastUpdate) {
-                                            if (routeId.startsWith('MNR')) {
-                                                const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
+                                        // NYC Ferry Route Inference for Destination
+                                        const ferryStops = FERRY_ROUTES[routeId];
+                                        if (ferryStops && updates.length > 0) {
+                                            const firstStopId = String(updates[0].stopId);
+                                            const lastStopId = String(updates[updates.length - 1].stopId);
+                                            const firstIdx = ferryStops.indexOf(firstStopId);
+                                            const lastIdx = ferryStops.indexOf(lastStopId);
+
+                                            if (firstIdx !== -1 && lastIdx !== -1) {
+                                                let destId = '';
+                                                // If moving forward (or staying same), dest is last stop of route
+                                                if (firstIdx <= lastIdx) {
+                                                    destId = ferryStops[ferryStops.length - 1];
+                                                } else {
+                                                    // Moving backward, dest is first stop of route
+                                                    destId = ferryStops[0];
+                                                }
+                                                const st = (nycFerryStations as any[]).find((s: any) => s.id === destId);
                                                 if (st) displayDest = st.name;
-                                            } else if (routeId.startsWith('LIRR')) {
-                                                const st = (lirrStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
-                                                if (st) displayDest = st.name;
-                                            } else if (routeId === 'PATH') {
-                                                const st = (pathStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
-                                                if (st) displayDest = st.name;
-                                            } else if (routeId === 'nyc-ferry') {
-                                                const st = (nycFerryStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
-                                                if (st) displayDest = st.name;
+                                            }
+                                        }
+
+                                        // Fallback logic
+                                        if (!displayDest || displayDest === '') {
+                                            const lastUpdate = entity.tripUpdate.stopTimeUpdate[entity.tripUpdate.stopTimeUpdate.length - 1];
+                                            if (lastUpdate) {
+                                                if (routeId.startsWith('MNR')) {
+                                                    const st = mnrStations.find((s: any) => s.id === lastUpdate.stopId);
+                                                    if (st) displayDest = st.name;
+                                                } else if (routeId.startsWith('LIRR')) {
+                                                    const st = (lirrStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                                    if (st) displayDest = st.name;
+                                                } else if (routeId === 'PATH') {
+                                                    const st = (pathStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                                    if (st) displayDest = st.name;
+                                                } else if (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) {
+                                                    const st = (nycFerryStations as any[]).find((s: any) => s.id === lastUpdate.stopId);
+                                                    if (st) displayDest = st.name;
+                                                }
                                             }
                                         }
                                     }
                                 }
 
                                 arrivals.push({
-                                    routeId: entityRouteId || (routeId === 'nyc-ferry' ? 'Ferry' : ''),
+                                    routeId: entityRouteId || (routeId === 'nyc-ferry' ? 'Ferry' : routeId),
                                     time: arrivalTime,
                                     destinationArrivalTime: destinationArrivalTime,
                                     minutesUntil: Math.floor((arrivalTime - now) / 60),
                                     destination: displayDest || 'Unknown',
-                                    track: track
+                                    track: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? '' : track
                                 });
                             }
                         }

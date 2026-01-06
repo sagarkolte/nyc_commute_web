@@ -34,7 +34,6 @@ async function assessFerry() {
         console.log(`Fetched ${tripUpdates.length} trip updates.`);
 
         console.log('\n--- Simulation: Inferring "East River" trips & Destinations ---');
-        // Logic copied from route.ts
         const routeId = 'East River';
         const requestedFerryRouteStops = FERRY_ROUTES[routeId];
 
@@ -43,13 +42,11 @@ async function assessFerry() {
             const updates = t.tripUpdate.stopTimeUpdate || [];
             const tripStops = updates.map(u => String(u.stopId));
 
-            // Check if ALL observed stops are in the East River definition
             const matchesLine = tripStops.every(s => requestedFerryRouteStops.includes(s));
 
             if (matchesLine && tripStops.length > 0) {
                 matchCount++;
 
-                // Destination Inference Logic (Exact copy from route.ts)
                 let inferredDest = "Unknown";
                 const firstStopId = String(updates[0].stopId);
                 const lastStopId = String(updates[updates.length - 1].stopId);
@@ -58,19 +55,17 @@ async function assessFerry() {
 
                 if (firstIdx !== -1 && lastIdx !== -1) {
                     if (firstIdx <= lastIdx) {
-                        // Forward -> Dest is last stop of route
                         const destId = requestedFerryRouteStops[requestedFerryRouteStops.length - 1];
                         inferredDest = `End of Line Forward (ID: ${destId})`;
                     } else {
-                        // Backward -> Dest is first stop of route
                         const destId = requestedFerryRouteStops[0];
                         inferredDest = `End of Line Reverse (ID: ${destId})`;
                     }
                 }
 
-                if (i < 10) { // Limit output
+                if (i < 10) {
                     console.log(`TRIP ${t.tripUpdate.trip.tripId}`);
-                    console.log(`   Stops: ${tripStops.join(' -> ')}`);
+                    // console.log(`   Stops: ${tripStops.join(' -> ')}`);
                     console.log(`   Inferred Dest: ${inferredDest}`);
                 }
             }
