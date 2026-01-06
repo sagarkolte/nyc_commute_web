@@ -572,6 +572,7 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
 
     // 1. Resolve Line Name
     let schedule = FERRY_SCHEDULE[routeId];
+    let scheduleRouteId = routeId; // Track the effective route ID (start with generic)
 
     // If generic 'nyc-ferry', try to find which line this stop belongs to
     if (!schedule && routeId === 'nyc-ferry') {
@@ -584,6 +585,7 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
         });
         if (lineName) {
             schedule = FERRY_SCHEDULE[lineName];
+            scheduleRouteId = lineName; // Update to the specific inferred line
             // console.log(`[Schedule] Inferred ${lineName} for stop ${stopId}`);
         }
     }
@@ -710,8 +712,9 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
 
             // Include if in relevant window (e.g. -30 mins to +4 hours)
             if (time > now - 1800 && time < now + 14400) {
-                // Determine Destination
-                const routeStops = FERRY_ROUTES[routeId];
+                // Determine Destination using the specific Route ID (inferred or explicit)
+                // We use 'scheduleRouteId' which was set to lineName if inferred.
+                const routeStops = FERRY_ROUTES[scheduleRouteId];
                 let destName = 'Scheduled';
                 if (routeStops) {
                     const destId = trip.directionId === 0
