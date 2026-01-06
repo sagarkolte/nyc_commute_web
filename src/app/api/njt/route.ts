@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getNjtDepartures } from '@/lib/njt';
+import { getNjtDepartures, parseNjtDate } from '@/lib/njt';
 import njtStations from '@/lib/njt_stations.json';
 
 export async function GET(request: Request) {
@@ -19,22 +19,27 @@ export async function GET(request: Request) {
     if (destStopId) {
         const destStation = (njtStations as any[]).find(s => s.id === destStopId);
         if (destStation) {
-            // Filter by destination name AND/OR Line
             const targetName = destStation.name.toLowerCase();
-            const targetLines: string[] = destStation.lines || [];
 
             departures = departures.filter(d => {
                 const dDest = d.destination.toLowerCase();
 
-                // 1. Name Match (bidirectional include for robustness)
+                // 1. Check if the train visits the destination stop AFTER the origin station
+                if (d.stops && d.stops.length > 0) {
+                    const destIdx = d.stops.findIndex((s: any) => s.STATION_2CHAR === destStopId);
+                    if (destIdx !== -1) {
+                        return true;
+                    }
+                }
+
+                // 2. Fallback: Name Match (if stops list is missing but destination name matches)
                 if (dDest === targetName || dDest.includes(targetName) || targetName.includes(dDest)) {
                     return true;
                 }
 
-                // 2. Line Match (Direct Only)
-                if (d.line && targetLines.includes(d.line)) {
-                    return true;
-                }
+                // Special case for NY Penn / Newark Penn
+                if (targetName.includes('new york') && dDest.includes('new york')) return true;
+                if (targetName.includes('newark penn') && dDest.includes('newark penn')) return true;
 
                 return false;
             });
@@ -45,7 +50,6 @@ export async function GET(request: Request) {
     departures.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
 
     // Map to 'Arrival' interface expected by CountdownCard
-    // Arrival: { routeId, time, minutesUntil, destination, track }
     const now = Date.now();
     const arrivals = departures.map(d => {
         const dTime = new Date(d.time).getTime();
@@ -62,8 +66,7 @@ export async function GET(request: Request) {
         if (destStopId && d.stops) {
             const destStop = d.stops.find((s: any) => s.STATION_2CHAR === destStopId);
             if (destStop) {
-                // NJT stop time is typically like "01-Jan-2026 06:42:00 PM"
-                const parsed = new Date(destStop.TIME);
+                const parsed = parseNjtDate(destStop.TIME);
                 if (!isNaN(parsed.getTime())) {
                     destinationArrivalTime = parsed.getTime() / 1000;
                 }
@@ -71,7 +74,7 @@ export async function GET(request: Request) {
         }
 
         return {
-            routeId: d.line, // e.g. "Northeast Corridor"
+            routeId: d.line,
             time: dTime / 1000,
             destinationArrivalTime: destinationArrivalTime,
             minutesUntil,

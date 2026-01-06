@@ -144,7 +144,7 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
 }
 
 // Helper to parse NJT Date string (e.g. "19-Dec-2025 07:46:00 AM") as America/New_York
-function parseNjtDate(dateStr: string): Date {
+export function parseNjtDate(dateStr: string): Date {
     // 1. naive parse as UTC
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return new Date(); // Fallback

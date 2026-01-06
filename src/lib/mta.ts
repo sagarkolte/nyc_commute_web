@@ -62,24 +62,29 @@ export const MtaService = {
         // Let's implement 'stops-for-route' as the primary "search" for now.
         // User types "M15" -> we fetch route "MTA NYCT_M15" -> then fetch stops.
 
-        // Step 1: Search for route. 
-        // We use `routes-for-agency` because `search-for-route` is unreliable/404s on this server.
-        const routeRes = await fetch(`${OBA_BASE}/routes-for-agency/MTA%20NYCT.json?key=${apiKey}`);
+        const agencies = ['MTA NYCT', 'MTABC'];
+        let routes: any[] = [];
 
-        if (!routeRes.ok) {
-            console.warn(`[MTA] routes-for-agency failed: ${routeRes.status}`);
-            return [];
+        for (const agency of agencies) {
+            try {
+                const routeRes = await fetch(`${OBA_BASE}/routes-for-agency/${encodeURIComponent(agency)}.json?key=${apiKey}`);
+                if (routeRes.ok) {
+                    const routeData = await routeRes.json();
+                    if (routeData?.data?.list) {
+                        routes = [...routes, ...routeData.data.list];
+                    }
+                }
+            } catch (e) {
+                console.warn(`[MTA] Failed to fetch routes for agency ${agency}:`, e);
+            }
         }
 
-        const routeData = await routeRes.json();
-        if (!routeData || !routeData.data) {
-            const keyPrefix = apiKey ? apiKey.substring(0, 4) + '...' : 'undefined';
-            console.warn(`[MTA] Invalid data from routes-for-agency. Key: ${keyPrefix}. Payload: ${JSON.stringify(routeData)}`);
-            return [];
+        const queryLower = query.toLowerCase();
+        // Priority match: startsWith, then includes
+        let matchedRoute = routes.find((r: any) => r.shortName.toLowerCase().startsWith(queryLower));
+        if (!matchedRoute) {
+            matchedRoute = routes.find((r: any) => r.shortName.toLowerCase().includes(queryLower));
         }
-
-        const routes = routeData.data.list || [];
-        const matchedRoute = routes.find((r: any) => r.shortName.toLowerCase().startsWith(query.toLowerCase()));
 
         if (matchedRoute) {
             const stopsRes = await fetch(`${OBA_BASE}/stops-for-route/${encodeURIComponent(matchedRoute.id)}.json?key=${apiKey}&includePolylines=false`);
