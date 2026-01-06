@@ -35,7 +35,11 @@ export async function GET(request: Request) {
     const serverApiKey = process.env.MTA_API_KEY || process.env.NEXT_PUBLIC_MTA_BUS_API_KEY;
 
     if (!routeId || !stopId) {
-        return NextResponse.json({ error: 'Missing required params' }, { status: 400 });
+        console.warn(`[API] Missing params - routeId: ${routeId}, stopId: ${stopId}`);
+        return NextResponse.json({
+            error: 'Missing required params',
+            details: { routeId: !!routeId, stopId: !!stopId }
+        }, { status: 400 });
     }
 
     // Bus feeds still require a key. We use client key if provided, else server key.
@@ -158,11 +162,11 @@ export async function GET(request: Request) {
                 });
             }
         } else {
-            // GTFS handling
             const feed = feedResponse.data;
-            const targetStopId = (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR')) ? stopId : `${stopId}${direction}`;
+            const isRailFeed = (routeId === 'PATH' || routeId === 'nyc-ferry' || routeId.startsWith('LIRR') || routeId.startsWith('MNR'));
+            const targetStopId = isRailFeed ? stopId : (direction ? `${stopId}${direction}` : stopId);
             const destStopId = searchParams.get('destStopId');
-            console.log(`[GTFS] Processing ${feed.entity?.length || 0} entities for ${routeId}. Target: ${targetStopId} Dest: ${destStopId || 'none'}. Now: ${now}`);
+            console.log(`[GTFS] Processing ${feed.entity?.length || 0} entities for ${routeId}. Target: ${targetStopId} (Raw: ${stopId}, Dir: ${direction}) Dest: ${destStopId || 'none'}. Now: ${now}`);
 
             const getTime = (t: any) => {
                 if (t === null || t === undefined) return null;

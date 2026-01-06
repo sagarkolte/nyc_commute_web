@@ -1,18 +1,43 @@
-
 import axios from 'axios';
 import njtStations from './njt_stations.json';
+import njtFallback from './njt_schedule_fallback.json';
 
 const NJT_BASE_URL = 'https://raildata.njtransit.com/api/TrainData';
 
 // Cache token in a way that survives some serverless warm starts
 const globalAny = global as any;
 const tokenCache = globalAny._njt_rail_token || { token: null, expiry: 0 };
+let tokenPromise: Promise<string | null> | null = null;
 
 async function getNjtToken(): Promise<string | null> {
     if (tokenCache.token && Date.now() < tokenCache.expiry) {
         return tokenCache.token;
     }
 
+    // If a request is already in flight, wait for it
+    if (tokenPromise) {
+        console.log('[NJT] Waiting for existing token request...');
+        return tokenPromise;
+    }
+
+    tokenPromise = (async () => {
+        try {
+            const result = await fetchNewToken();
+            if (result) {
+                tokenCache.token = result;
+                tokenCache.expiry = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
+                globalAny._njt_rail_token = tokenCache;
+            }
+            return result;
+        } finally {
+            tokenPromise = null;
+        }
+    })();
+
+    return tokenPromise;
+}
+
+async function fetchNewToken(): Promise<string | null> {
     const username = process.env.NJT_USERNAME;
     const password = process.env.NJT_PASSWORD;
 
@@ -39,11 +64,8 @@ async function getNjtToken(): Promise<string | null> {
             });
 
             if (res.data && res.data.UserToken) {
-                tokenCache.token = res.data.UserToken;
-                tokenCache.expiry = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
-                globalAny._njt_rail_token = tokenCache;
                 console.log(`[NJT] Refreshed NJT Token via ${url}`);
-                return tokenCache.token;
+                return res.data.UserToken;
             }
         } catch (error: any) {
             console.warn(`[NJT] Failed to get NJT Token from ${url}:`, error.response?.status || error.message);
@@ -62,54 +84,14 @@ export interface NjtDeparture {
     stops?: any[];
 }
 
-export async function getNjtDepartures(stationCode: string): Promise<NjtDeparture[]> {
+export async function getNjtDepartures(stationCode: string, destStopId?: string | null): Promise<NjtDeparture[]> {
     const token = await getNjtToken();
     const username = process.env.NJT_USERNAME;
     const password = process.env.NJT_PASSWORD;
 
-    if (!token) {
-        console.warn(`[NJT] Token fetch failed for ${stationCode}. Returning generic MOCK data.`);
-
-        const station = (njtStations as any[]).find(s => s.id === stationCode);
-        const stationName = station ? station.name : stationCode;
-
-        const now = new Date();
-        const baseMin = now.getMinutes() < 30 ? 30 : 60;
-
-        const m1 = new Date(now); m1.setMinutes(baseMin + 5);
-        const m2 = new Date(now); m2.setMinutes(baseMin + 25);
-        const m3 = new Date(now); m3.setMinutes(baseMin + 45);
-
-        return [
-            {
-                train_id: 'MOCK-1',
-                line: 'Transit Pulse Recovery',
-                destination: 'New York Penn Station',
-                track: '-',
-                time: m1.toISOString(),
-                status: 'SCHEDULED'
-            },
-            {
-                train_id: 'MOCK-2',
-                line: 'Transit Pulse Recovery',
-                destination: 'Newark Penn Station',
-                track: '-',
-                time: m2.toISOString(),
-                status: 'SCHEDULED'
-            },
-            {
-                train_id: 'MOCK-3',
-                line: 'Transit Pulse Recovery',
-                destination: 'Hoboken Terminal',
-                track: '-',
-                time: m3.toISOString(),
-                status: 'SCHEDULED'
-            }
-        ];
-    }
-
-    if (!username || !password) {
-        return [];
+    if (!token || !username || !password) {
+        console.warn(`[NJT] API unavailable for ${stationCode} (Token: ${!!token}). Using static fallback.`);
+        return getStaticFallback(stationCode, destStopId);
     }
 
     try {
@@ -119,7 +101,8 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
         params.append('token', token);
         params.append('station', stationCode);
 
-        const res = await axios.post(`${NJT_BASE_URL}/getTrainSchedule`, params.toString(), {
+        // Using getScheduleWithStops for richer data and higher quota
+        const res = await axios.post(`${NJT_BASE_URL}/getScheduleWithStops`, params.toString(), {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
 
@@ -128,17 +111,62 @@ export async function getNjtDepartures(stationCode: string): Promise<NjtDepartur
                 train_id: item.TRAIN_ID,
                 line: item.LINE,
                 destination: item.DESTINATION,
-                track: item.TRACK,
+                track: item.TRACK || '-', // Preserve Track Info
                 time: parseNjtDate(item.SCHED_DEP_DATE).toISOString(),
-                status: item.STATUS,
+                status: item.STATUS || 'ON TIME',
                 stops: item.STOPS
             }));
+        } else {
+            console.warn(`[NJT] Empty response or error from API for ${stationCode}. Using static fallback.`);
+            return getStaticFallback(stationCode, destStopId);
         }
     } catch (error: any) {
         console.error(`NJT Fetch Error (${stationCode}):`, error.message);
+        return getStaticFallback(stationCode, destStopId);
+    }
+}
+
+function getStaticFallback(stationCode: string, destStopId?: string | null): NjtDeparture[] {
+    const match = njtFallback.find(f => f.originId === stationCode && f.destId === destStopId);
+
+    const now = new Date();
+    const nowNYC = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+
+    if (match) {
+        return match.departures.map((timeStr, idx) => {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const depDate = new Date(nowNYC);
+            depDate.setHours(hours, minutes, 0, 0);
+
+            // If the time has already passed, it might be for tomorrow if we're near midnight, 
+            // but usually we just want the next upcoming ones.
+            // If depDate < nowNYC - 30 mins, assume it's tomorrow (simplified)
+            if (depDate.getTime() < nowNYC.getTime() - 30 * 60000) {
+                depDate.setDate(depDate.getDate() + 1);
+            }
+
+            return {
+                train_id: `STATIC-${idx}`,
+                line: match.route,
+                destination: (njtStations as any[]).find(s => s.id === destStopId)?.name || 'Unknown',
+                track: '-',
+                time: depDate.toISOString(),
+                status: 'SCHEDULED (Static)'
+            };
+        });
     }
 
-    return [];
+    // Ultimate fallback if no specific route match found
+    return [
+        {
+            train_id: 'STATIC-1',
+            line: 'Transit Pulse Fallback',
+            destination: 'Check NJT Schedule',
+            track: '-',
+            time: new Date(now.getTime() + 15 * 60000).toISOString(),
+            status: 'SCHEDULED'
+        }
+    ];
 }
 
 // Helper to parse NJT Date string (e.g. "19-Dec-2025 07:46:00 AM") as America/New_York

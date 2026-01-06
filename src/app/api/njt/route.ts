@@ -14,7 +14,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Station required' }, { status: 400 });
     }
 
-    let departures = await getNjtDepartures(actualStation);
+    let departures = await getNjtDepartures(actualStation, destStopId);
 
     if (destStopId) {
         const destStation = (njtStations as any[]).find(s => s.id === destStopId);
