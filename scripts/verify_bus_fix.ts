@@ -1,6 +1,6 @@
 
-import { MtaService } from '../src/lib/mta.ts';
-import { CommuteStorage } from '../src/lib/storage.ts';
+import { MtaService } from '../src/lib/mta';
+import { CommuteStorage } from '../src/lib/storage';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
