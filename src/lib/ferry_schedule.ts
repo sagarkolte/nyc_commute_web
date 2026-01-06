@@ -12,6 +12,10 @@ export const FERRY_SCHEDULE: Record<string, { Weekday: FerryScheduleItem[], Week
     'East River': {
         Weekday: generateEastRiverWeekday(),
         Weekend: generateEastRiverWeekend()
+    },
+    'Astoria': {
+        Weekday: generateAstoriaWeekday(),
+        Weekend: generateAstoriaWeekend()
     }
 };
 
@@ -92,4 +96,72 @@ function createTrip(hour: number, minute: number, direction: number): FerrySched
 
 function formatTime(h: number, m: number): string {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+function generateAstoriaWeekday(): FerryScheduleItem[] {
+    const trips: FerryScheduleItem[] = [];
+    const startHour = 6;
+    const endHour = 22;
+
+    // Astoria Schedule Pattern (Approximate for Hybrid Demo)
+    // Southbound: E 90th -> Wall St (Direction 1)
+    // Northbound: Wall St -> E 90th (Direction 0)
+
+    for (let h = startHour; h <= endHour; h++) {
+        // :15 Departure from E 90th
+        trips.push(createAstoriaTrip(h, 15, 1));
+
+        // Peak Service
+        if ((h >= 7 && h <= 9) || (h >= 16 && h <= 19)) {
+            trips.push(createAstoriaTrip(h, 45, 1));
+        }
+    }
+
+    // Northbound: Wall St -> E 90th (Direction 0)
+    for (let h = startHour; h <= endHour; h++) {
+        trips.push(createAstoriaTrip(h, 0, 0));
+        if ((h >= 7 && h <= 9) || (h >= 16 && h <= 19)) {
+            trips.push(createAstoriaTrip(h, 30, 0));
+        }
+    }
+
+    return trips.sort((a, b) => {
+        const timeA = Object.values(a.stops)[0];
+        const timeB = Object.values(b.stops)[0];
+        return timeA.localeCompare(timeB);
+    });
+}
+
+function generateAstoriaWeekend(): FerryScheduleItem[] {
+    const trips: FerryScheduleItem[] = [];
+    const startHour = 8;
+    const endHour = 22;
+    for (let h = startHour; h <= endHour; h++) {
+        trips.push(createAstoriaTrip(h, 15, 1));
+        trips.push(createAstoriaTrip(h, 0, 0));
+    }
+    return trips;
+}
+
+function createAstoriaTrip(hour: number, minute: number, direction: number): FerryScheduleItem {
+    const tripId = `SCH_AST_${Math.random().toString(36).substr(2, 5)}`;
+    const stops: Record<string, string> = {};
+
+    // North: Wall St (87) -> Navy Yard (120) -> E 34th (17) -> LIC (90) -> Roosevelt (25) -> Astoria (89) -> E 90th (113)
+    const northStops = ['87', '120', '17', '90', '25', '89', '113'];
+    // South: Reverse
+    const southStops = [...northStops].reverse();
+
+    const sequence = direction === 0 ? northStops : southStops;
+    // Offsets: 0, 10, 20, 25, 30, 35, 40
+    const timeOffsets = [0, 10, 20, 25, 30, 35, 40];
+
+    sequence.forEach((stopId, idx) => {
+        const totalMin = minute + timeOffsets[idx];
+        const h = hour + Math.floor(totalMin / 60);
+        const m = totalMin % 60;
+        stops[stopId] = formatTime(h, m);
+    });
+
+    return { tripId, directionId: direction, stops };
 }
