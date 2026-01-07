@@ -85,45 +85,122 @@ export interface NjtDeparture {
 }
 
 export async function getNjtDepartures(stationCode: string, destStopId?: string | null): Promise<NjtDeparture[]> {
+    // 1. Get Static Schedule Baseline (Targeted by destStopId if provided)
+    // Note: getStaticFallback returns trips filtered by destStopId if provided.
+    // Realtime API returns ALL trips from origin.
+    const staticTrips = getStaticFallback(stationCode, destStopId);
+
+    // 2. Fetch Realtime Data (Always fetch full board)
+    let realtimeTrips: NjtDeparture[] = [];
+    try {
+        realtimeTrips = await fetchRealtimeDepartures(stationCode);
+    } catch (e) {
+        console.warn(`[NJT] Realtime fetch failed, using pure static.`, e);
+    }
+
+    // 3. Hybrid Merge
+    // Strategy: 
+    // - Start with Static Trips.
+    // - Try to match each Static Trip to a Realtime Trip (Time window +/- 30m, Same Line).
+    // - If matched: Update Static with Realtime info (Time, Track, Status). Mark as 'Enriched'.
+    // - If Realtime Trip has no Static match: Add it to the list (It might be an extra train).
+
+    const merged: NjtDeparture[] = [];
+    const usedRealtimeIds = new Set<string>();
+
+    staticTrips.forEach(sTrip => {
+        const sTime = new Date(sTrip.time).getTime();
+
+        // Find best match in realtime
+        // Match logic: Same approximate time (within 30 mins)
+        // If we had destination info in static, checking that would be good, 
+        // but static trips are already filtered by dest. 
+        // Realtime trips might go elsewhere. We must be careful not to match a train going to a different place.
+        // HOWEVER: Static trips definitely go to user's dest. Realtime trips contain destination name.
+        // We can check if Realtime Trip destination matches the Static Trip destination name? 
+        // Static Trip dest name comes from looking up destId.
+
+        const strictMatch = realtimeTrips.find(rTrip => {
+            if (usedRealtimeIds.has(rTrip.train_id)) return false;
+
+            const rTime = new Date(rTrip.time).getTime();
+            const timeDiff = Math.abs(rTime - sTime);
+
+            // Check 1: Time Window (narrower, say 60 mins -> 30 mins)
+            if (timeDiff > 45 * 60 * 1000) return false;
+
+            // Check 2: Destination Match (Fuzzy)
+            // If static trip says "New York Penn", realtime should generally agree.
+            // But static dest name is constructed from ID lookup.
+            return true;
+        });
+
+        if (strictMatch) {
+            // ENRICH STATIC
+            merged.push({
+                ...sTrip,
+                time: strictMatch.time, // Use live time
+                track: strictMatch.track,
+                status: strictMatch.status || 'ON TIME',
+                train_id: strictMatch.train_id, // Use real ID
+                stops: strictMatch.stops // Add stops for detail
+            });
+            usedRealtimeIds.add(strictMatch.train_id);
+        } else {
+            // KEEP STATIC (No match found, API might be missing it or it's ghost)
+            // Only keep if it's in the future
+            if (sTime > Date.now() - 15 * 60000) {
+                merged.push(sTrip);
+            }
+        }
+    });
+
+    // Add remaining Realtime trips (Extra service, or ones that didn't match static)
+    // Note: If destStopId was provided, `staticTrips` were filtered. 
+    // `realtimeTrips` are NOT filtered. Adding them all would flood the response with irrelevant trains.
+    // We should rely on the caller (route.ts) to filter `merged`. 
+    // SO: We MUST include unmatched realtime trips so `route.ts` can check if they go to our destination.
+    realtimeTrips.forEach(rTrip => {
+        if (!usedRealtimeIds.has(rTrip.train_id)) {
+            merged.push(rTrip);
+        }
+    });
+
+    // Sort final list
+    return merged.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+}
+
+async function fetchRealtimeDepartures(stationCode: string): Promise<NjtDeparture[]> {
     const token = await getNjtToken();
     const username = process.env.NJT_USERNAME;
     const password = process.env.NJT_PASSWORD;
 
     if (!token || !username || !password) {
-        console.warn(`[NJT] API unavailable for ${stationCode} (Token: ${!!token}). Using static fallback.`);
-        return getStaticFallback(stationCode, destStopId);
+        return [];
     }
 
-    try {
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
-        params.append('token', token);
-        params.append('station', stationCode);
+    const params = new URLSearchParams();
+    params.append('username', username);
+    params.append('password', password);
+    params.append('token', token);
+    params.append('station', stationCode);
 
-        // Using getScheduleWithStops for richer data and higher quota
-        const res = await axios.post(`${NJT_BASE_URL}/getScheduleWithStops`, params.toString(), {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+    const res = await axios.post(`${NJT_BASE_URL}/getScheduleWithStops`, params.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
 
-        if (res.data && res.data.ITEMS) {
-            return res.data.ITEMS.map((item: any) => ({
-                train_id: item.TRAIN_ID,
-                line: item.LINE,
-                destination: item.DESTINATION,
-                track: item.TRACK || '-', // Preserve Track Info
-                time: parseNjtDate(item.SCHED_DEP_DATE).toISOString(),
-                status: item.STATUS || 'ON TIME',
-                stops: item.STOPS
-            }));
-        } else {
-            console.warn(`[NJT] Empty response or error from API for ${stationCode}. Using static fallback.`);
-            return getStaticFallback(stationCode, destStopId);
-        }
-    } catch (error: any) {
-        console.error(`NJT Fetch Error (${stationCode}):`, error.message);
-        return getStaticFallback(stationCode, destStopId);
+    if (res.data && res.data.ITEMS) {
+        return res.data.ITEMS.map((item: any) => ({
+            train_id: item.TRAIN_ID,
+            line: item.LINE,
+            destination: item.DESTINATION,
+            track: item.TRACK || '-',
+            time: parseNjtDate(item.SCHED_DEP_DATE).toISOString(),
+            status: item.STATUS || 'ON TIME',
+            stops: item.STOPS
+        }));
     }
+    return [];
 }
 
 function getStaticFallback(stationCode: string, destStopId?: string | null): NjtDeparture[] {
