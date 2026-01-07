@@ -146,7 +146,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 onDragEnd={handleDragEnd}
             >
                 <div className="commute-card-header">
-                    <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: isFerry && badgeText.length > 4 ? 'auto' : '40px', padding: isFerry && badgeText.length > 4 ? '0 10px' : '0' }}>
+                    <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0' }}>
                         {badgeText}
                     </div>
                     <div className="commute-card-info">
