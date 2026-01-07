@@ -47,8 +47,7 @@ async function fetchNewToken(): Promise<string | null> {
     }
 
     const endpoints = [
-        'https://raildata.njtransit.com/api/TrainData/getToken',
-        'https://railservice.njtransit.com/api/getToken'
+        'https://raildata.njtransit.com/api/TrainData/getToken'
     ];
 
     for (const url of endpoints) {
