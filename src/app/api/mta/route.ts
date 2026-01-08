@@ -78,7 +78,7 @@ export async function GET(request: Request) {
             }
         }
 
-        if (isRail && feedResponse.type === 'gtfs-raw') {
+        if (isRail && feedResponse.type === 'gtfs-raw' && feedResponse.data instanceof ArrayBuffer) {
             const root = await getProtobufRoot();
             if (root) {
                 const FeedMessage = root.lookupType('transit_realtime.FeedMessage');
@@ -118,7 +118,37 @@ export async function GET(request: Request) {
         const foundStopIds = new Set<string>();
         let sampleEntity: any = null;
 
-        if (feedResponse.type === 'siri') {
+        if (feedResponse.type === 'custom-bus') {
+            // Custom GTFS-RT Bus Processor
+            debugRaw += 'Type=MBus;';
+            const updates = feedResponse.data; // BusDeparture[]
+            feedEntityCount = updates.length;
+
+            updates.forEach((u: any) => {
+                // Check Stop Match
+                if (String(u.stopId) === String(stopId)) {
+                    stopMatchCount++;
+                    const arrivalTime = u.time / 1000;
+                    const diff = arrivalTime - now;
+
+                    if (arrivalTime > now) {
+                        afterNowCount++;
+                        arrivals.push({
+                            routeId: u.routeId,
+                            time: arrivalTime,
+                            minutesUntil: Math.floor(diff / 60),
+                            destination: 'Unknown' // Bus GTFS-RT doesn't easily give headsign per stop
+                        });
+                    }
+                }
+
+                // Debug first match
+                if (arrivals.length === 1 && afterNowCount === 1) {
+                    debugRaw += `First=${u.routeId}@${u.time};`;
+                }
+            });
+
+        } else if (feedResponse.type === 'siri') {
             debugRaw += 'Type=Siri;';
             const delivery = feedResponse.data.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0];
             console.log(`[BusDebug] Request: routeId=${routeId} stopId=${stopId} now=${now}`);

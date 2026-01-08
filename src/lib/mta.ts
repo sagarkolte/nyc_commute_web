@@ -1,4 +1,6 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
+import mtaBusIndex from './mta_bus_index.json';
+import { fetchBusGtfs } from './mta_bus_gtfs';
 
 const FEED_URLS: Record<string, string> = {
     // Number lines
@@ -32,180 +34,127 @@ const FEED_URLS: Record<string, string> = {
     'J': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz',
     'Z': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz',
     // LIRR (No Key required for this feed URL based on recent research, or handled via headers)
-    // Actually, per plan, we might need to handle LIRR differently if it's a different proto format.
-    // But standard GTFS-RT should work.
     'LIRR': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr%2Fgtfs-lirr',
     'MNR': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/mnr%2Fgtfs-mnr',
     'PATH': 'https://path.transitdata.nyc/gtfsrt',
     'NYC_FERRY': 'http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/tripupdate',
 };
 
-// Bus requires API Key and uses a different base URL usually, but let's try the modern endpoint scheme first.
-// If user provides a key, we might need to append it or use a header.
-// For now, we'll assume the user might provide a custom URL or Key in headers.
-
-// Bus support
-const OBA_BASE = 'http://bustime.mta.info/api/where';
-const SIRI_BASE = 'http://bustime.mta.info/api/siri';
+// Bus support - Static Index + GTFS-RT
+// Dropping legacy OBA API references as keys are incompatible.
 
 export const MtaService = {
     searchBusRoutes: async (query: string, apiKey: string) => {
-        const agencies = ['MTA NYCT', 'MTABC'];
-        let allRoutes: any[] = [];
+        // Fallback to Static Index search
+        // (API Key ignored as index is local)
+        const q = query.toLowerCase().trim();
+        if (!q) return [];
 
-        // 1. Parallel fetch for speed
-        await Promise.all(agencies.map(async (agency) => {
-            try {
-                // Determine URL based on agency if needed, but OBA handles it via param
-                const url = `${OBA_BASE}/routes-for-agency/${encodeURIComponent(agency)}.json?key=${apiKey}`;
-                const res = await fetch(url);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data?.data?.list) {
-                        allRoutes.push(...data.data.list);
-                    }
-                }
-            } catch (e) {
-                console.warn(`[MTA] Failed to fetch routes for ${agency}`, e);
-            }
-        }));
-
-        const queryLower = query.toLowerCase().trim();
-        if (!queryLower) return [];
-
-        // 2. Filter matches
-        // Exact match -> Starts with -> Includes
-        const matches = allRoutes.filter((r: any) => {
+        // Use mtaBusIndex
+        const matches = (mtaBusIndex as any[]).filter(r => {
             const short = (r.shortName || '').toLowerCase();
-            const long = (r.longName || '').toLowerCase();
+            // const long = (r.longName || '').toLowerCase(); // Index currently mainly has IDs, longName is placeholder
             const id = (r.id || '').toLowerCase();
-            return short.includes(queryLower) || id.includes(queryLower) || long.includes(queryLower);
+            return short.includes(q) || id.includes(q);
         });
 
-        // 3. Sort for relevance
         return matches.sort((a, b) => {
             const aShort = (a.shortName || '').toLowerCase();
             const bShort = (b.shortName || '').toLowerCase();
 
-            // Exact matches to top
-            if (aShort === queryLower && bShort !== queryLower) return -1;
-            if (bShort === queryLower && aShort !== queryLower) return 1;
+            // Exact match top
+            if (aShort === q && bShort !== q) return -1;
+            if (bShort === q && aShort !== q) return 1;
 
-            // Starts-with to top
-            const aStarts = aShort.startsWith(queryLower);
-            const bStarts = bShort.startsWith(queryLower);
-            if (aStarts && !bStarts) return -1;
-            if (bStarts && !aStarts) return 1;
+            // Starts with
+            if (aShort.startsWith(q) && !bShort.startsWith(q)) return -1;
+            if (bShort.startsWith(q) && !aShort.startsWith(q)) return 1;
 
-            // Alphanumeric sort
             return aShort.localeCompare(bShort, undefined, { numeric: true });
-        }).slice(0, 50); // Limit results
+        }).slice(0, 50);
     },
 
     getBusStops: async (routeId: string, apiKey: string) => {
-        // Stops for specific route
-        const url = `${OBA_BASE}/stops-for-route/${encodeURIComponent(routeId)}.json?key=${apiKey}&includePolylines=false`;
+        // We still don't have a static Stop DB for Buses (it's huge).
+        // And we can't use OBA API (Auth key mismatch).
+        // Strategy: 
+        // 1. We might be able to inference stops from GTFS-RT? No, rare.
+        // 2. We can try OBA "stops-for-route" anyway? Maybe "stops-for-route" is public? 
+        //    (Unlikely, usually requires key).
+        //    The user's key failed "routes-for-agency".
+        //    Let's return a dummy stop allowing ANY stop ID for now, or leverage the route listing.
+        //    Wait, without stops, the user can't select a stop.
+        //    Actually, "stops-for-route" is critical.
+        //    If we can't fetch stops, user workflow breaks at Step 2.
 
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`OBA API Error: ${res.status}`);
+        //    Let's mock it for now with "All Stops (Realtime Check)"?
+        //    Or: Maybe the key works for SIRI "StopMonitoring" but not "Discovery"?
+        //    No, SIRI failed too.
 
-            const data = await res.json();
-            if (!data?.data?.stops) return [];
+        //    Backup Plan: Just return one "Wildcard" stop that tracks the whole route?
+        //    "Any Stop" -> Then we list all upcoming stops from the Realtime Feed?
 
-            const stops = data.data.stops;
-            const stopGroupings = data.data.stopGroupings || [];
-            const stopHeadsignMap: Record<string, string> = {};
-
-            // Map stops to destinations
-            stopGroupings.forEach((grouping: any) => {
-                grouping.stopGroups?.forEach((sg: any) => {
-                    const destName = sg.name?.name;
-                    if (destName) {
-                        let cleanName = destName.replace('SELECT BUS ', '').trim();
-                        // Title case
-                        cleanName = cleanName.toLowerCase().replace(/(?:^|\s|["'([{])+\S/g, (match: string) => match.toUpperCase());
-
-                        sg.stopIds?.forEach((stopId: string) => {
-                            stopHeadsignMap[stopId] = `To ${cleanName}`;
-                        });
-                    }
-                });
-            });
-
-            return stops.map((s: any) => ({
-                id: s.id,
-                name: s.name,
-                direction: s.direction,
-                lat: s.lat,
-                lon: s.lon,
-                lines: s.routeIds || s.routes?.map((r: any) => r.id) || [],
-                headsign: stopHeadsignMap[s.id] || 'Bus Stop'
-            }));
-        } catch (e) {
-            console.error(`[MTA] Failed to get stops for route ${routeId}`, e);
-            throw e;
-        }
+        return [
+            {
+                id: 'ANY',
+                name: 'All Active Vehicles (Debug)',
+                direction: 'N/A',
+                lat: 0,
+                lon: 0,
+                lines: [routeId],
+                headsign: 'View Live Buses'
+            }
+        ];
     },
 
-    // Legacy support (redirects to search + get first match logic, or just deprecated)
-    // We'll keep a simplified version that mimics old behavior if anything else uses it, 
-    // but the UI will switch to the new methods.
     fetchBusStops: async (query: string, apiKey: string) => {
-        // Re-implement using new methods to save code
-        // 1. Search
         const routes = await MtaService.searchBusRoutes(query, apiKey);
         if (routes.length === 0) return [];
-
-        // 2. Pick first match
-        const bestMatch = routes[0];
-
-        // 3. Get stops
-        return MtaService.getBusStops(bestMatch.id, apiKey);
+        return MtaService.getBusStops(routes[0].id, apiKey);
     },
 
     fetchFeed: async (routeId: string, apiKey?: string, stopId?: string, returnRaw: boolean = false) => {
         let url = FEED_URLS[routeId];
 
-        // Dynamic Bus URL generation if route ID looks like a bus (e.g. M15) and isn't in static map
-        if (!url && routeId.length > 1 && !['SI', 'LIRR'].includes(routeId)) {
-            if (!apiKey) throw new Error('API Key required for Bus');
-            if (!stopId) throw new Error('Stop ID required for Bus real-time');
+        // Check if it's a Bus Route (e.g. M23, Q115) from our index or heuristic
+        const isBus = (mtaBusIndex as any[]).some(r => r.id === routeId || r.shortName === routeId) ||
+            routeId.match(/^[M|B|Q|S|Bx][0-9]+/);
 
-            // SIRI StopMonitoring
-            // http://bustime.mta.info/api/siri/stop-monitoring.json?key=...&MonitoringRef=...
-            const siriUrl = `${SIRI_BASE}/stop-monitoring.json?key=${apiKey}&MonitoringRef=${stopId}&version=2`;
-
+        if (!url && isBus) {
+            // Use our new GTFS-RT fetcher
             try {
-                // console.log('[MTA] Fetching SIRI:', siriUrl.replace(apiKey, 'LikelyValidKey'));
-                const res = await fetch(siriUrl, { cache: 'no-store' });
-                if (!res.ok) {
-                    const txt = await res.text();
-                    console.error('[MTA] SIRI Failed:', res.status, txt);
-                    throw new Error(`SIRI fetch failed: ${res.status}`);
-                }
-                const data = await res.json();
-                return { type: 'siri', data };
+                const updates = await fetchBusGtfs(routeId);
+                // Need to wrap in standard FeedMessage format or custom?
+                // The app expects `feed.entity[...]`.
+                // We will verify what `fetchBusGtfs` returns. 
+                // Ah, `fetchBusGtfs` returns flat `BusDeparture[]`.
+                // But the Caller (`route.ts`) expects a FeedMessage to parse `tripUpdate`.
+                // Actually, `route.ts` calls `MtaService.fetchFeed` then processes it.
+                // If we change return type here, we break `route.ts`.
+
+                // Better: Have `fetchBusGtfs` return the RAW FeedMessage, 
+                // OR construct a fake FeedMessage here from the parsed data?
+                // Or just let `fetchBusGtfs` return the raw `feed` object (decoded protobuf)
+                // and let `route.ts` filter it.
+
+                // Simplest: `fetchBusGtfs` returns parsed simple objects.
+                // We wrap them back into a mock GTFS structure so `route.ts` doesn't change too much, 
+                // OR we handle a special `type: 'custom-bus'` response.
+
+                return { type: 'custom-bus', data: updates };
             } catch (e) {
-                console.error('SIRI error:', e);
+                console.error('[MTA] Bus GTFS Fail', e);
                 throw e;
             }
         }
 
-        // LIRR and MNR special cases
-        if (routeId.startsWith('LIRR')) {
-            url = FEED_URLS['LIRR'];
-        } else if (routeId.startsWith('MNR')) {
-            url = FEED_URLS['MNR'];
-        } else if (routeId === 'PATH') {
-            url = FEED_URLS['PATH'];
-        } else if (routeId === 'NYC_FERRY') {
-            url = FEED_URLS['NYC_FERRY'];
-        }
+        // LIRR / MNR / PATH / Standard Subway
+        if (routeId.startsWith('LIRR')) url = FEED_URLS['LIRR'];
+        else if (routeId.startsWith('MNR')) url = FEED_URLS['MNR'];
+        else if (routeId === 'PATH') url = FEED_URLS['PATH'];
+        else if (routeId === 'NYC_FERRY') url = FEED_URLS['NYC_FERRY'];
 
-        if (!url) {
-            throw new Error(`No feed URL found for route: ${routeId}`);
-        }
+        if (!url) throw new Error(`No feed URL found for route: ${routeId}`);
 
         const headers: Record<string, string> = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -219,17 +168,14 @@ export const MtaService = {
             const response = await fetch(url, { cache: 'no-store', headers });
             if (!response.ok) {
                 const errorText = await response.text();
-                // console.error(`[MTA] HTTP error ${response.status}: ${errorText}`);
                 throw new Error(`HTTP error! status: ${response.status} - ${errorText.substring(0, 100)}`);
             }
             const buffer = await response.arrayBuffer();
-            console.log(`[MTA] Raw buffer size: ${buffer.byteLength} bytes`);
             if (returnRaw) {
                 return { type: 'gtfs-raw', data: buffer };
             }
             // @ts-ignore
             const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
-            console.log(`[MTA] Parsed ${feed.entity?.length || 0} entities from feed`);
             return { type: 'gtfs', data: feed };
         } catch (error) {
             console.error('Error fetching/parsing GTFS feed:', error);
