@@ -169,37 +169,33 @@ export async function getNjtDepartures(stationCode: string, destStopId?: string 
     return merged.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
 }
 
-async function fetchRealtimeDepartures(stationCode: string): Promise<NjtDeparture[]> {
-    const token = await getNjtToken();
-    const username = process.env.NJT_USERNAME;
-    const password = process.env.NJT_PASSWORD;
+import { fetchGtfsDepartures } from './njt_gtfs';
 
-    if (!token || !username || !password) {
+// ... (existing imports)
+
+// ... (getNjtDepartures function implementation remains similar, but calls fetchRealtimeDepartures)
+
+async function fetchRealtimeDepartures(stationCode: string): Promise<NjtDeparture[]> {
+    try {
+        const gtfsData = await fetchGtfsDepartures(stationCode);
+
+        return gtfsData.map(d => ({
+            train_id: d.trip_id,
+            line: `Line ${d.route_id}`, // GTFS Route ID (Numeric)
+            destination: 'See App', // GTFS doesn't give Headsign easily without trips.txt. 
+            // However, the Hybrid Merge logic matches against Static trips which HAVE destinations.
+            // So if matched, dest is overwritten.
+            // If unmatched, "See App" is fallback.
+            track: '-', // GTFS-RT usually doesn't have track for NJT (only DepartureVision does)
+            // Wait, does inspection showed track? No.
+            time: new Date(d.time).toISOString(),
+            status: d.status || 'ON TIME',
+            stops: [] // GTFS Stops are nested updates, we could parse but complex. 
+        }));
+    } catch (e) {
+        console.warn(`[NJT] Realtime fetch failed: ${(e as Error).message}`);
         return [];
     }
-
-    const params = new URLSearchParams();
-    params.append('username', username);
-    params.append('password', password);
-    params.append('token', token);
-    params.append('station', stationCode);
-
-    const res = await axios.post(`${NJT_BASE_URL}/getScheduleWithStops`, params.toString(), {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
-
-    if (res.data && res.data.ITEMS) {
-        return res.data.ITEMS.map((item: any) => ({
-            train_id: item.TRAIN_ID,
-            line: item.LINE,
-            destination: item.DESTINATION,
-            track: item.TRACK || '-',
-            time: parseNjtDate(item.SCHED_DEP_DATE).toISOString(),
-            status: item.STATUS || 'ON TIME',
-            stops: item.STOPS
-        }));
-    }
-    return [];
 }
 
 function getStaticFallback(stationCode: string, destStopId?: string | null): NjtDeparture[] {
