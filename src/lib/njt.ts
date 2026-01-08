@@ -202,19 +202,40 @@ function getStaticFallback(stationCode: string, destStopId?: string | null): Njt
     const match = njtFallback.find(f => f.originId === stationCode && f.destId === destStopId);
 
     const now = new Date();
-    const nowNYC = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+    // Get YYYY-MM-DD in NYC 
+    const nycFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    const [{ value: month }, , { value: day }, , { value: year }] = nycFormatter.formatToParts(now);
+
+    // Simple DST Check (March-Nov approximation or fixed for now)
+    // Jan is Standard (-05:00).
+    const isDst = false;
+    const offset = isDst ? "-04:00" : "-05:00";
 
     if (match) {
         return match.departures.map((timeStr, idx) => {
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            const depDate = new Date(nowNYC);
-            depDate.setHours(hours, minutes, 0, 0);
+            let [hours, minutes] = timeStr.split(':').map(Number);
+            let depIso = `${year}-${month}-${day}T${timeStr}:00${offset}`;
+            let depDate = new Date(depIso);
 
-            // If the time has already passed, it might be for tomorrow if we're near midnight, 
-            // but usually we just want the next upcoming ones.
-            // If depDate < nowNYC - 30 mins, assume it's tomorrow (simplified)
-            if (depDate.getTime() < nowNYC.getTime() - 30 * 60000) {
-                depDate.setDate(depDate.getDate() + 1);
+            // Handle Past/Midnight logic
+            // If the generated time is significantly in the past (> 2 hours ago), 
+            // it likely means the schedule wrapped or we are late at night looking at early morning trains? 
+            // Actually, static schedule "05:22" interpreted today at "23:00" is in the past. 
+            // We want upcoming. 
+            // If depDate < now - 30 mins, maybe it's for tomorrow?
+            // BUT static schedule array is sorted.
+            // If we are at 23:00, "05:22" for TODAY is passed. "05:22" for TOMORROW is what we want.
+
+            if (depDate.getTime() < now.getTime() - 30 * 60000) {
+                // Try tomorrow
+                const tomorrow = new Date(depDate);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                depDate = tomorrow;
             }
 
             return {
