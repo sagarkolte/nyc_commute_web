@@ -8,6 +8,10 @@ async function verifyPath() {
     console.log('Fetching PATH feed...');
     try {
         const feedResponse = await MtaService.fetchFeed('PATH', undefined, '26731');
+        if (feedResponse.type !== 'gtfs' || !('entity' in feedResponse.data)) {
+            console.log(`Skipping: Feed type is ${feedResponse.type}`);
+            return;
+        }
         const feed = feedResponse.data;
         const now = Date.now() / 1000;
 
