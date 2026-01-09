@@ -1,5 +1,6 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 import mtaBusIndex from './mta_bus_index.json';
+import mtaBusStops from './mta_bus_stops.json';
 import { fetchBusGtfs } from './mta_bus_gtfs';
 
 const FEED_URLS: Record<string, string> = {
@@ -75,29 +76,44 @@ export const MtaService = {
     },
 
     getBusStops: async (routeId: string, apiKey: string) => {
-        // We still don't have a static Stop DB for Buses (it's huge).
-        // And we can't use OBA API (Auth key mismatch).
-        // Strategy: 
-        // 1. We might be able to inference stops from GTFS-RT? No, rare.
-        // 2. We can try OBA "stops-for-route" anyway? Maybe "stops-for-route" is public? 
-        //    (Unlikely, usually requires key).
-        //    The user's key failed "routes-for-agency".
-        //    Let's return a dummy stop allowing ANY stop ID for now, or leverage the route listing.
-        //    Wait, without stops, the user can't select a stop.
-        //    Actually, "stops-for-route" is critical.
-        //    If we can't fetch stops, user workflow breaks at Step 2.
+        // Use Static Stop Index
+        // Keys in mtaBuStops are likely Route IDs (e.g. "M23+", "Q115").
+        // The input routeId might be "MTA NYCT_M23+".
+        // We need to normalize.
 
-        //    Let's mock it for now with "All Stops (Realtime Check)"?
-        //    Or: Maybe the key works for SIRI "StopMonitoring" but not "Discovery"?
-        //    No, SIRI failed too.
+        let stops = (mtaBusStops as any)[routeId];
 
-        //    Backup Plan: Just return one "Wildcard" stop that tracks the whole route?
-        //    "Any Stop" -> Then we list all upcoming stops from the Realtime Feed?
+        if (!stops) {
+            // Try stripping "MTA NYCT_" or "MTABC_"
+            const shortId = routeId.replace(/^MTA (NYCT_|BC_)/, '');
+            stops = (mtaBusStops as any)[shortId];
+        }
 
+        if (!stops) {
+            // Try matching via our helper index to find the GTFS Route ID?
+            const routeDef = (mtaBusIndex as any[]).find(r => r.id === routeId);
+            if (routeDef && routeDef.shortName) {
+                stops = (mtaBusStops as any)[routeDef.shortName];
+            }
+        }
+
+        if (stops) {
+            return stops.map((s: any) => ({
+                id: s.id,
+                name: s.name,
+                direction: s.direction || 'N/A',
+                lat: s.lat,
+                lon: s.lon,
+                lines: [routeId]
+            }));
+        }
+
+        // Fallback to "Any Stop" if missing from index (e.g. Express routes if payload failed)
+        console.warn(`[MTA] Check Bus Stops: No static stops for ${routeId}`);
         return [
             {
                 id: 'ANY',
-                name: 'All Active Vehicles (Debug)',
+                name: 'All Active Vehicles (Realtime)',
                 direction: 'N/A',
                 lat: 0,
                 lon: 0,
