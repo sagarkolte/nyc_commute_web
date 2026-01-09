@@ -25,21 +25,21 @@ download_feed() {
 }
 
 # 1. Manhattan
-download_feed "manhattan" "http://web.mta.info/developers/data/nyct/bus/google_transit_manhattan.zip"
+download_feed "manhattan" "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_m.zip"
 
 # 2. Queens
-download_feed "queens" "http://web.mta.info/developers/data/nyct/bus/google_transit_queens.zip"
+download_feed "queens" "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_q.zip"
 
 # 3. Brooklyn
-download_feed "brooklyn" "http://web.mta.info/developers/data/nyct/bus/google_transit_brooklyn.zip"
+download_feed "brooklyn" "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_b.zip"
 
 # 4. Bronx
-download_feed "bronx" "http://web.mta.info/developers/data/nyct/bus/google_transit_bronx.zip"
+download_feed "bronx" "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_bx.zip"
 
 # 5. Staten Island
-download_feed "staten_island" "http://web.mta.info/developers/data/nyct/bus/google_transit_staten_island.zip"
+download_feed "staten_island" "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_si.zip"
 
 # 6. MTA Bus Company (Regional/Express)
-download_feed "mtabc" "http://web.mta.info/developers/data/bus/google_transit_bus_company.zip"
+download_feed "mtabc" "https://rrgtfsfeeds.s3.amazonaws.com/gtfs_busco.zip"
 
 echo "All downloads processed."

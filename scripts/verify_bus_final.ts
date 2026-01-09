@@ -6,9 +6,9 @@ async function verify() {
     console.log("--- Verifying MTA Bus Implementation (Final CJS) ---");
 
     // 1. Search Route
-    console.log("\n[1] Testing Search 'Q12'...");
-    const results = await MtaService.searchBusRoutes('Q12', 'ignored');
-    console.log(`Found ${results.length} results for 'Q12'.`);
+    console.log("\n[1] Testing Search 'BXM7'...");
+    const results = await MtaService.searchBusRoutes('BXM7', 'ignored');
+    console.log(`Found ${results.length} results for 'BXM7'.`);
 
     if (results.length === 0) {
         console.error("❌ Search Failed!");
