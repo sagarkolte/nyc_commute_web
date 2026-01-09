@@ -40,3 +40,4 @@ src/lib/njt_bus_stop_times.txt
 njt_bus_data.zip
 njt_gtfs.zip
 stops.txt
+gtfs_data/
