@@ -79,7 +79,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                 });
                 setArrivals(sorted);
                 setHasAlert(data.alerts && data.alerts.length > 0);
-                setDebugInfo(null);
+                setDebugInfo((prev: any) => ({ ...prev, alerts: data.alerts }));
                 setError(null);
             } else if (data.error) {
                 throw new Error(data.error);
@@ -153,8 +153,41 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         {badgeText}
                     </div>
                     {hasAlert && (
-                        <div style={{ marginRight: 8 }}>
-                            <TriangleAlert size={20} color="#FFD100" fill="#FFD100" stroke="#000" strokeWidth={1.5} />
+                        <div style={{ marginRight: 8, position: 'relative', zIndex: 20 }}>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
+                                }}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                            >
+                                <TriangleAlert size={20} color="#FFD100" fill="#FFD100" stroke="#000" strokeWidth={1.5} />
+                            </button>
+                            {debugInfo?.showBubble && (
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '30px',
+                                    left: '-10px',
+                                    width: '250px',
+                                    backgroundColor: '#222',
+                                    border: '1px solid #444',
+                                    borderRadius: '8px',
+                                    padding: '12px',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                                    zIndex: 100,
+                                    color: '#eee',
+                                    textAlign: 'left'
+                                }}>
+                                    <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#FFD100' }}>Service Alert</h4>
+                                    {debugInfo?.alerts?.map((alert: any, idx: number) => (
+                                        <div key={idx} style={{ marginBottom: '8px', fontSize: '12px' }}>
+                                            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{alert.header}</div>
+                                            <div style={{ opacity: 0.8 }} dangerouslySetInnerHTML={{ __html: alert.description }} />
+                                        </div>
+                                    ))}
+                                    {(!debugInfo?.alerts || debugInfo.alerts.length === 0) && <div style={{ fontSize: '12px' }}>Check mta.info for details.</div>}
+                                </div>
+                            )}
                         </div>
                     )}
                     <div className="commute-card-info">

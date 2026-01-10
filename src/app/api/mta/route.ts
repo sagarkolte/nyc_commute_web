@@ -115,7 +115,8 @@ export async function GET(request: Request) {
             // Only fetch for Subway lines (MTA NYCT) for now as that's what the service covers
             // The service URL is subway-alerts.
             if (isSubwayOrRail && !routeId.startsWith('LIRR') && !routeId.startsWith('MNR') && routeId !== 'PATH' && routeId !== 'nyc-ferry') {
-                alerts = await MtaAlertsService.getAlertsForRoute(routeId);
+                const rawAlerts = await MtaAlertsService.getAlertsForRoute(routeId);
+                alerts = require('@/lib/mta_alerts').formatAlerts(rawAlerts);
             }
         } catch (e) {
             console.error('[API] Failed to fetch alerts', e);

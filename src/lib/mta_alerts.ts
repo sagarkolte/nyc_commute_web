@@ -68,3 +68,22 @@ export const MtaAlertsService = {
         });
     }
 };
+
+// Helper to extract text from GTFS-RT TranslatedString
+function getTranslation(trans: any): string {
+    if (!trans || !trans.translation) return '';
+    const t = trans.translation.find((tr: any) => tr.language === 'en' || tr.language === 'en-html');
+    return t ? t.text : (trans.translation[0]?.text || '');
+}
+
+// Helper to simplify alert object
+export function formatAlerts(entities: any[]) {
+    return entities.map(e => {
+        const a = e.alert;
+        return {
+            header: getTranslation(a.headerText),
+            description: getTranslation(a.descriptionText),
+            // activePeriod: we could parse activePeriod if needed
+        };
+    });
+}
