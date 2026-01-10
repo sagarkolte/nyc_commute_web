@@ -3,7 +3,9 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Station } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
-import subwayStations from '@/lib/stations.json';
+import subwayStationsRaw from '@/lib/stations.json';
+import sirStations from '@/lib/sir_stations.json';
+const subwayStations = [...subwayStationsRaw, ...sirStations];
 import lirrStations from '@/lib/lirr_stations.json';
 import mnrStations from '@/lib/mnr_stations.json';
 import pathStations from '@/lib/path_stations.json';

@@ -1,0 +1,191 @@
+[
+  {
+    "id": "S01",
+    "name": "St. George",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "Terminal",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S02",
+    "name": "Tompkinsville",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S03",
+    "name": "Stapleton",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S04",
+    "name": "Clifton",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S05",
+    "name": "Grasmere",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S06",
+    "name": "Old Town",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S07",
+    "name": "Dongan Hills",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S08",
+    "name": "Jefferson Av",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S09",
+    "name": "Grant City",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S10",
+    "name": "New Dorp",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S11",
+    "name": "Oakwood Heights",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S12",
+    "name": "Bay Terrace",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S13",
+    "name": "Great Kills",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S14",
+    "name": "Eltingville",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S15",
+    "name": "Annadale",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S16",
+    "name": "Huguenot",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S17",
+    "name": "Prince's Bay",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S18",
+    "name": "Pleasant Plains",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S19",
+    "name": "Richmond Valley",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S20",
+    "name": "Arthur Kill",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Tottenville"
+  },
+  {
+    "id": "S31",
+    "name": "Tottenville",
+    "lines": [
+      "SIR"
+    ],
+    "north_label": "St. George",
+    "south_label": "Terminal"
+  }
+]

@@ -14,6 +14,7 @@ const COLORS: Record<string, string> = {
     'B': '#FF6319', 'D': '#FF6319', 'F': '#FF6319', 'M': '#FF6319',
     'N': '#FCCC0A', 'Q': '#FCCC0A', 'R': '#FCCC0A', 'W': '#FCCC0A',
     'L': '#A7A9AC', 'G': '#6CBE45', 'J': '#996633', 'Z': '#996633',
+    'SI': '#0039A6',
 };
 
 export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDelete: () => void }) => {

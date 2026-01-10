@@ -39,6 +39,7 @@ const FEED_URLS: Record<string, string> = {
     'MNR': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/mnr%2Fgtfs-mnr',
     'PATH': 'https://path.transitdata.nyc/gtfsrt',
     'NYC_FERRY': 'http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/tripupdate',
+    'SI': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si',
 };
 
 // Bus support - Static Index + GTFS-RT
