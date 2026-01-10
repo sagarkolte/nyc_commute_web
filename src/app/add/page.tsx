@@ -10,7 +10,7 @@ import Link from 'next/link';
 const LINES = [
     '1', '2', '3', '4', '5', '6', '7',
     'A', 'C', 'E', 'B', 'D', 'F', 'M',
-    'N', 'Q', 'R', 'W', 'J', 'Z', 'G', 'L', 'S'
+    'N', 'Q', 'R', 'W', 'J', 'Z', 'G', 'L', 'S', 'SI'
 ];
 
 type Step = 'mode' | 'line' | 'station' | 'direction' | 'route';
