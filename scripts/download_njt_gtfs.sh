@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "=================================================="
+echo "⚠️  NJ TRANSIT GTFS DOWNLOAD REQUIRED ⚠️"
+echo "=================================================="
+echo ""
+echo "NJ Transit does not provide a public direct link for their GTFS data."
+echo "You must download it manually:"
+echo ""
+echo "1. Go to: https://www.njtransit.com/developer-tools"
+echo "2. Register/Login (it's free)."
+echo "3. Download the 'Rail Schedule Data' (GTFS)."
+echo "4. Rename the file to: njt_gtfs.zip"
+echo "5. Place it in the project root folder: $(pwd)/njt_gtfs.zip"
+echo ""
+echo "Once done, run: npm run build:njt"
+echo "=================================================="

@@ -171,10 +171,6 @@ export async function getNjtDepartures(stationCode: string, destStopId?: string 
 
 import { fetchGtfsDepartures } from './njt_gtfs';
 
-// ... (existing imports)
-
-// ... (getNjtDepartures function implementation remains similar, but calls fetchRealtimeDepartures)
-
 async function fetchRealtimeDepartures(stationCode: string): Promise<NjtDeparture[]> {
     try {
         const gtfsData = await fetchGtfsDepartures(stationCode);
@@ -198,7 +194,51 @@ async function fetchRealtimeDepartures(stationCode: string): Promise<NjtDepartur
     }
 }
 
+import njtGtfsMapping from './njt_gtfs_mapping.json';
+import { getNextTrainsById, NjtSqlTrip } from './njt_sql';
+
+// Helper to convert SQL Trip to App Trip
+function sqlTripToDeparture(trip: NjtSqlTrip, stopId: string): NjtDeparture {
+    const now = new Date();
+    // Create Date from minutes-from-midnight
+    // Assuming Eastern Time context for "today"
+    const nycTime = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+    const baseDate = new Date(nycTime);
+    baseDate.setHours(0, 0, 0, 0);
+
+    // Add minutes
+    const depTime = new Date(baseDate.getTime() + trip.origin_time * 60000);
+
+    return {
+        train_id: `SQL-${trip.trip_id}`, // Prefix to distinguish
+        line: `Line ${trip.route_id}`, // OR map route_id to name if needed
+        destination: trip.headsign, // SQL DB has headsign!
+        track: '-',
+        time: depTime.toISOString(),
+        status: 'SCHEDULED'
+    };
+}
+
 function getStaticFallback(stationCode: string, destStopId?: string | null): NjtDeparture[] {
+    // 1. Try SQL Database first
+    if (destStopId) {
+        const originGtfsId = (njtGtfsMapping as any)[stationCode];
+        const destGtfsId = (njtGtfsMapping as any)[destStopId];
+
+        if (originGtfsId && destGtfsId) {
+            try {
+                // limit 10 to ensure we have enough to show after real-time merge
+                const sqlTrips = getNextTrainsById(parseInt(originGtfsId), parseInt(destGtfsId), 10);
+                if (sqlTrips.length > 0) {
+                    return sqlTrips.map(t => sqlTripToDeparture(t, stationCode));
+                }
+            } catch (e) {
+                console.warn("[NJT] SQL Lookup failed, falling back to JSON:", e);
+            }
+        }
+    }
+
+    // 2. Original JSON Fallback (Legacy)
     const match = njtFallback.find(f => f.originId === stationCode && f.destId === destStopId);
 
     const now = new Date();
@@ -221,15 +261,6 @@ function getStaticFallback(stationCode: string, destStopId?: string | null): Njt
             let [hours, minutes] = timeStr.split(':').map(Number);
             let depIso = `${year}-${month}-${day}T${timeStr}:00${offset}`;
             let depDate = new Date(depIso);
-
-            // Handle Past/Midnight logic
-            // If the generated time is significantly in the past (> 2 hours ago), 
-            // it likely means the schedule wrapped or we are late at night looking at early morning trains? 
-            // Actually, static schedule "05:22" interpreted today at "23:00" is in the past. 
-            // We want upcoming. 
-            // If depDate < now - 30 mins, maybe it's for tomorrow?
-            // BUT static schedule array is sorted.
-            // If we are at 23:00, "05:22" for TODAY is passed. "05:22" for TOMORROW is what we want.
 
             if (depDate.getTime() < now.getTime() - 30 * 60000) {
                 // Try tomorrow

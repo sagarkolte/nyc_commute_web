@@ -41,3 +41,7 @@ njt_bus_data.zip
 njt_gtfs.zip
 stops.txt
 gtfs_data/
+
+# SQLite WAL files
+*.db-shm
+*.db-wal
