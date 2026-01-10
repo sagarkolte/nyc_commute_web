@@ -105,11 +105,33 @@ export function getNextTrainsById(
     if (!database) return [];
 
     const now = new Date();
-    // NJT Timezone handling needed? 
-    // Assuming server time or local time. For safety, let's use Eastern Time.
-    const nycTime = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
-    const currentMinutes = (nycTime.getHours() * 60) + nycTime.getMinutes();
-    const todayInt = toDateInt(nycTime);
+
+    // Robust Eastern Time conversion using Intl
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        hour12: false,
+        hour: 'numeric',
+        minute: 'numeric',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+
+    // Parse parts to avoid Date string parsing ambiguity
+    const parts = formatter.formatToParts(now);
+    const getPart = (type: string) => parseInt(parts.find(p => p.type === type)?.value || '0');
+
+    const year = getPart('year');
+    const month = getPart('month');
+    const day = getPart('day');
+    const hour = getPart('hour');
+    const minute = getPart('minute');
+
+    // Mins from midnight
+    const currentMinutes = (hour * 60) + minute;
+    const todayInt = parseInt(`${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`);
+
+    console.log(`[NJT-SQL] Time Check: Now=${now.toISOString()}, NYC=${hour}:${minute}, Mins=${currentMinutes}, Date=${todayInt}`);
 
     // 2. Query Schedule
     const query = `
