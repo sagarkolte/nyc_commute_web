@@ -446,14 +446,18 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                                 );
                             } else {
                                 return (
-                                    <button key={s.busstopnumber + (s.njt_direction || '')} className="item" onClick={() => handleSelect(s)}>
-                                        <div className="item-name">{s.busstopdescription}</div>
-                                        {njtStep === 'origin' && (
-                                            <div className="route-desc">
-                                                Towards: <strong>{s.njt_destination}</strong>
-                                            </div>
+                                    <>
+                                        {(!s || s.njt_destination !== 'Terminal') && (
+                                            <button key={s.busstopnumber + (s.njt_direction || '')} className="item" onClick={() => handleSelect(s)}>
+                                                <div className="item-name">{s.busstopdescription}</div>
+                                                {njtStep === 'origin' && (
+                                                    <div className="route-desc">
+                                                        Towards: <strong>{s.njt_destination}</strong>
+                                                    </div>
+                                                )}
+                                            </button>
                                         )}
-                                    </button>
+                                    </>
                                 );
                             }
                         })}

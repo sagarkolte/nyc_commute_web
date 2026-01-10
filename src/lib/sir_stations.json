@@ -5,8 +5,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "Terminal",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "Terminal"
   },
   {
     "id": "S02",
@@ -14,8 +14,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S03",
@@ -23,8 +23,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S04",
@@ -32,8 +32,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S05",
@@ -41,8 +41,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S06",
@@ -50,8 +50,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S07",
@@ -59,8 +59,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S08",
@@ -68,8 +68,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S09",
@@ -77,8 +77,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S10",
@@ -86,8 +86,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S11",
@@ -95,8 +95,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S12",
@@ -104,8 +104,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S13",
@@ -113,8 +113,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S14",
@@ -122,8 +122,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S15",
@@ -131,8 +131,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S16",
@@ -140,8 +140,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S17",
@@ -149,8 +149,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S18",
@@ -158,8 +158,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S19",
@@ -167,8 +167,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S20",
@@ -176,8 +176,8 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Tottenville"
+    "north_label": "Tottenville",
+    "south_label": "St. George"
   },
   {
     "id": "S31",
@@ -185,7 +185,7 @@
     "lines": [
       "SI"
     ],
-    "north_label": "St. George",
-    "south_label": "Terminal"
+    "north_label": "Terminal",
+    "south_label": "St. George"
   }
 ]

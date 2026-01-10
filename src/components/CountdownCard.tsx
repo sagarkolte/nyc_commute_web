@@ -161,9 +161,11 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         <h3>{(() => {
                             const fullLabel = toTitleCase(tuple.label);
                             const subtitle = tuple.destinationName ? toTitleCase(tuple.destinationName) :
-                                tuple.direction === 'N' ? 'Uptown / North' :
-                                    tuple.direction === 'S' ? 'Downtown / South' :
-                                        tuple.direction; // This is the exact subtitle text
+                                (tuple.routeId === 'SI' && tuple.direction === 'N') ? 'To Tottenville' :
+                                    (tuple.routeId === 'SI' && tuple.direction === 'S') ? 'To St. George' :
+                                        tuple.direction === 'N' ? 'Uptown / North' :
+                                            tuple.direction === 'S' ? 'Downtown / South' :
+                                                tuple.direction; // This is the exact subtitle text
 
                             // 1. Try to split by " - " which is common for some routes
                             const parts = fullLabel.split(' - ');
