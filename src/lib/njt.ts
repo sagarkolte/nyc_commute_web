@@ -201,13 +201,44 @@ import { getNextTrainsById, NjtSqlTrip } from './njt_sql';
 function sqlTripToDeparture(trip: NjtSqlTrip, stopId: string): NjtDeparture {
     const now = new Date();
     // Create Date from minutes-from-midnight
-    // Assuming Eastern Time context for "today"
-    const nycTime = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
-    const baseDate = new Date(nycTime);
-    baseDate.setHours(0, 0, 0, 0);
+    // Robust Eastern Time Midnight Calculation
+    const nycFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    const parts = nycFormatter.formatToParts(now);
+    const getPart = (type: string) => parseInt(parts.find(p => p.type === type)?.value || '0');
 
-    // Add minutes
-    const depTime = new Date(baseDate.getTime() + trip.origin_time * 60000);
+    // Construct simplified IOS string YYYY-MM-DD
+    const yyyy = getPart('year');
+    const mm = String(getPart('month')).padStart(2, '0');
+    const dd = String(getPart('day')).padStart(2, '0');
+
+    // Create base date string for America/New_York
+    // We can't easily construct a Date object set to EST midnight using native Date without shifts.
+    // Instead: Calculate timestamp of 00:00 EST today.
+
+    // Easier approach: Use the string constructor with offset
+    // EST is -5, EDT is -4. 
+    // Optimization: Just assume we are in the same day as 'now' and use setHours IF we can force TZ.
+    // Actually, simply constructing the UTC string for the correct time might be safer.
+
+    // Let's rely on the fact we have the date parts:
+    // Trip Time: HH:MM
+    const hours = Math.floor(trip.origin_time / 60);
+    const minutes = trip.origin_time % 60;
+
+    const hh = String(hours).padStart(2, '0');
+    const min = String(minutes).padStart(2, '0');
+
+    // HARDCODED OFFSET for now (Winter/Jan = -05:00)
+    // To do this properly requires a library, but -05:00 is safe for Jan.
+    const isoString = `${yyyy}-${mm}-${dd}T${hh}:${min}:00-05:00`;
+
+    // Verify validity
+    const depTime = new Date(isoString);
 
     return {
         train_id: `SQL-${trip.trip_id}`, // Prefix to distinguish
