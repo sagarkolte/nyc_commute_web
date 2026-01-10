@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getNjtDepartures, parseNjtDate } from '@/lib/njt';
+
+export const dynamic = 'force-dynamic';
 import njtStations from '@/lib/njt_stations.json';
 
 export async function GET(request: Request) {
