@@ -41,8 +41,25 @@ function getDb() {
                 return null;
             }
 
-            console.log("[NJT-SQL] Opening DB at:", dbPath);
-            db = new Database(dbPath, { readonly: true });
+            // WORKAROUND: Copy to /tmp to avoid SQLITE_CANTOPEN (Read-only FS issues with WAL/locking)
+            // /tmp is writable in Vercel Lambda
+            const tmpDbPath = path.join('/tmp', DB_FILENAME);
+            try {
+                // Only copy if source is different or tmp doesn't exist
+                if (dbPath !== tmpDbPath) {
+                    // Check if file already exists in tmp (reused container)
+                    if (!fs.existsSync(tmpDbPath)) {
+                        console.log(`[NJT-SQL] Copying DB from ${dbPath} to ${tmpDbPath}...`);
+                        fs.copyFileSync(dbPath, tmpDbPath);
+                    }
+                }
+                console.log("[NJT-SQL] Opening DB at:", tmpDbPath);
+                db = new Database(tmpDbPath, { readonly: true });
+            } catch (copyError) {
+                console.warn("[NJT-SQL] Failed to copy to /tmp, trying direct open...", copyError);
+                console.log("[NJT-SQL] Opening DB at:", dbPath);
+                db = new Database(dbPath, { readonly: true });
+            }
         } catch (e) {
             console.error("Failed to open NJT DB:", e);
             return null;
