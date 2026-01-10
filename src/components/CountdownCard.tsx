@@ -150,7 +150,27 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         {badgeText}
                     </div>
                     <div className="commute-card-info">
-                        <h3>{toTitleCase(tuple.label)}</h3>
+                        <h3>{(() => {
+                            const fullLabel = toTitleCase(tuple.label);
+                            const subtitle = tuple.destinationName ? toTitleCase(tuple.destinationName) :
+                                tuple.direction === 'N' ? 'Uptown / North' :
+                                    tuple.direction === 'S' ? 'Downtown / South' :
+                                        tuple.direction; // This is the exact subtitle text
+
+                            // 1. Try to split by " - " which is common for some routes
+                            const parts = fullLabel.split(' - ');
+                            if (parts.length > 1) {
+                                return parts[0];
+                            }
+
+                            // 2. Try to remove the subtitle if it's part of the label (common in "Stop (Headsign)" format from StationSelector)
+                            if (subtitle && fullLabel.toLowerCase().includes(subtitle.toLowerCase())) {
+                                // Remove subtitle and parenthesis if present
+                                return fullLabel.replace(new RegExp(`\\s*\\(?${subtitle}\\)?`, 'i'), '').trim();
+                            }
+
+                            return fullLabel;
+                        })()}</h3>
                         <p>
                             {isFerry && tuple.routeId !== 'NYC Ferry' && tuple.routeId !== 'nyc-ferry' ? (
                                 <span style={{ fontWeight: 600, color: lineColor, marginRight: '8px' }}>{tuple.routeId}</span>
