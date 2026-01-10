@@ -82,8 +82,7 @@ export function formatAlerts(entities: any[]) {
         const a = e.alert;
         return {
             header: getTranslation(a.headerText),
-            description: getTranslation(a.descriptionText),
-            // activePeriod: we could parse activePeriod if needed
+            // description: getTranslation(a.descriptionText), // User requested to hide full description
         };
     });
 }

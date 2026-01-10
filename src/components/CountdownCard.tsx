@@ -181,8 +181,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                                     <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#FFD100' }}>Service Alert</h4>
                                     {debugInfo?.alerts?.map((alert: any, idx: number) => (
                                         <div key={idx} style={{ marginBottom: '8px', fontSize: '12px' }}>
-                                            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{alert.header}</div>
-                                            <div style={{ opacity: 0.8 }} dangerouslySetInnerHTML={{ __html: alert.description }} />
+                                            <div style={{ fontWeight: 'bold' }}>{alert.header}</div>
                                         </div>
                                     ))}
                                     {(!debugInfo?.alerts || debugInfo.alerts.length === 0) && <div style={{ fontSize: '12px' }}>Check mta.info for details.</div>}
