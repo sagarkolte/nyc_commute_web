@@ -3,17 +3,46 @@ import Database from 'better-sqlite3';
 import path from 'path';
 
 // Load DB
-// In Next.js Serverless (Vercel), we must ensure the file is included.
-// We typically use process.cwd() or __dirname tricks. 
-// For now, assume strict path.
-const DB_PATH = path.join(process.cwd(), 'src/lib/njt_schedule.db');
+import fs from 'fs';
+
+// Load DB
+// Vercel Serverless environment handling
+const DB_FILENAME = 'njt_schedule.db';
 let db: any;
 
 function getDb() {
     if (!db) {
         try {
-            console.log("[NJT-SQL] Opening DB at:", DB_PATH);
-            db = new Database(DB_PATH, { readonly: true });
+            // Attempt 1: Strict path (traced)
+            let dbPath = path.join(process.cwd(), 'src/lib', DB_FILENAME);
+
+            // Attempt 2: Same directory (bundled)
+            if (!fs.existsSync(dbPath)) {
+                console.warn(`[NJT-SQL] DB not found at ${dbPath}. Checking other locations...`);
+                const altPath = path.join(__dirname, DB_FILENAME);
+                if (fs.existsSync(altPath)) {
+                    dbPath = altPath;
+                } else {
+                    // Attempt 3: Root (flat bundle)
+                    const rootPath = path.join(process.cwd(), DB_FILENAME);
+                    if (fs.existsSync(rootPath)) {
+                        dbPath = rootPath;
+                    }
+                }
+            }
+
+            if (!fs.existsSync(dbPath)) {
+                console.error(`[NJT-SQL] CRITICAL: DB file not found! CWD: ${process.cwd()}`);
+                // List files to help debug
+                try {
+                    console.log("CWD Listing:", fs.readdirSync(process.cwd()));
+                    console.log("Lib Listing:", fs.readdirSync(path.join(process.cwd(), 'src/lib')));
+                } catch (e) { }
+                return null;
+            }
+
+            console.log("[NJT-SQL] Opening DB at:", dbPath);
+            db = new Database(dbPath, { readonly: true });
         } catch (e) {
             console.error("Failed to open NJT DB:", e);
             return null;
