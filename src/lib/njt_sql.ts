@@ -155,8 +155,10 @@ export function getNextTrainsById(
         LIMIT ?
     `;
 
+    console.log(`[NJT-SQL] Querying: Date=${todayInt}, Origin=${originGtfsId}, Dest=${destGtfsId}, Time>=${currentMinutes}`);
     try {
         const rows = database.prepare(query).all(todayInt, originGtfsId, destGtfsId, currentMinutes, limit);
+        console.log(`[NJT-SQL] Found ${rows.length} rows.`);
         return rows as NjtSqlTrip[];
     } catch (e) {
         console.error("Query failed:", e);
@@ -191,5 +193,6 @@ export function getNextTrains(
         return [];
     }
 
+    console.log(`[NJT-SQL] Resolved: ${originStopName}->${originId}, ${destStopName}->${destId}`);
     return getNextTrainsById(originId, destId, limit);
 }
