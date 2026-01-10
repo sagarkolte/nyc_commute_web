@@ -158,7 +158,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                             {tuple.destinationName ? toTitleCase(tuple.destinationName) :
                                 tuple.direction === 'N' ? 'Uptown / North' :
                                     tuple.direction === 'S' ? 'Downtown / South' :
-                                        `Direction: ${tuple.direction}`}
+                                        tuple.direction}
                         </p>
                         {tuple.routeId === 'SI Ferry' && <div className="schedule-badge">SCHEDULE ONLY</div>}
                     </div>

@@ -168,18 +168,18 @@ ol {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  /* Allow wrapping on small screens */
+  white-space: normal;
 }
 
 .commute-card-info p {
   margin: 2px 0 0;
   font-size: 11px;
   color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--text-muted);
+  /* Allow wrapping */
+  white-space: normal;
 }
 
 .commute-card-arrivals {
