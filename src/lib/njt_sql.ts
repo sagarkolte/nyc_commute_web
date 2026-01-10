@@ -12,6 +12,7 @@ let db: any;
 function getDb() {
     if (!db) {
         try {
+            console.log("[NJT-SQL] Opening DB at:", DB_PATH);
             db = new Database(DB_PATH, { readonly: true });
         } catch (e) {
             console.error("Failed to open NJT DB:", e);
