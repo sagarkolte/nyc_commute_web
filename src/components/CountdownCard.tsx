@@ -127,7 +127,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
     const badgeText = formatRouteId(tuple.routeId);
 
     return (
-        <div className="commute-card-container">
+        <div className="commute-card-container" style={{ position: 'relative', zIndex: debugInfo?.showBubble ? 100 : 1 }}>
             {/* Delete Background - Always visible behind, but icon animates */}
             <div className="commute-card-delete-bg">
                 <motion.div style={{ opacity: iconOpacity, scale: iconScale }}>
