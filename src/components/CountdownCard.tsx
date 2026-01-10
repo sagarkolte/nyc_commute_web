@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CommuteTuple, Arrival } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
-import { Trash2 } from 'lucide-react';
+import { Trash2, TriangleAlert } from 'lucide-react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 const COLORS: Record<string, string> = {
@@ -19,6 +19,7 @@ const COLORS: Record<string, string> = {
 export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDelete: () => void }) => {
     const [arrivals, setArrivals] = useState<Arrival[]>([]);
     const [loading, setLoading] = useState(true);
+    const [hasAlert, setHasAlert] = useState(false);
     const [debugInfo, setDebugInfo] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -76,6 +77,7 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     return timeA - timeB;
                 });
                 setArrivals(sorted);
+                setHasAlert(data.alerts && data.alerts.length > 0);
                 setDebugInfo(null);
                 setError(null);
             } else if (data.error) {
@@ -149,6 +151,11 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                     <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0' }}>
                         {badgeText}
                     </div>
+                    {hasAlert && (
+                        <div style={{ marginRight: 8 }}>
+                            <TriangleAlert size={20} color="#FFD100" fill="#FFD100" stroke="#000" strokeWidth={1.5} />
+                        </div>
+                    )}
                     <div className="commute-card-info">
                         <h3>{(() => {
                             const fullLabel = toTitleCase(tuple.label);

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MtaService } from '@/lib/mta';
+import { MtaAlertsService } from '@/lib/mta_alerts';
 import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
 import pathStations from '@/lib/path_stations.json';
@@ -106,6 +107,18 @@ export async function GET(request: Request) {
             // Strategy: Only pre-fill if specific route is requested OR if we want to default generic to something.
             // Given user specifically asked for "East River" in UI, routeId should be 'East River'.
             arrivals = getScheduledFerryArrivals(routeId, stopId, now, direction);
+        }
+
+        // Fetch Alerts for the route
+        let alerts: any[] = [];
+        try {
+            // Only fetch for Subway lines (MTA NYCT) for now as that's what the service covers
+            // The service URL is subway-alerts.
+            if (isSubwayOrRail && !routeId.startsWith('LIRR') && !routeId.startsWith('MNR') && routeId !== 'PATH' && routeId !== 'nyc-ferry') {
+                alerts = await MtaAlertsService.getAlertsForRoute(routeId);
+            }
+        } catch (e) {
+            console.error('[API] Failed to fetch alerts', e);
         }
 
         // Debug stats
@@ -587,7 +600,8 @@ export async function GET(request: Request) {
                     afterNowCount,
                     totalArrivalsRaw: arrivals.length
                 }
-            }
+            },
+            alerts: alerts // Return alerts array
         });
     } catch (error) {
         console.error('[API] Error in MTA route:', error);
