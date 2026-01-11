@@ -231,13 +231,17 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                             if (subtitle && fullLabel.toLowerCase().includes(subtitle.toLowerCase())) {
                                 // Remove subtitle and parenthesis if present
                                 displayLabel = fullLabel.replace(new RegExp(`\\s*\\(?${subtitle}\\)?`, 'i'), '').trim();
+
+                                // ALSO remove trailing separators left behind (like " - " or " ➔ " or " to ")
+                                displayLabel = displayLabel.replace(/[\s\-➔→>]+$/, '').trim();
+                                displayLabel = displayLabel.replace(/\s+to$/, '').trim(); // Handle "Origin to Dest"
                             }
 
                             // FOR MNR/Departure Boards: Combine Origin -> Dest
                             if (isDepartureBoard && tuple.destinationName) {
                                 return (
                                     <span>
-                                        {displayLabel} <span style={{ opacity: 0.7 }}>→</span> {toTitleCase(tuple.destinationName)}
+                                        {displayLabel} <span style={{ opacity: 0.7, padding: '0 4px' }}>→</span> {toTitleCase(tuple.destinationName)}
                                     </span>
                                 );
                             }
