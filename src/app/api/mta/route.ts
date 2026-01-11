@@ -118,8 +118,8 @@ export async function GET(request: Request) {
             if (isSubwayOrRail || routeId.includes('Bus') || /^[MBQSX]\d+/.test(routeId) || routeId.includes('MTA NYCT')) {
                 // Determine if we should skip strictly unsupported ones (like generic NYC Ferry if we don't have a feed)
                 // But our service handles 'generic' fallbacks, so let's try.
-                // Exclude PATH/Ferry as they don't have GTFS-RT alerts in this service yet.
-                if (routeId !== 'PATH' && routeId !== 'nyc-ferry' && !FERRY_ROUTES[routeId]) {
+                // Exclude PATH as it doesn't have GTFS-RT alerts via the generic service yet.
+                if (routeId !== 'PATH') {
                     const rawAlerts = await MtaAlertsService.getAlertsForRoute(routeId);
                     alerts = require('@/lib/mta_alerts').formatAlerts(rawAlerts);
                 }
