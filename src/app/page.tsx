@@ -7,6 +7,7 @@ import { Plus, Settings as SettingsIcon } from 'lucide-react';
 import { CommuteTuple } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { CountdownCard } from '@/components/CountdownCard';
+import { SortableCard } from '@/components/SortableCard';
 import { Reorder, motion } from 'framer-motion';
 
 export default function Home() {
@@ -49,21 +50,7 @@ export default function Home() {
       ) : (
         <Reorder.Group axis="y" values={tuples} onReorder={handleReorder}>
           {tuples.map(t => (
-            <Reorder.Item
-              key={t.id}
-              value={t}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              whileDrag={{ scale: 1.08, boxShadow: "0 16px 32px rgba(0,0,0,0.3)", zIndex: 10 }}
-              onDragStart={() => {
-                if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                  navigator.vibrate(50);
-                }
-              }}
-            >
-              <CountdownCard tuple={t} onDelete={() => handleDelete(t.id)} />
-            </Reorder.Item>
+            <SortableCard key={t.id} item={t} onDelete={() => handleDelete(t.id)} />
           ))}
         </Reorder.Group>
       )}

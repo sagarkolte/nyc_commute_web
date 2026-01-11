@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { CommuteTuple, Arrival } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
-import { Trash2, TriangleAlert } from 'lucide-react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { Trash2, TriangleAlert, GripVertical } from 'lucide-react';
+import { motion, useMotionValue, useTransform, DragControls } from 'framer-motion';
 
 const COLORS: Record<string, string> = {
     '1': '#EE352E', '2': '#EE352E', '3': '#EE352E',
@@ -17,7 +17,7 @@ const COLORS: Record<string, string> = {
     'SI': '#0039A6',
 };
 
-export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDelete: () => void }) => {
+export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: CommuteTuple, onDelete: () => void, dragControls?: DragControls }) => {
     const [arrivals, setArrivals] = useState<Arrival[]>([]);
     const [loading, setLoading] = useState(true);
     const [hasAlert, setHasAlert] = useState(false);
@@ -226,6 +226,14 @@ export const CountdownCard = ({ tuple, onDelete }: { tuple: CommuteTuple, onDele
                         </p>
                         {tuple.routeId === 'SI Ferry' && <div className="schedule-badge">SCHEDULE ONLY</div>}
                     </div>
+                    {dragControls && (
+                        <div
+                            onPointerDown={(e) => dragControls.start(e)}
+                            style={{ cursor: 'grab', padding: '0 8px', display: 'flex', alignItems: 'center', opacity: 0.3 }}
+                        >
+                            <GripVertical size={20} color="#fff" />
+                        </div>
+                    )}
                 </div>
 
                 <div className="commute-card-body">
