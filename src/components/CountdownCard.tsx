@@ -222,28 +222,41 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
 
                             // 1. Try to split by " - " which is common for some routes
                             const parts = fullLabel.split(' - ');
+                            let displayLabel = fullLabel;
                             if (parts.length > 1) {
-                                return parts[0];
+                                displayLabel = parts[0];
                             }
 
                             // 2. Try to remove the subtitle if it's part of the label (common in "Stop (Headsign)" format from StationSelector)
                             if (subtitle && fullLabel.toLowerCase().includes(subtitle.toLowerCase())) {
                                 // Remove subtitle and parenthesis if present
-                                return fullLabel.replace(new RegExp(`\\s*\\(?${subtitle}\\)?`, 'i'), '').trim();
+                                displayLabel = fullLabel.replace(new RegExp(`\\s*\\(?${subtitle}\\)?`, 'i'), '').trim();
                             }
 
-                            return fullLabel;
+                            // FOR MNR/Departure Boards: Combine Origin -> Dest
+                            if (isDepartureBoard && tuple.destinationName) {
+                                return (
+                                    <span>
+                                        {displayLabel} <span style={{ opacity: 0.7 }}>→</span> {toTitleCase(tuple.destinationName)}
+                                    </span>
+                                );
+                            }
+
+                            return displayLabel;
                         })()}</h3>
                         <p>
                             {isFerry && tuple.routeId !== 'NYC Ferry' && tuple.routeId !== 'nyc-ferry' ? (
                                 <span style={{ fontWeight: 600, color: lineColor, marginRight: '8px' }}>{tuple.routeId}</span>
                             ) : null}
-                            {tuple.destinationName ? toTitleCase(tuple.destinationName) :
-                                (tuple.routeId === 'SI' && tuple.direction === 'N') ? 'To Tottenville' :
-                                    (tuple.routeId === 'SI' && tuple.direction === 'S') ? 'To St. George' :
-                                        tuple.direction === 'N' ? 'Uptown / North' :
-                                            tuple.direction === 'S' ? 'Downtown / South' :
-                                                tuple.direction}
+                            {/* Hide subtitle for Departure Boards since it's now in the title */}
+                            {!isDepartureBoard && (
+                                tuple.destinationName ? toTitleCase(tuple.destinationName) :
+                                    (tuple.routeId === 'SI' && tuple.direction === 'N') ? 'To Tottenville' :
+                                        (tuple.routeId === 'SI' && tuple.direction === 'S') ? 'To St. George' :
+                                            tuple.direction === 'N' ? 'Uptown / North' :
+                                                tuple.direction === 'S' ? 'Downtown / South' :
+                                                    tuple.direction
+                            )}
                         </p>
                         {tuple.routeId === 'SI Ferry' && <div className="schedule-badge">SCHEDULE ONLY</div>}
                     </div>
