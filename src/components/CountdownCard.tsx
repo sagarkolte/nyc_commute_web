@@ -141,6 +141,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                 className={`commute-card ${isDepartureBoard ? 'mnr-card' : ''}`}
                 style={{
                     borderLeft: `6px solid ${lineColor}`,
+                    paddingLeft: dragControls ? 36 : 12, // Make room for handle
                     x
                 }}
                 drag="x"
@@ -148,6 +149,26 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                 dragElastic={0.1}
                 onDragEnd={handleDragEnd}
             >
+                {dragControls && (
+                    <div
+                        onPointerDown={(e) => dragControls.start(e)}
+                        style={{
+                            position: 'absolute',
+                            left: 6,
+                            top: 0,
+                            bottom: 0,
+                            width: 24,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'grab',
+                            touchAction: 'none',
+                            zIndex: 5
+                        }}
+                    >
+                        <GripVertical size={20} color="#666" />
+                    </div>
+                )}
                 <div className="commute-card-header">
                     <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0' }}>
                         {badgeText}
@@ -226,14 +247,6 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                         </p>
                         {tuple.routeId === 'SI Ferry' && <div className="schedule-badge">SCHEDULE ONLY</div>}
                     </div>
-                    {dragControls && (
-                        <div
-                            onPointerDown={(e) => dragControls.start(e)}
-                            style={{ cursor: 'grab', padding: '0 8px', display: 'flex', alignItems: 'center', opacity: 0.3 }}
-                        >
-                            <GripVertical size={20} color="#fff" />
-                        </div>
-                    )}
                 </div>
 
                 <div className="commute-card-body">
