@@ -114,9 +114,15 @@ export async function GET(request: Request) {
         try {
             // Only fetch for Subway lines (MTA NYCT) for now as that's what the service covers
             // The service URL is subway-alerts.
-            if (isSubwayOrRail && !routeId.startsWith('LIRR') && !routeId.startsWith('MNR') && routeId !== 'PATH' && routeId !== 'nyc-ferry') {
-                const rawAlerts = await MtaAlertsService.getAlertsForRoute(routeId);
-                alerts = require('@/lib/mta_alerts').formatAlerts(rawAlerts);
+            // Fetch Alerts for all supported modes (Services logic handles filtering)
+            if (isSubwayOrRail || routeId.includes('Bus') || /^[MBQSX]\d+/.test(routeId) || routeId.includes('MTA NYCT')) {
+                // Determine if we should skip strictly unsupported ones (like generic NYC Ferry if we don't have a feed)
+                // But our service handles 'generic' fallbacks, so let's try.
+                // Exclude PATH/Ferry as they don't have GTFS-RT alerts in this service yet.
+                if (routeId !== 'PATH' && routeId !== 'nyc-ferry' && !FERRY_ROUTES[routeId]) {
+                    const rawAlerts = await MtaAlertsService.getAlertsForRoute(routeId);
+                    alerts = require('@/lib/mta_alerts').formatAlerts(rawAlerts);
+                }
             }
         } catch (e) {
             console.error('[API] Failed to fetch alerts', e);
