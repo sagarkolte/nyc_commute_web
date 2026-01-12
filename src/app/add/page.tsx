@@ -76,7 +76,7 @@ export default function AddPage() {
         setStation(s);
         // For Bus, the station already implies direction (it's a specific stop)
         if (mode === 'bus') {
-            saveTuple(s, (s.direction as any) || 'N', routeId);
+            saveTuple(s, (s.direction as any) || 'N', routeId, destStation);
         } else if (mode === 'njt-bus') {
             // NJ Transit BUS V2: Origin-Destination selection
             saveTuple(s, s.direction || 'N', routeId, destStation);
@@ -128,6 +128,9 @@ export default function AddPage() {
             }
         } else if (mode === 'bus') {
             newTuple.label = `${s.name} - ${dir}`;
+            if (destStation && destStation.id === 'USER_DEST') {
+                newTuple.destinationName = destStation.name;
+            }
         } else {
             newTuple.label = `${s.name} to ${dir === 'N' ? (s.north_label || 'North') : (s.south_label || 'South')}`;
         }
