@@ -313,6 +313,41 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 onSelect(originStation, inferredRoute, s);
             }
         } else {
+            // Special handling for MTA Bus to inject the 'Clean Destination'
+            if (mode === 'bus' && lockedRoute) {
+                const routeObj = busRoutes.find(r => r.id === lockedRoute);
+                let cleanDest = undefined;
+                if (routeObj && routeObj.longName) {
+                    const parts = routeObj.longName.split(' - ');
+                    const h = (s.headsign || '').toLowerCase();
+                    const matchHeight = parts.map((p: string) => {
+                        const pWords = p.toLowerCase().split(' ');
+                        let matches = 0;
+                        pWords.forEach(w => { if (h.includes(w) && w.length > 2) matches++; }); // Filter short words
+                        return matches;
+                    });
+                    // Compare matches. If tie, default to 1 (usually destination is 2nd part?) - NO, widely varies.
+                    // Just take max.
+                    const bestIdx = matchHeight[0] >= matchHeight[1] ? 0 : 1;
+                    if (matchHeight[bestIdx] > 0) {
+                        cleanDest = parts[bestIdx];
+                    }
+                }
+
+                // If we found a clean destination, pass it as a fake "destStation" so it saves to tuple.destinationName
+                if (cleanDest) {
+                    const fakeDest: Station = {
+                        id: 'USER_DEST',
+                        name: cleanDest,
+                        lines: [],
+                        north_label: '',
+                        south_label: ''
+                    };
+                    onSelect(s, routeId, fakeDest);
+                    return;
+                }
+            }
+
             onSelect(s, routeId);
         }
     };
@@ -474,7 +509,35 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
 
                         return (
                             <button key={s.id} className="item" onClick={() => handleSelect(s as Station, mode === 'bus' ? bestRoute : undefined)}>
-                                {mode === 'bus' ? `${s.name} ${s.headsign ? `(${s.headsign})` : `(${s.direction || 'Bus'})`}` : s.name}
+                                {mode === 'bus' ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                        <span style={{ fontWeight: 500 }}>{s.name}</span>
+                                        <span style={{ fontSize: '0.85em', color: '#aaa' }}>
+                                            To: {(() => {
+                                                // Try to derive a clean destination from the route longName
+                                                const routeObj = busRoutes.find(r => r.id === lockedRoute);
+                                                if (routeObj && routeObj.longName) {
+                                                    const parts = routeObj.longName.split(' - ');
+                                                    const h = (s.headsign || '').toLowerCase();
+                                                    // Simple heuristic: which part of the long name is in the headsign?
+                                                    // "Chelsea Piers - East Side" vs "SELECT BUS EAST SIDE..."
+                                                    const matchHeight = parts.map((p: string) => {
+                                                        const pWords = p.toLowerCase().split(' ');
+                                                        let matches = 0;
+                                                        pWords.forEach(w => { if (h.includes(w)) matches++; });
+                                                        return matches;
+                                                    });
+
+                                                    const bestIdx = matchHeight[0] > matchHeight[1] ? 0 : 1;
+                                                    // If we have a decent match (at least 1 word), usage that. 
+                                                    // Otherwise fallback to headsign.
+                                                    if (matchHeight[bestIdx] > 0) return parts[bestIdx];
+                                                }
+                                                return s.headsign || s.direction || 'Bus';
+                                            })()}
+                                        </span>
+                                    </div>
+                                ) : s.name}
                             </button>
                         );
                     })
