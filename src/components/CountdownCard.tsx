@@ -145,6 +145,9 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                     x
                 }}
                 drag="x"
+                dragConstraints={{ left: -200, right: 0 }}
+                dragElastic={{ left: 0.1, right: 0 }}
+                dragSnapToOrigin
                 onDragEnd={handleDragEnd}
             >
                 {dragControls && (
@@ -164,62 +167,62 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                     </div>
                 )}
                 {hasAlert && (
-                   <button
-                       onClick={(e) => {
-                           e.stopPropagation();
-                           setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
-                       }}
-                       style={{
-                           position: 'absolute',
-                           top: 0,
-                           right: 0,
-                           background: '#FFD100',
-                           borderTopRightRadius: '12px', // Matches card
-                           borderBottomLeftRadius: '8px',
-                           width: '24px',
-                           height: '24px',
-                           display: 'flex',
-                           alignItems: 'center',
-                           justifyContent: 'center',
-                           cursor: 'pointer',
-                           zIndex: 20,
-                           border: 'none',
-                           padding: 0
-                       }}
-                   >
-                       <span style={{ color: '#000', fontWeight: 'bold', fontSize: '14px' }}>!</span>
-                   </button>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
+                        }}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            background: '#FFD100',
+                            borderTopRightRadius: '12px', // Matches card
+                            borderBottomLeftRadius: '8px',
+                            width: '24px',
+                            height: '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            zIndex: 20,
+                            border: 'none',
+                            padding: 0
+                        }}
+                    >
+                        <span style={{ color: '#000', fontWeight: 'bold', fontSize: '14px' }}>!</span>
+                    </button>
                 )}
                 <div className="commute-card-header">
                     <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0' }}>
                         {badgeText}
                     </div>
-                    {/* Alert logic moved to corner */ }
-                <div className="commute-card-info">
+                    {/* Alert logic moved to corner */}
+                    <div className="commute-card-info">
                         {/* Bubble moved here to be relative to the header area but visually triggered from corner */}
                         {debugInfo?.showBubble && (
-                             <div style={{
-                                 position: 'absolute',
-                                 top: '30px',
-                                 right: '10px',
-                                 width: '250px',
-                                 backgroundColor: '#222',
-                                 border: '1px solid #444',
-                                 borderRadius: '8px',
-                                 padding: '12px',
-                                 boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-                                 zIndex: 100,
-                                 color: '#eee',
-                                 textAlign: 'left'
-                             }}>
-                                 <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#FFD100' }}>Service Alert</h4>
-                                 {debugInfo?.alerts?.map((alert: any, idx: number) => (
-                                     <div key={idx} style={{ marginBottom: '8px', fontSize: '12px' }}>
-                                         <div style={{ fontWeight: 'bold' }}>{alert.header}</div>
-                                     </div>
-                                 ))}
-                                 {(!debugInfo?.alerts || debugInfo.alerts.length === 0) && <div style={{ fontSize: '12px' }}>Check mta.info for details.</div>}
-                             </div>
+                            <div style={{
+                                position: 'absolute',
+                                top: '30px',
+                                right: '10px',
+                                width: '250px',
+                                backgroundColor: '#222',
+                                border: '1px solid #444',
+                                borderRadius: '8px',
+                                padding: '12px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                                zIndex: 100,
+                                color: '#eee',
+                                textAlign: 'left'
+                            }}>
+                                <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#FFD100' }}>Service Alert</h4>
+                                {debugInfo?.alerts?.map((alert: any, idx: number) => (
+                                    <div key={idx} style={{ marginBottom: '8px', fontSize: '12px' }}>
+                                        <div style={{ fontWeight: 'bold' }}>{alert.header}</div>
+                                    </div>
+                                ))}
+                                {(!debugInfo?.alerts || debugInfo.alerts.length === 0) && <div style={{ fontSize: '12px' }}>Check mta.info for details.</div>}
+                            </div>
                         )}
                         <h3>{(() => {
                             const fullLabel = toTitleCase(tuple.label);
