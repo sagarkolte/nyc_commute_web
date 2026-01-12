@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CommuteTuple, Arrival } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
-import { Trash2, TriangleAlert, GripVertical } from 'lucide-react';
+import { Trash2, Grip, AlertTriangle } from 'lucide-react';
 import { motion, useMotionValue, useTransform, DragControls } from 'framer-motion';
 
 const COLORS: Record<string, string> = {
@@ -141,12 +141,10 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                 className={`commute-card ${isDepartureBoard ? 'mnr-card' : ''}`}
                 style={{
                     borderLeft: `6px solid ${lineColor}`,
-                    paddingLeft: dragControls ? 36 : 12, // Make room for handle
+                    paddingLeft: 12, // Removed padding for handle as it is now in the corner
                     x
                 }}
                 drag="x"
-                dragConstraints={{ left: -200, right: 0 }}
-                dragElastic={0.1}
                 onDragEnd={handleDragEnd}
             >
                 {dragControls && (
@@ -154,63 +152,75 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                         onPointerDown={(e) => dragControls.start(e)}
                         style={{
                             position: 'absolute',
-                            left: 6,
-                            top: 0,
-                            bottom: 0,
-                            width: 24,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            left: 4,
+                            bottom: 4,
                             cursor: 'grab',
                             touchAction: 'none',
-                            zIndex: 5
+                            zIndex: 5,
+                            opacity: 0.5
                         }}
                     >
-                        <GripVertical size={20} color="#666" />
+                        <Grip size={16} color="#666" />
                     </div>
+                )}
+                {hasAlert && (
+                   <button
+                       onClick={(e) => {
+                           e.stopPropagation();
+                           setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
+                       }}
+                       style={{
+                           position: 'absolute',
+                           top: 0,
+                           right: 0,
+                           background: '#FFD100',
+                           borderTopRightRadius: '12px', // Matches card
+                           borderBottomLeftRadius: '8px',
+                           width: '24px',
+                           height: '24px',
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                           cursor: 'pointer',
+                           zIndex: 20,
+                           border: 'none',
+                           padding: 0
+                       }}
+                   >
+                       <span style={{ color: '#000', fontWeight: 'bold', fontSize: '14px' }}>!</span>
+                   </button>
                 )}
                 <div className="commute-card-header">
                     <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0' }}>
                         {badgeText}
                     </div>
-                    {hasAlert && (
-                        <div style={{ marginRight: 8, position: 'relative', zIndex: 20 }}>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
-                                }}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                            >
-                                <TriangleAlert size={20} color="#FFD100" fill="#FFD100" stroke="#000" strokeWidth={1.5} />
-                            </button>
-                            {debugInfo?.showBubble && (
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '30px',
-                                    left: '-10px',
-                                    width: '250px',
-                                    backgroundColor: '#222',
-                                    border: '1px solid #444',
-                                    borderRadius: '8px',
-                                    padding: '12px',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-                                    zIndex: 100,
-                                    color: '#eee',
-                                    textAlign: 'left'
-                                }}>
-                                    <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#FFD100' }}>Service Alert</h4>
-                                    {debugInfo?.alerts?.map((alert: any, idx: number) => (
-                                        <div key={idx} style={{ marginBottom: '8px', fontSize: '12px' }}>
-                                            <div style={{ fontWeight: 'bold' }}>{alert.header}</div>
-                                        </div>
-                                    ))}
-                                    {(!debugInfo?.alerts || debugInfo.alerts.length === 0) && <div style={{ fontSize: '12px' }}>Check mta.info for details.</div>}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                    <div className="commute-card-info">
+                    {/* Alert logic moved to corner */ }
+                <div className="commute-card-info">
+                        {/* Bubble moved here to be relative to the header area but visually triggered from corner */}
+                        {debugInfo?.showBubble && (
+                             <div style={{
+                                 position: 'absolute',
+                                 top: '30px',
+                                 right: '10px',
+                                 width: '250px',
+                                 backgroundColor: '#222',
+                                 border: '1px solid #444',
+                                 borderRadius: '8px',
+                                 padding: '12px',
+                                 boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                                 zIndex: 100,
+                                 color: '#eee',
+                                 textAlign: 'left'
+                             }}>
+                                 <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#FFD100' }}>Service Alert</h4>
+                                 {debugInfo?.alerts?.map((alert: any, idx: number) => (
+                                     <div key={idx} style={{ marginBottom: '8px', fontSize: '12px' }}>
+                                         <div style={{ fontWeight: 'bold' }}>{alert.header}</div>
+                                     </div>
+                                 ))}
+                                 {(!debugInfo?.alerts || debugInfo.alerts.length === 0) && <div style={{ fontSize: '12px' }}>Check mta.info for details.</div>}
+                             </div>
+                        )}
                         <h3>{(() => {
                             const fullLabel = toTitleCase(tuple.label);
                             const subtitle = tuple.destinationName ? toTitleCase(tuple.destinationName) :
