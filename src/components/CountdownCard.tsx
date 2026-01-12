@@ -163,7 +163,11 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                             opacity: 0.5
                         }}
                     >
-                        <Grip size={16} color="#666" />
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="2" cy="10" r="1.5" fill="#666" />
+                            <circle cx="2" cy="5" r="1.5" fill="#666" />
+                            <circle cx="7" cy="10" r="1.5" fill="#666" />
+                        </svg>
                     </div>
                 )}
                 {hasAlert && (
