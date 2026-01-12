@@ -40,7 +40,6 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     // New Bus Logic
     const [busStep, setBusStep] = useState<'route' | 'stop'>('route');
     const [busRoutes, setBusRoutes] = useState<any[]>([]);
-    const [lockedRouteMetadata, setLockedRouteMetadata] = useState<any>(null);
 
     useEffect(() => {
         setHasKey(!!CommuteStorage.getApiKey());
@@ -96,7 +95,6 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     const res = await fetch(`/api/mta/bus-stops?routeId=${encodeURIComponent(lockedRoute)}`, { headers });
                     const data = await res.json();
                     setBusStops(data.stops || []);
-                    if (data.route) setLockedRouteMetadata(data.route);
                 } catch (e) {
                     console.error(e);
                 } finally {
@@ -109,7 +107,6 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
 
     const handleUnlock = () => {
         setLockedRoute(null);
-        setLockedRouteMetadata(null);
         setBusStep('route');
         setSearch('');
         setBusStops([]);
@@ -318,27 +315,28 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         } else {
             // Special handling for MTA Bus to inject the 'Clean Destination'
             if (mode === 'bus' && lockedRoute) {
-                const routeObj = lockedRouteMetadata || busRoutes.find(r => r.id === lockedRoute);
-                let cleanDest = undefined;
-                if (routeObj && routeObj.longName) {
-                    const parts = routeObj.longName.split(' - ');
-                    const h = (s.headsign || '').toLowerCase();
-                    const matchHeight = parts.map((p: string) => {
-                        const pWords = p.toLowerCase().split(' ');
-                        let matches = 0;
-                        pWords.forEach(w => { if (h.includes(w) && w.length > 2) matches++; }); // Filter short words
-                        return matches;
-                    });
-                    // Compare matches. If tie, default to 1 (usually destination is 2nd part?) - NO, widely varies.
-                    // Just take max.
-                    const bestIdx = matchHeight[0] >= matchHeight[1] ? 0 : 1;
-                    if (matchHeight[bestIdx] > 0) {
-                        cleanDest = parts[bestIdx];
-                    }
-                }
+                // Option 2: Heuristic Cleaning using Regex
+                // "SELECT BUS CHELSEA PIERS 12AV CROSSTOWN" -> "CHELSEA PIERS 12AV"
+                let cleanDest = (s.headsign || s.direction || '').toUpperCase();
 
-                // If we found a clean destination, pass it as a fake "destStation" so it saves to tuple.destinationName
-                if (cleanDest) {
+                // Remove common prefixes/suffixes
+                cleanDest = cleanDest.replace(/SELECT BUS\s+/g, '');
+                cleanDest = cleanDest.replace(/\s+CROSSTOWN/g, '');
+                cleanDest = cleanDest.replace(/LIMITED/g, '');
+                cleanDest = cleanDest.replace(/\s+SBS/g, ''); // Select Bus Service suffix
+                cleanDest = cleanDest.trim();
+
+                // Capitalize properly (Title Case)
+                const toTitleCase = (str: string) => {
+                    return str.replace(
+                        /\w\S*/g,
+                        text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+                    );
+                };
+
+                if (cleanDest.length > 0 && cleanDest !== (s.headsign || '').toUpperCase()) {
+                    cleanDest = toTitleCase(cleanDest);
+
                     const fakeDest: Station = {
                         id: 'USER_DEST',
                         name: cleanDest,
