@@ -77,11 +77,41 @@ export const MtaService = {
     },
 
     getBusStops: async (routeId: string, apiKey: string) => {
-        // Use Static Stop Index
-        // Keys in mtaBuStops are likely Route IDs (e.g. "M23+", "Q115").
-        // The input routeId might be "MTA NYCT_M23+".
-        // We need to normalize.
+        // 1. Try Live API (MTA Bus Time via OneBusAway)
+        // This provides better data including "longName" for destination cleaning.
+        if (apiKey) {
+            try {
+                // Must ensure routeId is fully qualified or at least try both
+                const url = `http://bustime.mta.info/api/where/stops-for-route/${encodeURIComponent(routeId)}.json?key=${apiKey}&includePolylines=false&version=2`;
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.code === 200 && data.data) {
+                        const apiRoute = data.data.route;
+                        const apiStops = data.data.stops;
 
+                        const mappedStops = apiStops.map((s: any) => ({
+                            id: s.id,
+                            name: s.name,
+                            direction: s.direction || 'N/A',
+                            lat: s.lat,
+                            lon: s.lon,
+                            lines: [routeId],
+                            headsign: s.direction // Often "SELECT BUS CHELSEA..."
+                        }));
+
+                        return {
+                            stops: mappedStops,
+                            route: apiRoute // Contains longName, description, color, etc.
+                        };
+                    }
+                }
+            } catch (e) {
+                console.warn('[MTA] Live Bus Stop Fetch Failed', e);
+            }
+        }
+
+        // 2. Fallback to Static Stop Index
         let stops = (mtaBusStops as any)[routeId];
 
         if (!stops) {
@@ -99,7 +129,7 @@ export const MtaService = {
         }
 
         if (stops) {
-            return stops.map((s: any) => ({
+            const mapped = stops.map((s: any) => ({
                 id: s.id,
                 name: s.name,
                 direction: s.direction || 'N/A',
@@ -107,26 +137,26 @@ export const MtaService = {
                 lon: s.lon,
                 lines: [routeId]
             }));
+            return { stops: mapped, route: null };
         }
 
-        // Fallback to "Any Stop" if missing from index (e.g. Express routes if payload failed)
+        // Fallback to "Any Stop"
         console.warn(`[MTA] Check Bus Stops: No static stops for ${routeId}`);
-        return [
-            {
-                id: 'ANY',
-                name: 'All Active Vehicles (Realtime)',
-                direction: 'N/A',
-                lat: 0,
-                lon: 0,
-                lines: [routeId],
-                headsign: 'View Live Buses'
-            }
-        ];
+        const fallbackStop = {
+            id: 'ANY',
+            name: 'All Active Vehicles (Realtime)',
+            direction: 'N/A',
+            lat: 0,
+            lon: 0,
+            lines: [routeId],
+            headsign: 'View Live Buses'
+        };
+        return { stops: [fallbackStop], route: null };
     },
 
     fetchBusStops: async (query: string, apiKey: string) => {
         const routes = await MtaService.searchBusRoutes(query, apiKey);
-        if (routes.length === 0) return [];
+        if (routes.length === 0) return { stops: [], route: null };
         return MtaService.getBusStops(routes[0].id, apiKey);
     },
 

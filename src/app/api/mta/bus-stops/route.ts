@@ -25,18 +25,22 @@ export async function GET(request: Request) {
         let stops: any[] = [];
 
         if (routeId) {
-            stops = await MtaService.getBusStops(routeId, effectiveKey);
+            const result = await MtaService.getBusStops(routeId, effectiveKey);
+            // Result is now { stops: [], route: ... }
+            if ((result as any).stops) {
+                stops = (result as any).stops;
+                // We want to pass route metadata too
+                return NextResponse.json({ stops, route: (result as any).route });
+            } else {
+                stops = result as any; // Fallback if type mismatch
+                return NextResponse.json({ stops });
+            }
         } else if (query) {
-            stops = await MtaService.fetchBusStops(query, effectiveKey);
-        }
-
-        // Retry with Server Key if Client Key failed (and they are different)
-        if (stops.length === 0 && apiKey && serverApiKey && apiKey !== serverApiKey) {
-            console.log('[BusStops API] Client key failed or found nothing, retrying with Server Key...');
-            if (routeId) {
-                stops = await MtaService.getBusStops(routeId, serverApiKey);
-            } else if (query) {
-                stops = await MtaService.fetchBusStops(query, serverApiKey);
+            const result = await MtaService.fetchBusStops(query, effectiveKey);
+            if ((result as any).stops) {
+                return NextResponse.json({ stops: (result as any).stops, route: (result as any).route });
+            } else {
+                return NextResponse.json({ stops: result as any });
             }
         }
 

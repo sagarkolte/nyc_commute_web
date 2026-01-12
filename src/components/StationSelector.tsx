@@ -40,6 +40,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
     // New Bus Logic
     const [busStep, setBusStep] = useState<'route' | 'stop'>('route');
     const [busRoutes, setBusRoutes] = useState<any[]>([]);
+    const [lockedRouteMetadata, setLockedRouteMetadata] = useState<any>(null);
 
     useEffect(() => {
         setHasKey(!!CommuteStorage.getApiKey());
@@ -95,6 +96,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     const res = await fetch(`/api/mta/bus-stops?routeId=${encodeURIComponent(lockedRoute)}`, { headers });
                     const data = await res.json();
                     setBusStops(data.stops || []);
+                    if (data.route) setLockedRouteMetadata(data.route);
                 } catch (e) {
                     console.error(e);
                 } finally {
@@ -107,6 +109,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
 
     const handleUnlock = () => {
         setLockedRoute(null);
+        setLockedRouteMetadata(null);
         setBusStep('route');
         setSearch('');
         setBusStops([]);
@@ -315,7 +318,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         } else {
             // Special handling for MTA Bus to inject the 'Clean Destination'
             if (mode === 'bus' && lockedRoute) {
-                const routeObj = busRoutes.find(r => r.id === lockedRoute);
+                const routeObj = lockedRouteMetadata || busRoutes.find(r => r.id === lockedRoute);
                 let cleanDest = undefined;
                 if (routeObj && routeObj.longName) {
                     const parts = routeObj.longName.split(' - ');
