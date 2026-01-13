@@ -327,7 +327,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                             <div className="commute-board-header">
                                 <span className="commute-board-col-time">TIME</span>
                                 <span className="commute-board-col-dest">DESTINATION</span>
-                                {!isFerry && <span className="commute-board-col-track">TRACK</span>}
+                                <span className="commute-board-col-track">{!isFerry ? 'TRACK' : ''}</span>
                                 <span className="commute-board-col-arrives">ARRIVES</span>
                                 <span className="commute-board-col-eta">ETA</span>
                             </div>
@@ -335,7 +335,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                 <div key={i} className="commute-board-row">
                                     <span className="commute-board-col-time">{formatTime(arr.time)}</span>
                                     <span className="commute-board-col-dest">{toTitleCase(arr.destination || 'Unknown')}</span>
-                                    {!isFerry && <span className="commute-board-col-track">{arr.track || 'TBD'}</span>}
+                                    <span className="commute-board-col-track">{!isFerry ? (arr.track || 'TBD') : '--'}</span>
                                     <span className="commute-board-col-arrives">{arr.destinationArrivalTime ? formatTime(arr.destinationArrivalTime) : '--'}</span>
                                     <span className="commute-board-col-eta">{arr.minutesUntil} min</span>
                                 </div>
