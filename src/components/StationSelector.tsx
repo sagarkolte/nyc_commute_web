@@ -363,6 +363,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
         if (mode === 'bus') return '';
+        if (mode === 'subway') return '';
         return `${line || 'Train'} Station`;
 
     };
@@ -379,6 +380,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             if (njtStep === 'origin') return "Search for starting stop...";
             if (njtStep === 'destination') return "Search for ending stop...";
         }
+        if (mode === 'subway') return "Search Boarding Station...";
         return "Search station...";
     };
 
