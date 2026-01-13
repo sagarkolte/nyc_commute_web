@@ -120,7 +120,7 @@ export async function GET(request: Request) {
                 // But our service handles 'generic' fallbacks, so let's try.
                 // Exclude PATH as it doesn't have GTFS-RT alerts via the generic service yet.
                 if (routeId !== 'PATH') {
-                    const rawAlerts = await MtaAlertsService.getAlertsForRoute(routeId);
+                    const rawAlerts = await MtaAlertsService.getAlertsForRoute(routeId, effectiveKey);
                     alerts = require('@/lib/mta_alerts').formatAlerts(rawAlerts);
                 }
             }

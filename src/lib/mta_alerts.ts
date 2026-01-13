@@ -24,7 +24,7 @@ export const MtaAlertsService = {
     /**
      * Generic fetcher for a specific alert feed
      */
-    fetchFeed: async (feedKey: 'subway' | 'bus' | 'lirr' | 'mnr', url: string): Promise<any[]> => {
+    fetchFeed: async (feedKey: 'subway' | 'bus' | 'lirr' | 'mnr', url: string, apiKey?: string): Promise<any[]> => {
         const now = Date.now();
         const currentCache = cache[feedKey];
 
@@ -34,7 +34,10 @@ export const MtaAlertsService = {
 
         try {
             // console.log(`[MTA Alerts] Fetching ${feedKey} from ${url}`);
-            const response = await fetch(url, { cache: 'no-store' });
+            const headers: Record<string, string> = {};
+            if (apiKey) headers['x-api-key'] = apiKey;
+
+            const response = await fetch(url, { cache: 'no-store', headers });
 
             if (!response.ok) {
                 console.warn(`[MTA Alerts] Failed to fetch ${feedKey}: ${response.status}`);
@@ -64,7 +67,7 @@ export const MtaAlertsService = {
      * Automatically determines which feed to check.
      * @param routeId e.g. "W", "A", "M15", "LIRR", "MNR"
      */
-    getAlertsForRoute: async (routeId: string): Promise<any[]> => {
+    getAlertsForRoute: async (routeId: string, apiKey?: string): Promise<any[]> => {
         let feedKey: 'subway' | 'bus' | 'lirr' | 'mnr' = 'subway';
         let url = SUBWAY_ALERTS_URL;
 
@@ -100,7 +103,7 @@ export const MtaAlertsService = {
             url = SUBWAY_ALERTS_URL;
         }
 
-        const allAlerts = await MtaAlertsService.fetchFeed(feedKey, url);
+        const allAlerts = await MtaAlertsService.fetchFeed(feedKey, url, apiKey);
 
         return allAlerts.filter(entity => {
             if (!entity.alert || !entity.alert.informedEntity) return false;
