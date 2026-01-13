@@ -198,8 +198,10 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                     </button>
                 )}
                 <div className="commute-card-header">
-                    <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0' }}>
-                        {badgeText}
+                    <div style={{ width: '85px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexShrink: 0, marginRight: '8px' }}>
+                        <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0', marginRight: 0 }}>
+                            {badgeText}
+                        </div>
                     </div>
                     {/* Alert logic moved to corner */}
                     <div className="commute-card-info">
