@@ -5,9 +5,9 @@ import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
 import pathStations from '@/lib/path_stations.json';
 import nycFerryStations from '@/lib/nyc_ferry_stations.json';
-import lirrScheduleFallback from '@/lib/lirr_schedule_fallback.json';
+import { getNextLirrTrainsById } from '@/lib/lirr_sql';
+import { getNextFerryTripsByDirection } from '@/lib/ferry_sql';
 import { FERRY_ROUTES } from '@/lib/ferry_routes';
-import { FERRY_SCHEDULE, FerryScheduleItem } from '@/lib/ferry_schedule';
 import * as protobuf from 'protobufjs';
 import path from 'path';
 
@@ -650,239 +650,76 @@ export async function GET(request: Request) {
     }
 }
 
-// Helper for Hybrid Ferry Schedule
+// Helper for Hybrid Ferry Schedule (SQL)
 function getScheduledFerryArrivals(routeId: string, stopId: string, now: number, direction: string | null): any[] {
-    const day = new Date(now * 1000).getDay();
-    const isWeekend = day === 0 || day === 6;
+    const dirId = direction ? parseInt(direction) : 0;
 
-    // 1. Resolve Line Name
-    let schedule = FERRY_SCHEDULE[routeId];
-    let scheduleRouteId = routeId; // Track the effective route ID (start with generic)
+    // SQL Query
+    const trips = getNextFerryTripsByDirection(stopId, dirId, 15);
 
-    // If generic 'nyc-ferry', try to find which line this stop belongs to
-    if (!schedule && routeId === 'nyc-ferry') {
-        const lineName = Object.keys(FERRY_SCHEDULE).find(key => {
-            const s = FERRY_SCHEDULE[key];
-            // Check if this line services the stop
-            // We can check Weekday trips.
-            const sampleTrip = s.Weekday[0];
-            return sampleTrip && sampleTrip.stops[stopId];
-        });
-        if (lineName) {
-            schedule = FERRY_SCHEDULE[lineName];
-            scheduleRouteId = lineName; // Update to the specific inferred line
-            // console.log(`[Schedule] Inferred ${lineName} for stop ${stopId}`);
-        }
-    }
+    return trips.map(t => {
+        const time = getNycTimestamp(now, t.origin_time);
 
-    if (!schedule) return [];
+        // Filter out past trips (grace period 5 mins)
+        if (time < now - 300) return null;
 
-    const trips = isWeekend ? schedule.Weekend : schedule.Weekday;
-    const scheduledArrivals: any[] = [];
-
-    trips.forEach(trip => {
-        // Filter by Direction: 
-        // User's 'direction' param for Ferry is weird. Usually 'N' or 'S'.
-        // FERRY_SCHEDULE uses 0 (North/Forward) and 1 (South/Forward).
-        // Let's rely on stop sequence order in schedule vs user request? 
-        // Or if user provided direction...
-        // Actually, user selects Origin -> Dest directly. 
-        // We can just check if this Trip contains the Origin.
-        // AND check if it matches the implied direction if we knew it?
-
-        // For now, simpler: Just check if this trip stops at 'stopId'
-        const stopTimeStr = trip.stops[stopId];
-        if (stopTimeStr) {
-            const [h, m] = stopTimeStr.split(':').map(Number);
-
-            // TIMEZONE FIX:
-            // 'now' is UTC on Vercel. 'stopTimeStr' is NYC Local.
-            const date = new Date(now * 1000);
-
-            // Get NYC date parts from 'now'
-            const nycFormatter = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'America/New_York',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                timeZoneName: 'shortOffset'
-            });
-
-            const parts = nycFormatter.formatToParts(date);
-            const year = parts.find(p => p.type === 'year')?.value;
-            const month = parts.find(p => p.type === 'month')?.value;
-            const day = parts.find(p => p.type === 'day')?.value;
-
-            // Construct ISO string for NYC time: YYYY-MM-DDTHH:MM:00-05:00
-            // We need the CURRENT NYC offset.
-            // Intl 'timeZoneName' gives "GMT-5" or "EST". Only longOffset/shortOffset gives reliable parseable string?
-            // Actually, construct string without offset, then parse as NYC? No standard JS way.
-            // Workaround: Use the offset from Intl.
-            const tzPart = parts.find(p => p.type === 'timeZoneName')?.value; // "GMT-5"
-            let offset = '-05:00';
-            if (tzPart) {
-                const match = tzPart.match(/([+-]\d+)/);
-                if (match) {
-                    offset = `${match[1]}:00`.replace('::', ':'); // handle simple GMT-5
-                    if (offset.length === 3) offset = offset.replace('+', '+0').replace('-', '-0') + ':00'; // -5 -> -05:00
-                }
-            }
-
-            // Re-format to ensure ISO8601 compatibility
-            // Getting offset is tricky without a library.
-            // ALTERNATIVE: Use the UTC date, set UTC hours to (h + 5)? No, DST.
-
-            // SIMPLEST PROXY:
-            // 1. Create a Date object in Server Local Time that matches the "Wall Clock" of NYC.
-            // 2. Adjust it by the difference between Server Time and NYC Time?
-
-            // Let's use string manipulation which is safer.
-            // "1/6/2026, 5:00:21 PM" (NYC)
-            // We want to set hours to h, m.
-
-            // A robust way without libraries:
-            // 1. Get current time in NYC as string.
-            // 2. Replace the HH:MM part with our target schedule HH:MM.
-            // 3. Parse it back relative to NYC timezone? WE CAN'T without library.
-
-            // WAIT. If we just use `date.toLocaleString('en-US', { timeZone: 'America/New_York' })`
-            // We get "1/6/2026, 5:00:21 PM".
-            // We can replace time with "07:00:00 AM".
-            // Then `new Date("1/6/2026, 07:00:00 AM")` -> Interprets as Server Local.
-            // If Server is UTC, this is interpreted as 7 AM UTC.
-            // But 7 AM NYC is 12 PM UTC.
-            // So we are OFF by exactly (Server - NYC) offset.
-
-            // Correct approach:
-            // 1. Construct `targetDate = new Date(now * 1000)`.
-            // 2. Shift `targetDate` so that `getUTCHours()` matches `h`.
-            //    (This effectively treats the UTC slot as a scratchpad).
-            //    targetDate.setUTCHours(h, m, 0, 0);
-            // 3. Now `targetDate` is "YYYY-MM-DDTHH:MM:00Z".
-            // 4. We want to convert this "NYC Wall Time" to "True UTC Timestamp".
-            //    True UTC = NYC Wall Time + Offset (e.g. +5 hours).
-            //    timestamp = targetDate.getTime() + (5 * 3600 * 1000).
-            //    BUT Offset varies (DST).
-
-            //    We can Find the offset dynamically:
-            //    Calculate offset = (True UTC of X - Unix of X-as-NYC).
-            //    Let X = now.
-            //    nycStr = new Date(X).toLocaleString('en-US', { timeZone: 'America/New_York' });
-            //    nycDateAsLocal = new Date(nycStr); // Local interpretation of NYC time
-            //    offset = X - nycDateAsLocal.getTime();
-            //    (If Server is UTC: X is UTC. nycDateAsLocal is X-5h interpreted as UTC. X - (X-5) = +5h).
-
-            //    So: True Schedule UTC = (Date(Schedule HH:MM) interpreted as Local) + offset.
-
-            const targetLocal = new Date(now * 1000);
-            targetLocal.setHours(h, m, 0, 0); // Set wall clock hours (e.g. 5:30 PM)
-
-            const nycStr = new Date(now * 1000).toLocaleString('en-US', { timeZone: 'America/New_York' });
-            const nycDateAsLocal = new Date(nycStr);
-            const serverNow = new Date(now * 1000);
-
-            // Calculate offset in ms: (Real UTC - Interpretation of NYC String as Local)
-            // Example:
-            // Real UTC: 10:00 PM.
-            // NYC String: "5:00 PM".
-            // Local Interpretation ("5:00 PM"): 5:00 PM UTC.
-            // Diff: 10:00 - 5:00 = +5 hours.
-            const tzOffsetMs = serverNow.getTime() - nycDateAsLocal.getTime();
-
-            // We accepted targetLocal as "Local Interpretation of Stop Time".
-            // So we Add Offset.
-            let time = (targetLocal.getTime() + tzOffsetMs) / 1000;
-
-            // Handle wrap-around? Assume schedule is "today".
-
-            // Include if in relevant window (e.g. -30 mins to +4 hours)
-            if (time > now - 1800 && time < now + 14400) {
-                // Determine Destination using the specific Route ID (inferred or explicit)
-                // We use 'scheduleRouteId' which was set to lineName if inferred.
-                const routeStops = FERRY_ROUTES[scheduleRouteId];
-                let destName = 'Scheduled';
-                if (routeStops) {
-                    const destId = trip.directionId === 0
-                        ? routeStops[routeStops.length - 1]
-                        : routeStops[0];
-                    const st = (nycFerryStations as any[]).find((s: any) => s.id === destId);
-                    if (st) destName = st.name;
-                }
-
-                scheduledArrivals.push({
-                    routeId: routeId,
-                    time: time,
-                    destinationArrivalTime: null,
-                    minutesUntil: Math.floor((time - now) / 60),
-                    destination: destName,
-                    type: 'schedule',
-                    tripId: trip.tripId,
-                    status: 'Scheduled',
-                    track: ''
-                });
-            }
-        }
-    });
-
-    return scheduledArrivals;
+        return {
+            routeId: routeId, // Keep generic or specific? Use passed routeId.
+            time: time,
+            destinationArrivalTime: null,
+            minutesUntil: Math.floor((time - now) / 60),
+            destination: t.headsign,
+            type: 'schedule',
+            tripId: `SQL-${t.trip_id}`,
+            status: 'Scheduled',
+            track: ''
+        };
+    }).filter(Boolean);
 }
 
-// Helper for LIRR/Rail Schedule Fallback
+// Helper for LIRR/Rail Schedule Fallback (SQL)
 function getScheduledRailArrivals(routeId: string, originId: string, destId: string, now: number): any[] {
-    // 1. Find relevant schedule block
-    // Using lirrScheduleFallback
-    // Schema: { originId, destId, route, departures: ["HH:MM"] }
+    // SQL Query
+    const trips = getNextLirrTrainsById(originId, destId, 10);
 
-    // We match Origin and Dest EXACTLY first.
-    let block = (lirrScheduleFallback as any[]).find(b => b.originId === originId && b.destId === destId);
-
-    if (!block) return [];
-
-    const scheduledArrivals: any[] = [];
-
-    block.departures.forEach((timeStr: string) => {
-        const [h, m] = timeStr.split(':').map(Number);
-
-        // --- Timezone Logic (Reused from Ferry) ---
-        const targetLocal = new Date(now * 1000);
-        targetLocal.setHours(h, m, 0, 0);
-
-        const nycStr = new Date(now * 1000).toLocaleString('en-US', { timeZone: 'America/New_York' });
-        const nycDateAsLocal = new Date(nycStr);
-        const serverNow = new Date(now * 1000);
-        const tzOffsetMs = serverNow.getTime() - nycDateAsLocal.getTime();
-
-        let time = (targetLocal.getTime() + tzOffsetMs) / 1000;
-
-        // Handle next day wrap? simpler: assume today.
-
-        // Window: -1h to +12h ?
-        if (time > now - 3600 && time < now + 43200) {
-            scheduledArrivals.push({
-                routeId: routeId,
-                time: time,
-                destinationArrivalTime: null, // Could infer from block duration if we had it
-                minutesUntil: Math.floor((time - now) / 60),
-                destination: 'Grand Central', // Mock or lookup destId name in stations? 
-                // Getting station name from ID:
-                // We don't have stations imported here easily for LIRR (only lirrStations import at top? Yes line 5)
-                // But destId is "349" -> "Grand Central"
-                // Let's assume the UI handles it or we look it up.
-                // We imported lirrStations!
-                type: 'schedule',
-                status: 'Scheduled',
-                track: ''
-            });
+    return trips.map(t => {
+        const time = getNycTimestamp(now, t.origin_time);
+        let destTime = null;
+        if (t.dest_time) {
+            destTime = getNycTimestamp(now, t.dest_time);
         }
-    });
 
-    // Lookup Destination Name
-    if (scheduledArrivals.length > 0) {
-        const st = (lirrStations as any[]).find(s => s.id === destId);
-        if (st) {
-            scheduledArrivals.forEach(a => a.destination = st.name);
-        }
-    }
+        if (time < now - 300) return null;
 
-    return scheduledArrivals;
+        return {
+            routeId: routeId,
+            time: time,
+            destinationArrivalTime: destTime,
+            minutesUntil: Math.floor((time - now) / 60),
+            destination: t.headsign,
+            type: 'schedule',
+            tripId: `SQL-${t.trip_id}`,
+            status: 'Scheduled',
+            track: ''
+        };
+    }).filter(Boolean);
+}
+
+// Timezone Helper
+function getNycTimestamp(nowSeconds: number, targetMins: number): number {
+    const serverNow = new Date(nowSeconds * 1000);
+    const nycStr = serverNow.toLocaleString('en-US', { timeZone: 'America/New_York' });
+    const nycDateAsLocal = new Date(nycStr);
+
+    // Offset = True UTC - Local Interpretation
+    const tzOffsetMs = serverNow.getTime() - nycDateAsLocal.getTime();
+
+    const h = Math.floor(targetMins / 60);
+    const m = targetMins % 60;
+
+    const targetLocal = new Date(nowSeconds * 1000); // Start with Today
+    targetLocal.setHours(h, m, 0, 0); // Set wall clock
+
+    // Apply offset
+    return (targetLocal.getTime() + tzOffsetMs) / 1000;
 }
