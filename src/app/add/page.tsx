@@ -127,7 +127,7 @@ export default function AddPage() {
                 }
             }
         } else if (mode === 'bus') {
-            newTuple.label = `${s.name} - ${dir}`;
+            newTuple.label = s.name;
             if (destStation && destStation.id === 'USER_DEST') {
                 newTuple.destinationName = destStation.name;
             }
