@@ -5,6 +5,7 @@ import mnrStations from '@/lib/mnr_stations.json';
 import lirrStations from '@/lib/lirr_stations.json';
 import pathStations from '@/lib/path_stations.json';
 import nycFerryStations from '@/lib/nyc_ferry_stations.json';
+import lirrScheduleFallback from '@/lib/lirr_schedule_fallback.json';
 import { FERRY_ROUTES } from '@/lib/ferry_routes';
 import { FERRY_SCHEDULE, FerryScheduleItem } from '@/lib/ferry_schedule';
 import * as protobuf from 'protobufjs';
@@ -107,6 +108,16 @@ export async function GET(request: Request) {
             // Strategy: Only pre-fill if specific route is requested OR if we want to default generic to something.
             // Given user specifically asked for "East River" in UI, routeId should be 'East River'.
             arrivals = getScheduledFerryArrivals(routeId, stopId, now, direction);
+        } else if (routeId.startsWith('LIRR') || routeId.startsWith('MNR')) {
+            // LIRR (and eventually MNR) Schedule Fallback
+            if (routeId.startsWith('LIRR')) {
+                // Get destStopId from params?
+                const destStopId = searchParams.get('destStopId');
+                if (destStopId) {
+                    const scheduled = getScheduledRailArrivals(routeId, stopId, destStopId, now);
+                    arrivals = scheduled;
+                }
+            }
         }
 
         // Fetch Alerts for the route
@@ -563,14 +574,37 @@ export async function GET(request: Request) {
                                     }
                                 }
 
-                                if (!matched) {
-                                    arrivals.push(newArrival);
-                                }
+                                arrivals.push(newArrival);
                             }
                         }
                     }
                 }
             });
+        }
+
+        // HYBRID MERGE for LIRR Fallback (similar to Ferry)
+        if (routeId.startsWith('LIRR')) {
+            // We have 'arrivals' which might contain Scheduled items (from top) AND Live items (pushed above).
+            // We want to dedup.
+            // Strategy:
+            // 1. Separate Live vs Schedule
+            const live = arrivals.filter(a => a.status !== 'Scheduled');
+            let scheduled = arrivals.filter(a => a.status === 'Scheduled');
+
+            // 2. Hydrate/Filter
+            scheduled = scheduled.filter(sch => {
+                // Check if there is a matching Live trip (same time window)
+                // Or if it's in the past and not matched.
+                const match = live.find(l => Math.abs(l.time - sch.time) < 1800); // 30 min window?
+                if (match) {
+                    // Live trip exists for this slot. Use Live.
+                    return false;
+                }
+                // Keep schedule if in future
+                return sch.time > now;
+            });
+
+            arrivals = [...live, ...scheduled];
         }
 
         // Filter out stale scheduled trips (Ferry only)
@@ -789,6 +823,66 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
             }
         }
     });
+
+    return scheduledArrivals;
+}
+
+// Helper for LIRR/Rail Schedule Fallback
+function getScheduledRailArrivals(routeId: string, originId: string, destId: string, now: number): any[] {
+    // 1. Find relevant schedule block
+    // Using lirrScheduleFallback
+    // Schema: { originId, destId, route, departures: ["HH:MM"] }
+
+    // We match Origin and Dest EXACTLY first.
+    let block = (lirrScheduleFallback as any[]).find(b => b.originId === originId && b.destId === destId);
+
+    if (!block) return [];
+
+    const scheduledArrivals: any[] = [];
+
+    block.departures.forEach((timeStr: string) => {
+        const [h, m] = timeStr.split(':').map(Number);
+
+        // --- Timezone Logic (Reused from Ferry) ---
+        const targetLocal = new Date(now * 1000);
+        targetLocal.setHours(h, m, 0, 0);
+
+        const nycStr = new Date(now * 1000).toLocaleString('en-US', { timeZone: 'America/New_York' });
+        const nycDateAsLocal = new Date(nycStr);
+        const serverNow = new Date(now * 1000);
+        const tzOffsetMs = serverNow.getTime() - nycDateAsLocal.getTime();
+
+        let time = (targetLocal.getTime() + tzOffsetMs) / 1000;
+
+        // Handle next day wrap? simpler: assume today.
+
+        // Window: -1h to +12h ?
+        if (time > now - 3600 && time < now + 43200) {
+            scheduledArrivals.push({
+                routeId: routeId,
+                time: time,
+                destinationArrivalTime: null, // Could infer from block duration if we had it
+                minutesUntil: Math.floor((time - now) / 60),
+                destination: 'Grand Central', // Mock or lookup destId name in stations? 
+                // Getting station name from ID:
+                // We don't have stations imported here easily for LIRR (only lirrStations import at top? Yes line 5)
+                // But destId is "349" -> "Grand Central"
+                // Let's assume the UI handles it or we look it up.
+                // We imported lirrStations!
+                type: 'schedule',
+                status: 'Scheduled',
+                track: ''
+            });
+        }
+    });
+
+    // Lookup Destination Name
+    if (scheduledArrivals.length > 0) {
+        const st = (lirrStations as any[]).find(s => s.id === destId);
+        if (st) {
+            scheduledArrivals.forEach(a => a.destination = st.name);
+        }
+    }
 
     return scheduledArrivals;
 }
