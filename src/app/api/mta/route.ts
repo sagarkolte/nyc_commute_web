@@ -652,7 +652,13 @@ export async function GET(request: Request) {
 
 // Helper for Hybrid Ferry Schedule (SQL)
 function getScheduledFerryArrivals(routeId: string, stopId: string, now: number, direction: string | null): any[] {
-    const dirId = direction ? parseInt(direction) : 0;
+    let dirId = 0;
+    if (direction === 'N') dirId = 1;
+    else if (direction === 'S') dirId = 0;
+    else if (direction) {
+        const parsed = parseInt(direction);
+        if (!isNaN(parsed)) dirId = parsed;
+    }
 
     // SQL Query
     const trips = getNextFerryTripsByDirection(stopId, dirId, 15);
