@@ -124,7 +124,11 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
         });
     };
 
-    const badgeText = formatRouteId(tuple.routeId);
+    const isSBS = tuple.routeId.includes('+') || tuple.routeId.endsWith('-SBS') || tuple.routeId.includes('SBS');
+    let badgeText = formatRouteId(tuple.routeId);
+    if (isSBS) {
+        badgeText = badgeText.replace('-SBS', '');
+    }
 
     return (
         <div className="commute-card-container" style={{ position: 'relative', zIndex: debugInfo?.showBubble ? 100 : 1 }}>
@@ -141,7 +145,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                 className={`commute-card ${isDepartureBoard ? 'mnr-card' : ''}`}
                 style={{
                     borderLeft: `6px solid ${lineColor}`,
-                    paddingLeft: 12, // Removed padding for handle as it is now in the corner
+                    paddingLeft: 12,
                     x
                 }}
                 drag="x"
@@ -197,6 +201,32 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                         <span style={{ color: '#000', fontWeight: 'bold', fontSize: '14px' }}>!</span>
                     </button>
                 )}
+
+                {isSBS && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            background: '#1C1C1E', // Match card bg
+                            borderBottomRightRadius: '8px',
+                            borderTopLeftRadius: '12px', // Match card rounded corner
+                            borderRight: '1px solid #333',
+                            borderBottom: '1px solid #333',
+                            padding: '4px 8px',
+                            zIndex: 15,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            lineHeight: 1
+                        }}
+                    >
+                        <span style={{ color: '#009BDB', fontWeight: 'bold', fontSize: '10px', fontFamily: 'Helvetica, Arial, sans-serif', letterSpacing: '0.5px' }}>
+                            +Select
+                        </span>
+                    </div>
+                )}
+
                 <div className="commute-card-header">
                     <div style={{ width: '85px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexShrink: 0, marginRight: '8px' }}>
                         <div className="commute-card-badge" style={{ backgroundColor: lineColor, width: badgeText.length > 3 ? 'auto' : '40px', padding: badgeText.length > 3 ? '0 10px' : '0', marginRight: 0 }}>
@@ -323,6 +353,6 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                     )}
                 </div>
             </motion.div>
-        </div>
+        </div >
     );
 };
