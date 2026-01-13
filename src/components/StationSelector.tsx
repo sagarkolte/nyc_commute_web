@@ -362,13 +362,14 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
         if (mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') {
             return originStation ? 'Select Arrival Station' : 'Select Departure Station';
         }
+        if (mode === 'bus') return '';
         return `${line || 'Train'} Station`;
 
     };
 
     const getPlaceholder = () => {
         if (mode === 'bus') {
-            return lockedRoute ? "Filter by Name/Dest..." : "Search Route (e.g. M23)";
+            return lockedRoute ? "Search Boarding Stop..." : "Search Route (e.g. M23)";
         }
         if ((mode === 'mnr' || mode === 'njt' || mode === 'lirr' || mode === 'njt-rail' || mode === 'path' || mode === 'nyc-ferry') && originStation) {
             return "Select Arrival Station...";
