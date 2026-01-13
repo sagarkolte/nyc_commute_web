@@ -2,8 +2,8 @@ import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 const SUBWAY_ALERTS_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts';
 const BUS_ALERTS_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fbus-alerts';
-const LIRR_ALERTS_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr_gtfs_realtime_alerts';
-const MNR_ALERTS_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/mnr_gtfs_realtime_alerts';
+const LIRR_ALERTS_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Flirr-alerts.json';
+const MNR_ALERTS_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fmnr-alerts.json';
 
 const CACHE_DURATION_MS = 60 * 1000; // 60 seconds
 
@@ -44,11 +44,56 @@ export const MtaAlertsService = {
                 return currentCache ? currentCache.entities : [];
             }
 
-            const buffer = await response.arrayBuffer();
-            const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
 
-            // Filter only entities that contain alerts
-            const alertEntities = feed.entity.filter(e => !!e.alert);
+            const buffer = await response.arrayBuffer();
+            let alertEntities: any[] = [];
+
+            // Check if it's JSON (LIRR/MNR Camsys feeds)
+            // Or try parsing as JSON first, if fail then Protobuf?
+            // The JSON feeds usually return an array or an object with `entity`
+
+            // Heuristic: If feedKey is lirr or mnr, it's JSON now.
+            if (feedKey === 'lirr' || feedKey === 'mnr') {
+                try {
+                    const text = new TextDecoder().decode(buffer);
+                    const json = JSON.parse(text);
+                    // Camsys JSON often mimics GTFS-RT structure: { "entity": [ ... ] } or just [ ... ]
+                    // LIRR/MNR JSON usually has root object keys, maybe "route" or "ServiceDelivery"?
+                    // Actually, the user shared URLs end in .json. They are likely "Camsys" format.
+                    // Structure is usually: array of alerts OR { entity: [] }.
+                    // Let's assume standard GTFS-RT-in-JSON: { entity: [...] }?
+                    // Or Camsys propriety: [ { "route_id": ... "alert_type": ... } ]?
+
+                    // Attempt to Normalize:
+                    // If it is GTFS-RT JSON, it has `entity`.
+                    if (json.entity && Array.isArray(json.entity)) {
+                        alertEntities = json.entity;
+                    } else if (Array.isArray(json)) {
+                        // Maybe it's a direct array of alerts?
+                        // We need to map them to Expected Entity Structure { alert: { ... } }
+                        // But we don't know the schema yet. 
+                        // Fallback: assume it is NOT this structure if we can't guess.
+                        // But wait, if we fail to parse, we return empty.
+
+                        // If we assume it is the standard "Realtime Feeds" JSON representation:
+                        // It matches the proto structure.
+                        alertEntities = json; // If it's an array of entities
+                    } else {
+                        // If it's the "ServiceStatus" format?
+                        console.warn('[MTA Alerts] Unknown JSON format', Object.keys(json));
+                    }
+
+                    // Filter for alerts
+                    alertEntities = alertEntities.filter((e: any) => !!e.alert);
+
+                } catch (e) {
+                    console.error('[MTA Alerts] Failed to parse JSON', e);
+                }
+            } else {
+                // Protobuf (Subway / Bus)
+                const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
+                alertEntities = feed.entity.filter(e => !!e.alert);
+            }
 
             cache[feedKey] = {
                 timestamp: now,
