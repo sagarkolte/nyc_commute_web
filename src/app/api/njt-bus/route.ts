@@ -23,7 +23,8 @@ export async function GET(request: Request) {
             time: Date.now() / 1000 + (NjtBusV2Service.parseMinutes(t.departuretime) * 60),
             minutesUntil: NjtBusV2Service.parseMinutes(t.departuretime),
             destination: t.header || 'Unknown',
-            status: t.departuretime
+            status: t.departuretime,
+            isRealtime: true
         }));
 
         return NextResponse.json({ arrivals });

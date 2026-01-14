@@ -168,7 +168,8 @@ export async function GET(request: Request) {
                             routeId: u.routeId,
                             time: arrivalTime,
                             minutesUntil: Math.floor(diff / 60),
-                            destination: 'Unknown' // Bus GTFS-RT doesn't easily give headsign per stop
+                            destination: 'Unknown', // Bus GTFS-RT doesn't easily give headsign per stop
+                            isRealtime: true
                         });
                     }
                 }
@@ -231,7 +232,8 @@ export async function GET(request: Request) {
                             arrivals.push({
                                 routeId: journey.LineRef || routeId,
                                 time: arrivalTime,
-                                minutesUntil: Math.floor((arrivalTime - now) / 60)
+                                minutesUntil: Math.floor((arrivalTime - now) / 60),
+                                isRealtime: true
                             });
                         }
                     }
@@ -560,7 +562,8 @@ export async function GET(request: Request) {
                                     minutesUntil: Math.floor((arrivalTime - now) / 60),
                                     destination: displayDest || 'Unknown',
                                     track: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? '' : track,
-                                    status: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? 'Live' : undefined
+                                    status: (routeId === 'nyc-ferry' || !!FERRY_ROUTES[routeId]) ? 'Live' : undefined,
+                                    isRealtime: true
                                 };
 
                                 // HYBRID MERGE for Ferry
@@ -678,6 +681,7 @@ function getScheduledFerryArrivals(routeId: string, stopId: string, now: number,
             type: 'schedule',
             tripId: `SQL-${t.trip_id}`,
             status: 'Scheduled',
+            isRealtime: false,
             track: ''
         };
     }).filter(Boolean);
@@ -706,6 +710,7 @@ function getScheduledRailArrivals(routeId: string, originId: string, destId: str
             type: 'schedule',
             tripId: `SQL-${t.trip_id}`,
             status: 'Scheduled',
+            isRealtime: false,
             track: ''
         };
     }).filter(Boolean);

@@ -130,6 +130,8 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
         badgeText = badgeText.replace('-SBS', '');
     }
 
+    const hasRealtime = arrivals.length > 0 && arrivals.some(a => a.isRealtime);
+
     return (
         <div className="commute-card-container" style={{ position: 'relative', zIndex: debugInfo?.showBubble ? 100 : 1 }}>
             {/* Delete Background - Always visible behind, but icon animates */}
@@ -174,32 +176,71 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                         </svg>
                     </div>
                 )}
-                {hasAlert && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
-                        }}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            background: '#FFD100',
-                            borderTopRightRadius: '12px', // Matches card
-                            borderBottomLeftRadius: '8px',
-                            width: '24px',
-                            height: '24px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            zIndex: 20,
-                            border: 'none',
-                            padding: 0
-                        }}
-                    >
-                        <span style={{ color: '#000', fontWeight: 'bold', fontSize: '14px' }}>!</span>
-                    </button>
+                {(hasAlert || hasRealtime) && (
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        zIndex: 20,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        pointerEvents: 'none'
+                    }}>
+                        {hasRealtime && (
+                            <div style={{
+                                background: 'rgba(74, 222, 128, 0.15)',
+                                color: '#4ade80',
+                                padding: '0 8px',
+                                height: '24px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                letterSpacing: '0.5px',
+                                borderTopRightRadius: hasAlert ? '0' : '12px',
+                                borderBottomLeftRadius: '8px',
+                                borderTopLeftRadius: hasAlert ? '8px' : '0', // Soft start if alert exists, else flows from left? default 0 fits card edge
+                                borderBottomRightRadius: '0'
+                            }}>
+                                <div style={{
+                                    width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', marginRight: '4px',
+                                    boxShadow: '0 0 4px #4ade80'
+                                }} />
+                                LIVE
+                            </div>
+                        )}
+                        {hasAlert && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDebugInfo((prev: any) => ({ ...prev, showBubble: !prev?.showBubble }));
+                                }}
+                                style={{
+                                    background: '#FFD100',
+                                    borderTopRightRadius: '12px',
+                                    borderBottomLeftRadius: '8px',
+                                    borderTopLeftRadius: '0',
+                                    borderBottomRightRadius: '0',
+                                    width: '24px',
+                                    height: '24px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    border: 'none',
+                                    padding: 0,
+                                    color: '#000',
+                                    fontWeight: 'bold',
+                                    fontSize: '14px',
+                                    pointerEvents: 'auto'
+                                }}
+                            >
+                                !
+                            </button>
+                        )}
+                    </div>
                 )}
 
                 {isSBS && (

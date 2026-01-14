@@ -19,6 +19,7 @@ export interface Arrival {
     minutesUntil: number;
     destination?: string;
     track?: string;
+    isRealtime?: boolean;
 }
 
 export interface Station {
