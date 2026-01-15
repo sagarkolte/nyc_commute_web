@@ -199,10 +199,11 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                 fontWeight: 'bold',
                                 fontFamily: 'Helvetica, Arial, sans-serif',
                                 letterSpacing: '0.5px',
-                                borderTopRightRadius: hasAlert ? '0' : '12px',
+                                // If alert exists, flat right side. If not, rounded right side (pill).
+                                borderTopRightRadius: hasAlert ? '0' : '8px',
+                                borderBottomRightRadius: hasAlert ? '0' : '8px',
                                 borderBottomLeftRadius: '8px',
-                                borderTopLeftRadius: hasAlert ? '8px' : '0', // Soft start if alert exists, else flows from left? default 0 fits card edge
-                                borderBottomRightRadius: '0'
+                                borderTopLeftRadius: '8px' // Always rounded start since it's floating or connecting
                             }}>
                                 <div style={{
                                     width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', marginRight: '4px',
@@ -211,6 +212,12 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                 LIVE
                             </div>
                         )}
+
+                        {/* If Live exists but Alert doesn't, show placeholder to maintain Live position */}
+                        {hasRealtime && !hasAlert && (
+                            <div style={{ width: '24px', height: '24px' }} />
+                        )}
+
                         {hasAlert && (
                             <button
                                 onClick={(e) => {
