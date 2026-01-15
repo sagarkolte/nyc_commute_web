@@ -191,7 +191,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                 background: 'rgba(74, 222, 128, 0.15)',
                                 color: '#4ade80',
                                 padding: '0 8px',
-                                height: '24px',
+                                height: '20px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -215,7 +215,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
 
                         {/* If Live exists but Alert doesn't, show placeholder to maintain Live position */}
                         {hasRealtime && !hasAlert && (
-                            <div style={{ width: '24px', height: '24px' }} />
+                            <div style={{ width: '24px', height: '20px' }} />
                         )}
 
                         {hasAlert && (
@@ -231,7 +231,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                     borderTopLeftRadius: '0',
                                     borderBottomRightRadius: '0',
                                     width: '24px',
-                                    height: '24px',
+                                    height: '20px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -240,7 +240,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                     padding: 0,
                                     color: '#000',
                                     fontWeight: 'bold',
-                                    fontSize: '14px',
+                                    fontSize: '12px',
                                     pointerEvents: 'auto'
                                 }}
                             >
