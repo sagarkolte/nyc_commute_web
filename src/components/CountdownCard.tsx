@@ -199,11 +199,11 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                 fontWeight: 'bold',
                                 fontFamily: 'Helvetica, Arial, sans-serif',
                                 letterSpacing: '0.5px',
-                                // If alert exists, flat right side. If not, rounded right side (pill).
-                                borderTopRightRadius: hasAlert ? '0' : '8px',
-                                borderBottomRightRadius: hasAlert ? '0' : '8px',
+                                // Shape: Jigsaw piece (Always flat right)
+                                borderTopRightRadius: '0',
+                                borderBottomRightRadius: '0',
                                 borderBottomLeftRadius: '8px',
-                                borderTopLeftRadius: '8px' // Always rounded start since it's floating or connecting
+                                borderTopLeftRadius: '8px'
                             }}>
                                 <div style={{
                                     width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', marginRight: '4px',
@@ -227,7 +227,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                                 style={{
                                     background: '#FFD100',
                                     borderTopRightRadius: '12px',
-                                    borderBottomLeftRadius: '8px',
+                                    borderBottomLeftRadius: '0',
                                     borderTopLeftRadius: '0',
                                     borderBottomRightRadius: '0',
                                     width: '24px',
