@@ -85,7 +85,7 @@ export async function GET(request: Request) {
             line: d.line,
             status: d.status
         };
-    }).filter(a => a.minutesUntil > -15);
+    }).filter(a => a.minutesUntil > -15 && a.minutesUntil < 1200);
 
     return NextResponse.json({ arrivals });
 }

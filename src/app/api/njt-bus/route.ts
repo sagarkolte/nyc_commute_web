@@ -25,7 +25,7 @@ export async function GET(request: Request) {
             destination: t.header || 'Unknown',
             status: t.departuretime,
             isRealtime: true
-        }));
+        })).filter(a => a.minutesUntil < 1200);
 
         return NextResponse.json({ arrivals });
     } catch (e: any) {
