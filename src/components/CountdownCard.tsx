@@ -261,7 +261,8 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                             borderTopLeftRadius: '12px', // Match card rounded corner
                             borderRight: '1px solid #333',
                             borderBottom: '1px solid #333',
-                            padding: '4px 8px',
+                            height: '20px',
+                            padding: '0 8px',
                             zIndex: 15,
                             display: 'flex',
                             alignItems: 'center',
