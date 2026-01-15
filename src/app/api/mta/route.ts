@@ -621,6 +621,9 @@ export async function GET(request: Request) {
             });
         }
 
+        // Filter out redundant trips too far in future (e.g. next day duplicates > 20 hours away)
+        arrivals = arrivals.filter(a => a.minutesUntil == null || a.minutesUntil < 1200);
+
         // Sort by time
         arrivals.sort((a, b) => a.time - b.time);
 
