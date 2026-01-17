@@ -7,7 +7,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Force the Class to be linked
+        print("⚡️⚡️⚡️ Force Link: \(NYCBridgeImpl.self) ⚡️⚡️⚡️")
+        
+        // Manual Registration Workaround
+        DispatchQueue.main.async {
+            if let rootVC = self.window?.rootViewController as? CAPBridgeViewController {
+                let plugin = NYCBridgeImpl()
+                rootVC.bridge?.registerPluginInstance(plugin)
+                print("⚡️⚡️⚡️ [AppDelegate] Manually Registered NYCBridgeImpl! ⚡️⚡️⚡️")
+            } else {
+                print("❌ [AppDelegate] Could not find CAPBridgeViewController to register plugin.")
+            }
+        }
+        
         return true
     }
 

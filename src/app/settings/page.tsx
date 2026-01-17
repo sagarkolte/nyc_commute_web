@@ -49,6 +49,34 @@ export default function SettingsPage() {
                 </button>
             </div>
 
+            <div className="card" style={{ marginTop: 24 }}>
+                <h2>Widget Debug</h2>
+                <p className="desc">
+                    Force a sync to the iOS Widget.
+                </p>
+                <button onClick={() => {
+                    alert('Starting Sync...');
+                    try {
+                        const tuples = CommuteStorage.getTuples();
+                        CommuteStorage.saveTuples(tuples);
+                        // We can't await saveTuples because it's void, but it logs to console.
+                        // Let's call the bridge directly to prove connectivity
+                        import('../../lib/widget_bridge').then(async m => {
+                            try {
+                                await m.default.echo({ value: 'Debug Echo' });
+                                alert('Sync Triggered + Echo Success!');
+                            } catch (e: any) {
+                                alert('Echo Failed: ' + e.message);
+                            }
+                        }).catch(err => alert('Import Failed: ' + err.message));
+                    } catch (e: any) {
+                        alert('Sync Failed: ' + e.message);
+                    }
+                }} className="save-btn" style={{ backgroundColor: '#444' }}>
+                    Force Widget Sync
+                </button>
+            </div>
+
             <style jsx>{`
         .header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
         .back-link { display: flex; align-items: center; justify-content: center; padding: 8px; border-radius: 50%; background: #333; }

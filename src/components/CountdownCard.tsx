@@ -82,6 +82,10 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
                 setHasAlert(data.alerts && data.alerts.length > 0);
                 setDebugInfo((prev: any) => ({ ...prev, alerts: data.alerts }));
                 setError(null);
+
+                // Sync to Widget
+                const etaStrings = sorted.slice(0, 3).map(a => `${Math.max(0, a.minutesUntil)} min`);
+                CommuteStorage.updateTupleETAs(tuple.id, etaStrings);
             } else if (data.error) {
                 throw new Error(data.error);
             }
