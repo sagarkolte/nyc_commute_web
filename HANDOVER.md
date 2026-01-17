@@ -1,5 +1,10 @@
 # Project Handover & Context
 
+## Repository Details
+- **URL:** https://github.com/sagarkolte/nyc_commute_web.git
+- **Branch:** main
+- **Local Path:** ~/nyc_commute_web
+
 ## Migration Status
 **Date:** 2026-01-16
 **Action:** Moved project from Cloud Storage to local `~/nyc_commute_web` for performance.
@@ -26,4 +31,4 @@ A Next.js 15 application wrapped with Capacitor for iOS.
 2.  **iOS Debugging**:
     *   Run `npx cap sync`.
     *   Run `npx cap open ios`.
-    *   Explore `next.config.ts` / Console logs for the "White Screen" error.
+    *   Check Xcode logs for the "White Screen" error.
