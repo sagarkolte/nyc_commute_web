@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CommuteTuple, Arrival } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
+import { API_BASE_URL } from '@/lib/api_config';
 import { Trash2, Grip, AlertTriangle } from 'lucide-react';
 import { motion, useMotionValue, useTransform, DragControls } from 'framer-motion';
 
@@ -59,7 +60,7 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
 
-            const res = await fetch(`${endpoint}?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}&destStopId=${destStopId}`, {
+            const res = await fetch(`${API_BASE_URL}${endpoint}?_t=${Date.now()}&routeId=${routeId}&stopId=${stopId}&direction=${direction}&destStopId=${destStopId}`, {
                 headers,
                 signal: controller.signal
             });

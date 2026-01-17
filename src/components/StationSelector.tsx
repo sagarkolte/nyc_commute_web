@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Station } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
+import { API_BASE_URL } from '@/lib/api_config';
 import subwayStationsRaw from '@/lib/stations.json';
 import sirStations from '@/lib/sir_stations.json';
 const subwayStations = [...subwayStationsRaw, ...sirStations];
@@ -52,7 +53,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 setLoading(true);
                 try {
                     // We'll call our api to proxy the request
-                    const res = await fetch('/api/njt-bus/routes');
+                    const res = await fetch(`${API_BASE_URL}/api/njt-bus/routes`);
                     const data = await res.json();
                     setNjtRoutes(data || []);
                 } catch (e) {
@@ -71,7 +72,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
             const delayDebounceFn = setTimeout(async () => {
                 setLoading(true);
                 try {
-                    const res = await fetch(`/api/mta/bus-routes?q=${encodeURIComponent(search)}`);
+                    const res = await fetch(`${API_BASE_URL}/api/mta/bus-routes?q=${encodeURIComponent(search)}`);
                     const data = await res.json();
                     setBusRoutes(data.routes || []);
                 } catch (e) {
@@ -92,7 +93,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     const headers: any = {};
                     if (apiKey) headers['x-mta-api-key'] = apiKey;
 
-                    const res = await fetch(`/api/mta/bus-stops?routeId=${encodeURIComponent(lockedRoute)}`, { headers });
+                    const res = await fetch(`${API_BASE_URL}/api/mta/bus-stops?routeId=${encodeURIComponent(lockedRoute)}`, { headers });
                     const data = await res.json();
                     setBusStops(data.stops || []);
                 } catch (e) {
@@ -232,7 +233,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                 setLoading(true);
                 try {
                     // Fetch directions
-                    const dRes = await fetch(`/api/njt-bus/directions?route=${encodeURIComponent(targetRouteId)}`);
+                    const dRes = await fetch(`${API_BASE_URL}/api/njt-bus/directions?route=${encodeURIComponent(targetRouteId)}`);
                     const dirs = await dRes.json();
                     if (dirs.error) throw new Error(dirs.error);
                     setNjtDirections(Array.isArray(dirs) ? dirs : []);
@@ -240,7 +241,7 @@ export const StationSelector = ({ mode, line, onSelect, onBack, placeholder, rou
                     // Fetch stops for ALL directions
                     const allStops: any[] = [];
                     for (const dir of (Array.isArray(dirs) ? dirs : [])) {
-                        const sRes = await fetch(`/api/njt-bus/stops?route=${encodeURIComponent(targetRouteId)}&direction=${encodeURIComponent(dir)}`);
+                        const sRes = await fetch(`${API_BASE_URL}/api/njt-bus/stops?route=${encodeURIComponent(targetRouteId)}&direction=${encodeURIComponent(dir)}`);
                         const data = await sRes.json();
                         if (Array.isArray(data) && data.length > 0) {
                             // Tag each stop with its direction name as the destination label

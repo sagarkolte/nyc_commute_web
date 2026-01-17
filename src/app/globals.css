@@ -33,7 +33,10 @@ button {
 .container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 16px 16px 100px 16px;
+  margin: 0 auto;
+  /* Top padding: 48px base + Safe Area Inset to really clear the notch */
+  padding: calc(48px + env(safe-area-inset-top)) 16px calc(100px + env(safe-area-inset-bottom)) 16px;
+  min-height: 100vh;
   min-height: 100vh;
 }
 
