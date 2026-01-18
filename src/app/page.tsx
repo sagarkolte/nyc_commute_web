@@ -3,16 +3,18 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, Settings as SettingsIcon } from 'lucide-react';
+import { Plus, Settings as SettingsIcon, MapPin } from 'lucide-react';
 import { CommuteTuple } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { CountdownCard } from '@/components/CountdownCard';
 import { SortableCard } from '@/components/SortableCard';
 import { Reorder, motion } from 'framer-motion';
+import { sortTuplesByLocation } from '@/lib/location';
 
 export default function Home() {
   const [tuples, setTuples] = useState<CommuteTuple[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [sorting, setSorting] = useState(false);
 
   useEffect(() => {
     setTuples(CommuteStorage.getTuples());
@@ -29,6 +31,31 @@ export default function Home() {
     setTuples(CommuteStorage.getTuples());
   };
 
+  const handleLocationSort = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setSorting(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // console.log("Sorting for", latitude, longitude);
+        const sorted = sortTuplesByLocation(tuples, latitude, longitude);
+        setTuples(sorted);
+        CommuteStorage.saveTuples(sorted);
+        setSorting(false);
+        // Optional: Provide feedback?
+      },
+      (error) => {
+        console.error('Error getting location', error);
+        alert('Unable to retrieve your location');
+        setSorting(false);
+      }
+    );
+  };
+
   if (!mounted) return null;
 
   return (
@@ -38,9 +65,19 @@ export default function Home() {
           <Image src="/logo.png" width={32} height={32} alt="Transit Pulse" style={{ borderRadius: 8 }} />
           <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Transit Pulse</h1>
         </div>
-        <Link href="/settings">
-          <SettingsIcon color="#888" size={24} />
-        </Link>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <button
+            onClick={handleLocationSort}
+            className="icon-btn"
+            aria-label="Sort by proximity"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}
+          >
+            <MapPin color={sorting ? "var(--primary)" : "#888"} size={24} className={sorting ? "animate-pulse" : ""} />
+          </button>
+          <Link href="/settings">
+            <SettingsIcon color="#888" size={24} />
+          </Link>
+        </div>
       </header>
 
       {tuples.length === 0 ? (
@@ -59,7 +96,15 @@ export default function Home() {
         <Plus color="white" size={32} />
       </Link>
 
-
+      <style jsx global>{`
+        .icon-btn:active { opacity: 0.7; transform: scale(0.95); }
+        .animate-pulse { animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+      `}</style>
     </main>
   );
 }
