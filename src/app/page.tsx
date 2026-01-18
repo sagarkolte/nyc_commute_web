@@ -91,7 +91,8 @@ export default function Home() {
             // Note: We need user location state to show this live, 
             // but for now let's just show if it HAS coords.
             // Better: add a text showing the coords.
-            const hasCoords = (t.lat && t.lon) || (t.mode === 'mnr' || t.mode === 'subway' || t.mode === 'lirr'); // simple check
+            // Better: add a text showing the coords.
+
             return (
               <div key={t.id} style={{ position: 'relative' }}>
                 <SortableCard item={t} onDelete={() => handleDelete(t.id)} />
