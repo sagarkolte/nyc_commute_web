@@ -98,7 +98,7 @@ export default function Home() {
                 <SortableCard item={t} onDelete={() => handleDelete(t.id)} />
                 {/* Debug Overlay */}
                 <div style={{ position: 'absolute', top: 0, right: 50, fontSize: 10, color: 'lime', background: 'rgba(0,0,0,0.7)', padding: 2, zIndex: 100 }}>
-                  {t.lat ? `Saved: ${t.lat.toFixed(3)}, ${t.lon?.toFixed(3)}` : `Static: ${t.mode}`}
+                  {t.lat ? `Saved: ${Number(t.lat).toFixed(3)}, ${Number(t.lon).toFixed(3)}` : `Static: ${t.mode}`}
                 </div>
               </div>
             );
