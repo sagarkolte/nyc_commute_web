@@ -86,9 +86,22 @@ export default function Home() {
         </div>
       ) : (
         <Reorder.Group axis="y" values={tuples} onReorder={handleReorder}>
-          {tuples.map(t => (
-            <SortableCard key={t.id} item={t} onDelete={() => handleDelete(t.id)} />
-          ))}
+          {tuples.map(t => {
+            // DEBUG: Calculate distance if we have location
+            // Note: We need user location state to show this live, 
+            // but for now let's just show if it HAS coords.
+            // Better: add a text showing the coords.
+            const hasCoords = (t.lat && t.lon) || (t.mode === 'mnr' || t.mode === 'subway' || t.mode === 'lirr'); // simple check
+            return (
+              <div key={t.id} style={{ position: 'relative' }}>
+                <SortableCard item={t} onDelete={() => handleDelete(t.id)} />
+                {/* Debug Overlay */}
+                <div style={{ position: 'absolute', top: 0, right: 50, fontSize: 10, color: 'lime', background: 'rgba(0,0,0,0.7)', padding: 2, zIndex: 100 }}>
+                  {t.lat ? `Saved: ${t.lat.toFixed(3)}, ${t.lon?.toFixed(3)}` : `Static: ${t.mode}`}
+                </div>
+              </div>
+            );
+          })}
         </Reorder.Group>
       )}
 
