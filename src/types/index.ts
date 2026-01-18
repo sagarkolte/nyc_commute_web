@@ -11,6 +11,8 @@ export interface CommuteTuple {
     destinationName?: string; // Explicit terminal station name (e.g. "Chelsea Piers")
     destinationStopId?: string; // For Rail (MNR/LIRR) Start-End filtering
     createdAt: number;
+    lat?: number;
+    lon?: number;
 }
 
 export interface Arrival {

@@ -106,7 +106,9 @@ export default function AddPage() {
             direction: dir,
             destinationName: s.headsign, // For Bus
             destinationStopId: destStation?.id, // For MNR/NJT
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            lat: s.lat,
+            lon: s.lon
         };
 
         if (['lirr', 'mnr', 'path', 'njt', 'njt-rail', 'njt-bus', 'nyc-ferry', 'si-ferry'].includes(mode)) {
