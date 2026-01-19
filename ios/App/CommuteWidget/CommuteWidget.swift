@@ -267,44 +267,35 @@ struct RectangularView: View {
     
     var body: some View {
         if let item = item {
-            HStack(spacing: 8) {
-                // Badge
-                ZStack {
-                    if item.mode == "subway" {
-                        Circle().strokeBorder(style: StrokeStyle(lineWidth: 2))
-                    } else {
-                        RoundedRectangle(cornerRadius: 4).strokeBorder(style: StrokeStyle(lineWidth: 2))
-                    }
-                    Text(formatRouteId(item.routeId ?? "?"))
-                        .font(.system(size: 12, weight: .bold))
-                        .minimumScaleFactor(0.4) // Allow shrinking for long IDs like SIM15
-                        .padding(2) // Prevent touching borders
-                }
-                .frame(width: 28, height: 28)
+            VStack(alignment: .leading, spacing: 1) {
+                // Line 1: Nickname or Destination (Caption)
+                Text(item.nickname ?? item.destinationName ?? item.label)
+                    .font(.system(size: 13, weight: .bold)) // Larger and Bolder
+                    .foregroundColor(.white.opacity(0.9)) // Brighter grey
+                    .lineLimit(1)
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    // Title: Nickname OR Destination OR Label
-                    Text(item.nickname ?? item.destinationName ?? item.label)
-                        .font(.headline)
-                        .fontWeight(.bold)
+                // Line 2: Route ID (Emphasized)
+                Text(formatRouteId(item.routeId ?? "?"))
+                    .font(.system(size: 14, weight: .heavy))
+                    .foregroundColor(.white)
+                
+                // Line 3: ETAs (Hero - slightly reduced)
+                if let etas = item.etas, !etas.isEmpty {
+                    Text(etas.prefix(3).map { $0.replacingOccurrences(of: " min", with: "") }.joined(separator: ", ") + " min")
+                        .font(.system(size: 16, weight: .bold)) // Reduced from 19 to 16
+                        .foregroundColor(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                    
-                    // ETAs
-                    if let etas = item.etas, !etas.isEmpty {
-                        // "5, 12, 19 m"
-                        Text(etas.prefix(3).map { $0.replacingOccurrences(of: " min", with: "") }.joined(separator: ", ") + " min")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    } else {
-                        Text("--")
-                            .font(.caption)
-                    }
+                } else {
+                    Text("--")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.gray)
                 }
-                Spacer()
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         } else {
-            Text("Add a route to see updates")
+            Text("Add a route")
+                .font(.caption)
         }
     }
     
