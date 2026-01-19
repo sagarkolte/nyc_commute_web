@@ -47,5 +47,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We use your location to sort commute cards by proximity.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We use your location to sort commute cards by proximity.</string>
 </dict>
 </plist>

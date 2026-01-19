@@ -16,6 +16,7 @@ struct CommuteTuple: Codable, Identifiable {
     let direction: String?
     let destinationName: String?
     let etas: [String]?
+    let nickname: String?
 }
 // MARK: - Provider
 struct Provider: TimelineProvider {
@@ -74,86 +75,36 @@ struct SimpleEntry: TimelineEntry {
     let items: [CommuteTuple]
 }
 // MARK: - Widget View
+// MARK: - Widget View
 struct CommuteWidgetEntryView : View {
     var entry: Provider.Entry
-    
+    @Environment(\.widgetFamily) var family // Detect widget type
+
     var body: some View {
-        ZStack {
-            // Global Background
-            Color(hex: "000000").edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 12) {
-                if entry.items.isEmpty {
-                    Text("Add routes in App")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
-                } else {
-                    ForEach(entry.items) { item in
-                        HStack(spacing: 0) {
-                            // Colored Left Border
-                            Rectangle()
-                                .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
-                                .frame(width: 6)
-                            
-                            // Content
-                            HStack(alignment: .center, spacing: 12) {
-                                // Badge
-                                ZStack {
-                                    if item.mode == "subway" {
-                                        Circle()
-                                            .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
-                                    }
-                                    
-                                    Text(formatRouteId(item.routeId ?? "?"))
-                                        .font(.system(size: 10, weight: .bold))
-                                        .foregroundColor(.white)
-                                }
-                                .frame(width: 24, height: 24)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(item.label)
-                                        .font(.system(size: 14, weight: .bold)) // Slightly larger title
-                                        .lineLimit(1)
-                                        .foregroundColor(.white)
-                                    
-                                    if let etas = item.etas, !etas.isEmpty {
-                                        Text(etas.joined(separator: ", "))
-                                            .font(.system(size: 12, weight: .medium)) // Medium weight for visibility
-                                            .foregroundColor(Color(hex: "4ADE80")) // Green for times (Tailwind green-400)
-                                            .lineLimit(1)
-                                    } else {
-                                        Text("Loading...")
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
-                                    }
-                                }
-                                Spacer()
-                            }
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 10)
-                        }
-                        .background(Color(hex: "1C1C1E")) // Card Background
-                        .cornerRadius(8)
-                        .clipShape(RoundedRectangle(cornerRadius: 8)) // Ensure border clips
-                    }
-                }
-            }
-            .padding(12)
+        switch family {
+        case .accessoryCircular:
+            CircularView(item: entry.items.first)
+        case .accessoryRectangular:
+            RectangularView(item: entry.items.first)
+        case .accessoryInline:
+            InlineView(item: entry.items.first) // Bonus fallback
+        default:
+            // Existing System Small/Medium View
+            SystemView(entry: entry)
         }
     }
-    
+
     func formatRouteId(_ id: String) -> String {
         return id.replacingOccurrences(of: "MTA NYCT_", with: "")
                  .replacingOccurrences(of: "MTABC_", with: "")
                  .replacingOccurrences(of: "-SBS", with: "")
+                 .replacingOccurrences(of: "SBS", with: "")
+                 .replacingOccurrences(of: "+", with: "")
     }
-    
+
     func colorForRoute(_ routeId: String, mode: String) -> Color {
         let r = routeId.replacingOccurrences(of: "MTA NYCT_", with: "")
-        
+
         // Subway Colors
         switch r {
         case "1", "2", "3": return Color(hex: "EE352E")
@@ -168,7 +119,7 @@ struct CommuteWidgetEntryView : View {
         case "SI": return Color(hex: "0039A6") // SIR
         default: break
         }
-        
+
         // Mode Fallbacks
         switch mode {
         case "lirr": return Color(hex: "0039A6") // Blue
@@ -177,6 +128,210 @@ struct CommuteWidgetEntryView : View {
         case "bus": return Color(hex: "0039A6") // Blue
         default: return .gray
         }
+    }
+}
+
+// MARK: - Sub Views
+struct SystemView: View {
+    var entry: Provider.Entry
+    
+    // Helper needed here as it was local to View struct before
+    func formatRouteId(_ id: String) -> String {
+        return id.replacingOccurrences(of: "MTA NYCT_", with: "")
+                 .replacingOccurrences(of: "MTABC_", with: "")
+                 .replacingOccurrences(of: "-SBS", with: "")
+                 .replacingOccurrences(of: "SBS", with: "")
+                 .replacingOccurrences(of: "+", with: "")
+    }
+    
+    func colorForRoute(_ routeId: String, mode: String) -> Color {
+        return CommuteWidgetEntryView(entry: entry).colorForRoute(routeId, mode: mode)
+    }
+
+    var body: some View {
+        ZStack {
+            Color(hex: "000000").edgesIgnoringSafeArea(.all)
+            VStack(spacing: 12) {
+                if entry.items.isEmpty {
+                    Text("Add routes in App")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                } else {
+                    ForEach(entry.items) { item in
+                        HStack(spacing: 0) {
+                            Rectangle()
+                                .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
+                                .frame(width: 6)
+                            HStack(alignment: .center, spacing: 12) {
+                                ZStack {
+                                    if item.mode == "subway" {
+                                        Circle()
+                                            .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
+                                    }
+                                    Text(formatRouteId(item.routeId ?? "?"))
+                                        .font(.system(size: 10, weight: .bold))
+                                        .minimumScaleFactor(0.5)
+                                        .foregroundColor(.white)
+                                }
+                                .frame(width: 24, height: 24)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    if let nickname = item.nickname, !nickname.isEmpty {
+                                        Text(nickname)
+                                            .font(.system(size: 14, weight: .bold))
+                                            .lineLimit(1)
+                                            .foregroundColor(.white)
+                                    } else {
+                                        Text(item.label)
+                                            .font(.system(size: 14, weight: .bold))
+                                            .lineLimit(1)
+                                            .foregroundColor(.white)
+                                    }
+                                    
+                                    if let etas = item.etas, !etas.isEmpty {
+                                        Text(etas.joined(separator: ", "))
+                                            .font(.system(size: 12, weight: .medium))
+                                            .foregroundColor(Color(hex: "4ADE80"))
+                                            .lineLimit(1)
+                                    } else {
+                                        Text("Loading...")
+                                            .font(.caption)
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+                        }
+                        .background(Color(hex: "1C1C1E"))
+                        .cornerRadius(8)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+            }
+            .padding(12)
+        }
+    }
+}
+
+struct CircularView: View {
+    let item: CommuteTuple?
+    
+    var body: some View {
+        if let item = item {
+            VStack(spacing: 1) {
+                // For Circular, if we have a short nickname like "Work", show it.
+                // Otherwise show Route ID.
+                if let nickname = item.nickname, !nickname.isEmpty, nickname.count <= 4 {
+                    Text(nickname)
+                        .font(.system(size: 10, weight: .heavy))
+                        .minimumScaleFactor(0.6)
+                } else {
+                    Text(formatRouteId(item.routeId ?? "?"))
+                        .font(.system(size: 12, weight: .heavy))
+                        .minimumScaleFactor(0.5)
+                }
+                
+                // Top ETA
+                if let etas = item.etas, let first = etas.first {
+                    Text(formatTime(first))
+                        .font(.system(size: 10, weight: .bold))
+                } else {
+                    Text("--")
+                        .font(.caption)
+                }
+            }
+        } else {
+            Text("No Data")
+        }
+    }
+    
+    func formatRouteId(_ id: String) -> String {
+        return id.replacingOccurrences(of: "MTA NYCT_", with: "")
+                 .replacingOccurrences(of: "MTABC_", with: "")
+                 .replacingOccurrences(of: "-SBS", with: "")
+                 .replacingOccurrences(of: "SBS", with: "")
+                 .replacingOccurrences(of: "+", with: "")
+    }
+    
+    func formatTime(_ t: String) -> String {
+        return t.replacingOccurrences(of: " min", with: "m")
+    }
+}
+
+struct RectangularView: View {
+    let item: CommuteTuple?
+    
+    var body: some View {
+        if let item = item {
+            HStack(spacing: 8) {
+                // Badge
+                ZStack {
+                    if item.mode == "subway" {
+                        Circle().strokeBorder(style: StrokeStyle(lineWidth: 2))
+                    } else {
+                        RoundedRectangle(cornerRadius: 4).strokeBorder(style: StrokeStyle(lineWidth: 2))
+                    }
+                    Text(formatRouteId(item.routeId ?? "?"))
+                        .font(.system(size: 12, weight: .bold))
+                        .minimumScaleFactor(0.4) // Allow shrinking for long IDs like SIM15
+                        .padding(2) // Prevent touching borders
+                }
+                .frame(width: 28, height: 28)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    // Title: Nickname OR Destination OR Label
+                    Text(item.nickname ?? item.destinationName ?? item.label)
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    
+                    // ETAs
+                    if let etas = item.etas, !etas.isEmpty {
+                        // "5, 12, 19 m"
+                        Text(etas.prefix(3).map { $0.replacingOccurrences(of: " min", with: "") }.joined(separator: ", ") + " min")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                    } else {
+                        Text("--")
+                            .font(.caption)
+                    }
+                }
+                Spacer()
+            }
+        } else {
+            Text("Add a route to see updates")
+        }
+    }
+    
+    func formatRouteId(_ id: String) -> String {
+        return id.replacingOccurrences(of: "MTA NYCT_", with: "")
+                 .replacingOccurrences(of: "MTABC_", with: "")
+                 .replacingOccurrences(of: "-SBS", with: "")
+                 .replacingOccurrences(of: "SBS", with: "")
+                 .replacingOccurrences(of: "+", with: "")
+    }
+}
+
+struct InlineView: View {
+    let item: CommuteTuple?
+    var body: some View {
+        if let item = item, let etas = item.etas, let first = etas.first {
+             Text("\(formatRouteId(item.routeId ?? "")): \(first)")
+        } else {
+            Text("Commute")
+        }
+    }
+    func formatRouteId(_ id: String) -> String {
+        return id.replacingOccurrences(of: "MTA NYCT_", with: "")
+                 .replacingOccurrences(of: "MTABC_", with: "")
+                 .replacingOccurrences(of: "-SBS", with: "")
+                 .replacingOccurrences(of: "SBS", with: "")
+                 .replacingOccurrences(of: "+", with: "")
     }
 }
 
@@ -205,7 +360,7 @@ extension Color {
         )
     }
 }
-// MARK: - Main Widget Config
+
 @main
 struct CommuteWidget: Widget {
     let kind: String = "CommuteWidget"
@@ -213,7 +368,7 @@ struct CommuteWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
                 CommuteWidgetEntryView(entry: entry)
-                    .containerBackground(Color.black, for: .widget) // Force Black
+                    .containerBackground(Color.black, for: .widget)
             } else {
                 CommuteWidgetEntryView(entry: entry)
                     .padding()
@@ -222,7 +377,7 @@ struct CommuteWidget: Widget {
         }
         .configurationDisplayName("Commute Tracker")
         .description("View your top commutes.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline])
         .contentMarginsDisabled()
     }
 }

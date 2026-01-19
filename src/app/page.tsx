@@ -10,6 +10,7 @@ import { CountdownCard } from '@/components/CountdownCard';
 import { SortableCard } from '@/components/SortableCard';
 import { Reorder, motion } from 'framer-motion';
 import { sortTuplesByLocation } from '@/lib/location';
+import { Geolocation } from '@capacitor/geolocation';
 
 export default function Home() {
   const [tuples, setTuples] = useState<CommuteTuple[]>([]);
@@ -31,29 +32,34 @@ export default function Home() {
     setTuples(CommuteStorage.getTuples());
   };
 
-  const handleLocationSort = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser');
-      return;
-    }
 
-    setSorting(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        // console.log("Sorting for", latitude, longitude);
-        const sorted = sortTuplesByLocation(tuples, latitude, longitude);
-        setTuples(sorted);
-        CommuteStorage.saveTuples(sorted);
-        setSorting(false);
-        // Optional: Provide feedback?
-      },
-      (error) => {
-        console.error('Error getting location', error);
-        alert('Unable to retrieve your location');
-        setSorting(false);
+
+  const handleLocationSort = async () => {
+    try {
+      setSorting(true);
+
+      // Request permissions first
+      const perm = await Geolocation.checkPermissions();
+      if (perm.location !== 'granted') {
+        const req = await Geolocation.requestPermissions();
+        if (req.location !== 'granted') {
+          alert('Location permission denied.');
+          setSorting(false);
+          return;
+        }
       }
-    );
+
+      const position = await Geolocation.getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      const sorted = sortTuplesByLocation(tuples, latitude, longitude);
+      setTuples(sorted);
+      CommuteStorage.saveTuples(sorted);
+      setSorting(false);
+    } catch (error) {
+      console.error('Error getting location', error);
+      alert('Unable to retrieve your location');
+      setSorting(false);
+    }
   };
 
   if (!mounted) return null;

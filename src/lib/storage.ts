@@ -48,7 +48,16 @@ export const CommuteStorage = {
     removeTuple: (id: string) => {
         const tuples = CommuteStorage.getTuples();
         const filtered = tuples.filter(t => t.id !== id);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+        CommuteStorage.saveTuples(filtered); // Use saveTuples to sync
+    },
+
+    updateTuple: (id: string, updates: Partial<CommuteTuple>) => {
+        const tuples = CommuteStorage.getTuples();
+        const index = tuples.findIndex(t => t.id === id);
+        if (index !== -1) {
+            tuples[index] = { ...tuples[index], ...updates };
+            CommuteStorage.saveTuples(tuples);
+        }
     },
 
     getApiKey: (): string | null => {

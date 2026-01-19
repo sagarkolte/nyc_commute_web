@@ -13,6 +13,7 @@ export interface CommuteTuple {
     createdAt: number;
     lat?: number;
     lon?: number;
+    nickname?: string;
 }
 
 export interface Arrival {
