@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/master.swiftdeps"
+  },
+  "/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift": {
+    "dependencies": "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.d",
+    "object": "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.swift.o",
+    "swiftmodule": "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin~partial.swiftmodule",
+    "swift-dependencies": "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.swiftdeps",
+    "diagnostics": "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.dia"
+  }
+}

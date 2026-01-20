@@ -6,6 +6,7 @@ import { CommuteTuple, Station, CommuteDirection } from '@/types';
 import { CommuteStorage } from '@/lib/storage';
 import { StationSelector } from '@/components/StationSelector';
 import Link from 'next/link';
+import { X, ArrowLeft } from 'lucide-react';
 
 const LINES = [
     '1', '2', '3', '4', '5', '6', '7',
@@ -154,18 +155,43 @@ export default function AddPage() {
         <main className="container">
             {step === 'mode' && !subModeStep && (
                 <>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-                        <Link href="/" style={{ color: 'var(--primary)', marginRight: 16 }}>Cancel</Link>
-                        <h1>Select Mode</h1>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+                        <h1 style={{ margin: 0, fontSize: 28 }}>Add Route</h1>
+                        <Link href="/" style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 18,
+                            background: '#2C2C2E',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <X color="#fff" size={20} />
+                        </Link>
                     </div>
-                    <div className="grid">
-                        <button className="mode-btn" onClick={() => handleModeSelect('subway')}>Subway</button>
-                        <button className="mode-btn" onClick={() => handleModeSelect('lirr')}>LIRR</button>
-                        <button className="mode-btn" onClick={() => handleModeSelect('mnr')}>Metro-North</button>
-                        <button className="mode-btn" onClick={() => handleModeSelect('njt')}>NJ Transit</button>
-                        <button className="mode-btn" onClick={() => handleModeSelect('path')}>PATH</button>
-                        <button className="mode-btn" onClick={() => handleModeSelect('ferry')}>Ferry</button>
-                        <button className="mode-btn" onClick={() => handleModeSelect('bus')}>Bus</button>
+
+                    <div className="mode-grid">
+                        <button className="mode-tile" onClick={() => handleModeSelect('subway')}>
+                            <span className="label">Subway</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleModeSelect('lirr')}>
+                            <span className="label">LIRR</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleModeSelect('mnr')}>
+                            <span className="label">Metro-North</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleModeSelect('njt')}>
+                            <span className="label">NJ Transit</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleModeSelect('path')}>
+                            <span className="label">PATH</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleModeSelect('ferry')}>
+                            <span className="label">Ferry</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleModeSelect('bus')}>
+                            <span className="label">Bus</span>
+                        </button>
                     </div>
                 </>
             )}
@@ -173,12 +199,18 @@ export default function AddPage() {
             {step === 'mode' && subModeStep === 'njt' && (
                 <>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-                        <button onClick={() => setSubModeStep(null)} className="back-btn">← Back</button>
-                        <h1>NJ Transit Mode</h1>
+                        <button onClick={() => setSubModeStep(null)} className="back-btn">
+                            <ArrowLeft size={24} />
+                        </button>
+                        <h1 style={{ marginLeft: 16 }}>NJ Transit</h1>
                     </div>
-                    <div className="grid">
-                        <button className="mode-btn" onClick={() => handleSubModeSelect('njt-rail')}>Train</button>
-                        <button className="mode-btn" onClick={() => handleSubModeSelect('njt-bus')}>Bus</button>
+                    <div className="mode-grid">
+                        <button className="mode-tile" onClick={() => handleSubModeSelect('njt-rail')}>
+                            <span className="label">Train</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleSubModeSelect('njt-bus')}>
+                            <span className="label">Bus</span>
+                        </button>
                     </div>
                 </>
             )}
@@ -186,12 +218,18 @@ export default function AddPage() {
             {step === 'mode' && subModeStep === 'ferry' && (
                 <>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-                        <button onClick={() => setSubModeStep(null)} className="back-btn">← Back</button>
-                        <h1>Ferry Mode</h1>
+                        <button onClick={() => setSubModeStep(null)} className="back-btn">
+                            <ArrowLeft size={24} />
+                        </button>
+                        <h1 style={{ marginLeft: 16 }}>Ferry</h1>
                     </div>
-                    <div className="grid">
-                        <button className="mode-btn" onClick={() => handleSubModeSelect('nyc-ferry')}>NYC Ferry - Real Time</button>
-                        <button className="mode-btn" onClick={() => handleSubModeSelect('si-ferry')}>Staten Island Ferry - Schedule Only</button>
+                    <div className="mode-grid">
+                        <button className="mode-tile" onClick={() => handleSubModeSelect('nyc-ferry')}>
+                            <span className="label">NYC Ferry</span>
+                        </button>
+                        <button className="mode-tile" onClick={() => handleSubModeSelect('si-ferry')}>
+                            <span className="label">Staten Island</span>
+                        </button>
                     </div>
                 </>
             )}
@@ -200,12 +238,14 @@ export default function AddPage() {
             {step === 'line' && (
                 <>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-                        <button onClick={() => setStep('mode')} className="back-btn">← Back</button>
-                        <h1>Select Line</h1>
+                        <button onClick={() => setStep('mode')} className="back-btn">
+                            <ArrowLeft size={24} />
+                        </button>
+                        <h1 style={{ marginLeft: 16 }}>Select Line</h1>
                     </div>
-                    <div className="grid">
+                    <div className="lines-grid">
                         {LINES.map(l => (
-                            <button key={l} className="line-btn" onClick={() => handleLineSelect(l)}>
+                            <button key={l} className={`line-btn line-${l}`} onClick={() => handleLineSelect(l)}>
                                 {l}
                             </button>
                         ))}
@@ -213,63 +253,112 @@ export default function AddPage() {
                 </>
             )}
 
-            {step === 'station' && (
-                <StationSelector
-                    mode={mode as any}
-                    line={line}
-                    onSelect={handleStationSelect}
-                    onBack={() => setStep(mode === 'subway' ? 'line' : 'mode')}
-                />
-            )}
+            {(step === 'station' || step === 'direction') && (
+                <>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+                        <button onClick={() => step === 'direction' ? setStep('station') : (mode === 'subway' ? setStep('line') : setStep('mode'))} className="back-btn">
+                            <ArrowLeft size={24} />
+                        </button>
+                        <h1 style={{ marginLeft: 16 }}>
+                            {step === 'direction' ? 'Direction' : 'Select Station'}
+                        </h1>
+                    </div>
 
-            {step === 'direction' && (station || mode === 'si-ferry') && (
-                <div className="direction-step">
-                    <button className="back-btn" onClick={() => setStep(mode === 'si-ferry' ? 'mode' : 'station')}>← Back</button>
-                    <h2>Select Direction</h2>
-                    {station && <p style={{ color: '#888', marginBottom: 32 }}>{station.name}</p>}
+                    {step === 'station' && (
+                        <StationSelector
+                            mode={mode as any}
+                            line={line}
+                            onSelect={handleStationSelect}
+                        />
+                    )}
 
-                    <button className="dir-btn" onClick={() => handleDirectionSelect('N')}>
-                        {mode === 'lirr' || mode === 'mnr' ? 'Toward NYC / Westbound' : (mode === 'path' ? 'Toward NYC (33rd St / WTC)' : (mode === 'si-ferry' ? 'To Manhattan' : `Toward ${station?.north_label || 'Uptown / Northbound'}`))}
-                    </button>
-
-                    <button className="dir-btn" onClick={() => handleDirectionSelect('S')}>
-                        {mode === 'lirr' || mode === 'mnr' ? 'Toward LI/CT / Eastbound' : (mode === 'path' ? 'Toward NJ (Newark / Hoboken)' : (mode === 'si-ferry' ? 'To Staten Island' : `Toward ${station?.south_label || 'Downtown / Southbound'}`))}
-                    </button>
-                </div>
+                    {step === 'direction' && station && (
+                        <div className="direction-list">
+                            <button className="direction-btn" onClick={() => handleDirectionSelect('N')}>
+                                {mode === 'si-ferry' ? 'To Manhattan' : (station.north_label || 'Northbound')}
+                            </button>
+                            <button className="direction-btn" onClick={() => handleDirectionSelect('S')}>
+                                {mode === 'si-ferry' ? 'To St. George' : (station.south_label || 'Southbound')}
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
 
             <style jsx>{`
-        .grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
-        .line-btn {
-          width: 60px; height: 60px;
-          border-radius: 50%;
-          background: #333;
-          color: white;
-          font-weight: bold;
-          font-size: 24px;
-        }
-        .mode-btn {
-            background: var(--card-bg);
-            padding: 24px;
-            border-radius: 12px;
-            color: white;
-            font-size: 20px;
-            width: 100%;
-            text-align: center;
+                .mode-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 12px;
+                }
+                .mode-tile {
+                    height: 80px;
+                    background: #2C2C2E;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: transform 0.2s;
+                }
+                .mode-tile:active {
+                    transform: scale(0.96);
+                    background: #3A3A3C;
+                }
+                .label { font-size: 16px; font-weight: 600; color: white; }
+
+
+            .lines-grid {
+                display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 16px;
+                }
+            .line-btn {
+                width: 60px;
+            height: 60px;
+            border-radius: 30px;
             font-weight: bold;
-        }
-        .direction-step { display: flex; flex-direction: column; }
-        .back-btn { background: none; color: var(--primary); text-align: left; padding: 0; margin-right: 16px; font-size: 16px; }
-        .dir-btn {
-          background: var(--card-bg);
-          padding: 20px;
-          border-radius: 12px;
-          color: white;
-          font-size: 18px;
-          margin-bottom: 16px;
-          text-align: left;
-        }
-      `}</style>
-        </main>
+            font-size: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #333;
+                }
+            /* MTA Colors */
+            .line-1, .line-2, .line-3 {background: #EE352E; }
+            .line-4, .line-5, .line-6 {background: #00933C; }
+            .line-7 {background: #B933AD; }
+            .line-A, .line-C, .line-E {background: #0039A6; }
+            .line-B, .line-D, .line-F, .line-M {background: #FF6319; }
+            .line-N, .line-Q, .line-R, .line-W {background: #FCCC0A; color: black; }
+            .line-J, .line-Z {background: #996633; }
+            .line-G {background: #6CBE45; }
+            .line-L {background: #A7A9AC; color: black; }
+            .line-S {background: #808183; }
+            .line-SI {background: #0039A6; }
+
+            .back-btn {
+                background: none;
+            color: white;
+            padding: 8px;
+            margin-left: -8px;
+                }
+
+            .direction-list {
+                display: flex;
+            flex-direction: column;
+            gap: 16px;
+                }
+            .direction-btn {
+                padding: 24px;
+            background: #2C2C2E;
+            border-radius: 16px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: left;
+                }
+            `}</style>
+        </main >
     );
 }

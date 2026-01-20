@@ -18,7 +18,7 @@ const moved = moveDir(apiDir, hiddenApiDir);
 
 try {
     console.log('Starting Next.js static export...');
-    execSync('NEXT_PUBLIC_IS_EXPORT=true next build', { stdio: 'inherit' });
+    execSync('NEXT_PUBLIC_IS_EXPORT=true NEXT_PUBLIC_API_BASE_URL=https://nyc-commute-web.vercel.app next build', { stdio: 'inherit' });
 } catch (error) {
     console.error('Build failed!');
     process.exit(1);

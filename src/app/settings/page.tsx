@@ -23,31 +23,22 @@ export default function SettingsPage() {
     return (
         <main className="container">
             <div className="header">
-                <Link href="/" className="back-link">
-                    <ArrowLeft color="white" />
+                <Link href="/" style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    background: '#2C2C2E',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                }}>
+                    <ArrowLeft color="white" size={20} />
                 </Link>
                 <h1>Settings</h1>
             </div>
 
-            <div className="card">
-                <h2>MTA Bus Time API Key</h2>
-                <p className="desc">
-                    Required for real-time Bus tracking.
-                    <a href="http://bustime.mta.info/wiki/Developers/Index" target="_blank" rel="noreferrer"> Get a key here.</a>
-                </p>
-
-                <input
-                    type="text"
-                    placeholder="Enter your API Key"
-                    value={key}
-                    onChange={e => setKey(e.target.value)}
-                    className="input"
-                />
-
-                <button onClick={handleSave} className="save-btn">
-                    {saved ? 'Saved!' : 'Save Key'}
-                </button>
-            </div>
+            {/* API Key removed as it is legacy/auto-handled now */}
 
             <div className="card" style={{ marginTop: 24 }}>
                 <h2>Widget Debug</h2>

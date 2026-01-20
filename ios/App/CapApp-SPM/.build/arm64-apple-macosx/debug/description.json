@@ -1,0 +1,426 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.CapApp-SPM-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources",
+      "importPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/placeholder.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "CapApp_SPM",
+      "moduleOutputPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/CapApp_SPM.swiftmodule",
+      "objects" : [
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/placeholder.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/include/CapApp-SPM-Swift.h",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "capapp_spm"
+      ],
+      "outputFileMapPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/placeholder.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/CapApp_SPM.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/placeholder.swift"
+      ],
+      "tempsPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.GeolocationPlugin-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources",
+      "importPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "GeolocationPlugin",
+      "moduleOutputPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule",
+      "objects" : [
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/include/GeolocationPlugin-Swift.h",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "geolocation"
+      ],
+      "outputFileMapPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift"
+      ],
+      "tempsPath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "CapApp_SPM" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "CapApp_SPM",
+      "-package-name",
+      "capapp_spm",
+      "-c",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/placeholder.swift",
+      "-I",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/include/CapApp-SPM-Swift.h",
+      "-color-diagnostics",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "capapp_spm",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "GeolocationPlugin" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "GeolocationPlugin",
+      "-package-name",
+      "geolocation",
+      "-c",
+      "/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift",
+      "-I",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/include/GeolocationPlugin-Swift.h",
+      "-color-diagnostics",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "geolocation",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "CapApp_SPM" : [
+      "GeolocationPlugin",
+      "Cordova",
+      "Capacitor"
+    ],
+    "GeolocationPlugin" : [
+      "Cordova",
+      "Capacitor"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/placeholder.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources"
+    },
+    "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources"
+    },
+    "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

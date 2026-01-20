@@ -1,0 +1,66 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "CapApp-SPM-arm64-apple-macosx15.0-debug.module": ["<CapApp-SPM-arm64-apple-macosx15.0-debug.module>"]
+  "GeolocationPlugin-arm64-apple-macosx15.0-debug.module": ["<GeolocationPlugin-arm64-apple-macosx15.0-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<CapApp-SPM-arm64-apple-macosx15.0-debug.module>"]
+  "test": ["<CapApp-SPM-arm64-apple-macosx15.0-debug.module>"]
+default: "main"
+nodes:
+  "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/placeholder.swift"]
+    outputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources"]
+    description: "Write auxiliary file /Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources"
+
+  "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift"]
+    outputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources"]
+    description: "Write auxiliary file /Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources"
+
+  "/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<CapApp-SPM-arm64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/placeholder.swift.o","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/CapApp_SPM.swiftmodule"]
+    outputs: ["<CapApp-SPM-arm64-apple-macosx15.0-debug.module>"]
+
+  "<GeolocationPlugin-arm64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.swift.o","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule"]
+    outputs: ["<GeolocationPlugin-arm64-apple-macosx15.0-debug.module>"]
+
+  "C.CapApp-SPM-arm64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/placeholder.swift","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources"]
+    outputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/placeholder.swift.o","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/CapApp_SPM.swiftmodule"]
+    description: "Compiling Swift Module 'CapApp_SPM' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","CapApp_SPM","-emit-dependencies","-emit-module","-emit-module-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/CapApp_SPM.swiftmodule","-output-file-map","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/sources","-I","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx10.13","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j8","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/CapApp_SPM.build/include/CapApp-SPM-Swift.h","-color-diagnostics","-swift-version","5","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","capapp_spm"]
+
+  "C.GeolocationPlugin-arm64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs: ["/Users/sagarkolte/nyc_commute_web/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources"]
+    outputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/GeolocationPlugin.swift.o","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule"]
+    description: "Compiling Swift Module 'GeolocationPlugin' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","GeolocationPlugin","-emit-dependencies","-emit-module","-emit-module-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules/GeolocationPlugin.swiftmodule","-output-file-map","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/sources","-I","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx10.13","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j8","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/.build/arm64-apple-macosx/debug/GeolocationPlugin.build/include/GeolocationPlugin-Swift.h","-color-diagnostics","-swift-version","5","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","geolocation"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Sources/CapApp-SPM/","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Package.swift","/Users/sagarkolte/nyc_commute_web/ios/App/CapApp-SPM/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

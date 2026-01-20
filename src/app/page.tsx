@@ -66,22 +66,56 @@ export default function Home() {
 
   return (
     <main className="container">
-      <header style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <header style={{
+        marginBottom: 24,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '8px 0'
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Image src="/logo.png" width={32} height={32} alt="Transit Pulse" style={{ borderRadius: 8 }} />
-          <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Transit Pulse</h1>
+          <div style={{
+            width: 36,
+            height: 36,
+            position: 'relative',
+            borderRadius: 8,
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+          }}>
+            <Image src="/logo.png" fill alt="Transit Pulse" style={{ objectFit: 'cover' }} />
+          </div>
+          <h1 style={{ fontSize: 22, fontWeight: '700', letterSpacing: '-0.02em', margin: 0 }}>Transit Pulse</h1>
         </div>
-        <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button
             onClick={handleLocationSort}
             className="icon-btn"
             aria-label="Sort by proximity"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}
+            style={{
+              background: '#2C2C2E',
+              border: 'none',
+              cursor: 'pointer',
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease'
+            }}
           >
-            <MapPin color={sorting ? "var(--primary)" : "#888"} size={24} className={sorting ? "animate-pulse" : ""} />
+            <MapPin color={sorting ? "var(--primary)" : "#fff"} size={20} className={sorting ? "animate-pulse" : ""} />
           </button>
-          <Link href="/settings">
-            <SettingsIcon color="#888" size={24} />
+          <Link href="/settings" style={{
+            background: '#2C2C2E',
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <SettingsIcon color="#fff" size={20} />
           </Link>
         </div>
       </header>
