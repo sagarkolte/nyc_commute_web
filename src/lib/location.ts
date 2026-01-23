@@ -83,8 +83,8 @@ function deg2rad(deg: number) {
 
 export function sortTuplesByLocation(tuples: CommuteTuple[], userLat: number, userLon: number): CommuteTuple[] {
     return [...tuples].sort((a, b) => {
-        let coordsA = (a.lat && a.lon) ? { lat: a.lat, lon: a.lon } : getStationCoordinates(a.mode, a.stopId);
-        let coordsB = (b.lat && b.lon) ? { lat: b.lat, lon: b.lon } : getStationCoordinates(b.mode, b.stopId);
+        let coordsA = (a.lat && a.lon) ? { lat: Number(a.lat), lon: Number(a.lon) } : getStationCoordinates(a.mode, a.stopId);
+        let coordsB = (b.lat && b.lon) ? { lat: Number(b.lat), lon: Number(b.lon) } : getStationCoordinates(b.mode, b.stopId);
 
         // If no coords, push to bottom
         if (!coordsA && !coordsB) return 0;

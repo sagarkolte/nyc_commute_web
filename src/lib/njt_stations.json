@@ -4,14 +4,18 @@
     "name": "Aberdeen-Matawan",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.420161",
+    "lon": "-74.223702"
   },
   {
     "id": "AB",
     "name": "Absecon",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.424333",
+    "lon": "-74.502094"
   },
   {
     "id": "AZ",
@@ -19,56 +23,72 @@
     "lines": [
       "Main Line",
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "41.030902",
+    "lon": "-74.130957"
   },
   {
     "id": "AH",
     "name": "Allenhurst",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.237659",
+    "lon": "-74.006769"
   },
   {
     "id": "AS",
     "name": "Anderson Street",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.894458",
+    "lon": "-74.043781"
   },
   {
     "id": "AN",
     "name": "Annandale",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.645173",
+    "lon": "-74.878569"
   },
   {
     "id": "AP",
     "name": "Asbury Park",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.215359",
+    "lon": "-74.014786"
   },
   {
     "id": "AO",
     "name": "Atco",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.783547",
+    "lon": "-74.907588"
   },
   {
     "id": "AC",
     "name": "Atlantic City Rail Terminal",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.363299",
+    "lon": "-74.441486"
   },
   {
     "id": "AV",
     "name": "Avenel",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.57762",
+    "lon": "-74.27753"
   },
   {
     "id": "BA",
@@ -94,70 +114,90 @@
     "name": "Basking Ridge",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.711378",
+    "lon": "-74.55527"
   },
   {
     "id": "BH",
     "name": "Bay Head",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.077178",
+    "lon": "-74.046183"
   },
   {
     "id": "MC",
     "name": "Bay Street",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.808178",
+    "lon": "-74.208681"
   },
   {
     "id": "BS",
     "name": "Belmar",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.18059",
+    "lon": "-74.027301"
   },
   {
     "id": "BY",
     "name": "Berkeley Heights",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.682345",
+    "lon": "-74.442649"
   },
   {
     "id": "BV",
     "name": "Bernardsville",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.716845",
+    "lon": "-74.571023"
   },
   {
     "id": "BM",
     "name": "Bloomfield",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.792709",
+    "lon": "-74.200043"
   },
   {
     "id": "BN",
     "name": "Boonton",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.903378",
+    "lon": "-74.407736"
   },
   {
     "id": "BK",
     "name": "Bound Brook",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.560929",
+    "lon": "-74.530617"
   },
   {
     "id": "BB",
     "name": "Bradley Beach",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.203751",
+    "lon": "-74.018891"
   },
   {
     "id": "BU",
@@ -165,21 +205,27 @@
     "lines": [
       "Morristown Line",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.765134",
+    "lon": "-74.218612"
   },
   {
     "id": "BW",
     "name": "Bridgewater",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.559904",
+    "lon": "-74.551741"
   },
   {
     "id": "BF",
     "name": "Broadway Fair Lawn",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.922505",
+    "lon": "-74.115236"
   },
   {
     "id": "CB",
@@ -187,49 +233,63 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.450917",
+    "lon": "-74.266554"
   },
   {
     "id": "CM",
     "name": "Chatham",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.740137",
+    "lon": "-74.384812"
   },
   {
     "id": "CY",
     "name": "Cherry Hill",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.928447",
+    "lon": "-75.041661"
   },
   {
     "id": "IF",
     "name": "Clifton",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.867998",
+    "lon": "-74.153206"
   },
   {
     "id": "CN",
     "name": "Convent Station",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.779038",
+    "lon": "-74.443435"
   },
   {
     "id": "XC",
     "name": "Cranford",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.655523",
+    "lon": "-74.303226"
   },
   {
     "id": "DL",
     "name": "Delawanna",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.831369",
+    "lon": "-74.131262"
   },
   {
     "id": "DV",
@@ -237,7 +297,9 @@
     "lines": [
       "Montclair-Boonton",
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.8839",
+    "lon": "-74.481513"
   },
   {
     "id": "DO",
@@ -245,14 +307,18 @@
     "lines": [
       "Morristown Line",
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.883415",
+    "lon": "-74.555887"
   },
   {
     "id": "DN",
     "name": "Dunellen",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.590869",
+    "lon": "-74.463043"
   },
   {
     "id": "EO",
@@ -260,28 +326,36 @@
     "lines": [
       "Morristown Line",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.760977",
+    "lon": "-74.210464"
   },
   {
     "id": "ED",
     "name": "Edison",
     "lines": [
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.519148",
+    "lon": "-74.410972"
   },
   {
     "id": "EH",
     "name": "Egg Harbor City",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.526441",
+    "lon": "-74.648028"
   },
   {
     "id": "EL",
     "name": "Elberon",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.265292",
+    "lon": "-73.99762"
   },
   {
     "id": "EZ",
@@ -289,105 +363,135 @@
     "lines": [
       "No Jersey Coast",
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.667857",
+    "lon": "-74.215174"
   },
   {
     "id": "EN",
     "name": "Emerson",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.975036",
+    "lon": "-74.027474"
   },
   {
     "id": "EX",
     "name": "Essex Street",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.878973",
+    "lon": "-74.051893"
   },
   {
     "id": "FW",
     "name": "Fanwood",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.64106",
+    "lon": "-74.385003"
   },
   {
     "id": "FH",
     "name": "Far Hills",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.68571",
+    "lon": "-74.633734"
   },
   {
     "id": "GD",
     "name": "Garfield",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.866669",
+    "lon": "-74.10556"
   },
   {
     "id": "GW",
     "name": "Garwood",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.652569",
+    "lon": "-74.324794"
   },
   {
     "id": "GI",
     "name": "Gillette",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.678251",
+    "lon": "-74.468317"
   },
   {
     "id": "GL",
     "name": "Gladstone",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.720284",
+    "lon": "-74.666371"
   },
   {
     "id": "GG",
     "name": "Glen Ridge",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.80059",
+    "lon": "-74.204655"
   },
   {
     "id": "GK",
     "name": "Glen Rock Boro Hall",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.96137",
+    "lon": "-74.1293"
   },
   {
     "id": "RS",
     "name": "Glen Rock Main Line",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.962206",
+    "lon": "-74.133485"
   },
   {
     "id": "HQ",
     "name": "Hackettstown",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.851444",
+    "lon": "-74.835352"
   },
   {
     "id": "HL",
     "name": "Hamilton",
     "lines": [
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.255309",
+    "lon": "-74.70412"
   },
   {
     "id": "HN",
     "name": "Hammonton",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.631673",
+    "lon": "-74.79946"
   },
   {
     "id": "RM",
@@ -395,28 +499,36 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.293354",
+    "lon": "-74.13987"
   },
   {
     "id": "HW",
     "name": "Hawthorne",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.942539",
+    "lon": "-74.152411"
   },
   {
     "id": "HZ",
     "name": "Hazlet",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.415385",
+    "lon": "-74.190393"
   },
   {
     "id": "HG",
     "name": "High Bridge",
     "lines": [
       "NJT"
-    ]
+    ],
+    "lat": "40.666884",
+    "lon": "-74.895863"
   },
   {
     "id": "HI",
@@ -424,14 +536,18 @@
     "lines": [
       "Gladstone Branch",
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.766863",
+    "lon": "-74.243744"
   },
   {
     "id": "HD",
     "name": "Hillsdale",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.002414",
+    "lon": "-74.041033"
   },
   {
     "id": "HB",
@@ -443,7 +559,9 @@
       "Bergen Co. Line ",
       "Gladstone Branch",
       "Main Line"
-    ]
+    ],
+    "lat": "40.734843",
+    "lon": "-74.028046"
   },
   {
     "id": "UF",
@@ -451,14 +569,18 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "40.997369",
+    "lon": "-74.113521"
   },
   {
     "id": "JA",
     "name": "Jersey Avenue",
     "lines": [
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.476912",
+    "lon": "-74.467363"
   },
   {
     "id": "HP",
@@ -466,21 +588,27 @@
     "lines": [
       "Morristown Line",
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.904219",
+    "lon": "-74.665697"
   },
   {
     "id": "ON",
     "name": "Lebanon",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.636903",
+    "lon": "-74.835766"
   },
   {
     "id": "LP",
     "name": "Lincoln Park",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.924138",
+    "lon": "-74.301826"
   },
   {
     "id": "LI",
@@ -488,56 +616,72 @@
     "lines": [
       "No Jersey Coast",
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.629485",
+    "lon": "-74.251772"
   },
   {
     "id": "LW",
     "name": "Lindenwold",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.833809",
+    "lon": "-75.000314"
   },
   {
     "id": "FA",
     "name": "Little Falls",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.880669",
+    "lon": "-74.235372"
   },
   {
     "id": "LS",
     "name": "Little Silver",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.326715",
+    "lon": "-74.041054"
   },
   {
     "id": "LB",
     "name": "Long Branch",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.297145",
+    "lon": "-73.988331"
   },
   {
     "id": "LN",
     "name": "Lyndhurst",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.814165",
+    "lon": "-74.122696"
   },
   {
     "id": "LY",
     "name": "Lyons",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.684844",
+    "lon": "-74.54947"
   },
   {
     "id": "MA",
     "name": "Madison",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.757028",
+    "lon": "-74.415105"
   },
   {
     "id": "MZ",
@@ -545,14 +689,18 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.094416",
+    "lon": "-74.14662"
   },
   {
     "id": "SQ",
     "name": "Manasquan",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.120573",
+    "lon": "-74.047688"
   },
   {
     "id": "MW",
@@ -560,14 +708,18 @@
     "lines": [
       "Gladstone Branch",
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.731149",
+    "lon": "-74.275427"
   },
   {
     "id": "XU",
     "name": "Meadowlands",
     "lines": [
       "NJT"
-    ]
+    ],
+    "lat": "40.813053",
+    "lon": "-74.072114"
   },
   {
     "id": "MP",
@@ -578,21 +730,27 @@
       "REGIONAL",
       "KEYSTONE",
       "ACELA EXPRESS"
-    ]
+    ],
+    "lat": "40.56864",
+    "lon": "-74.329394"
   },
   {
     "id": "MU",
     "name": "Metuchen",
     "lines": [
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.540736",
+    "lon": "-74.360671"
   },
   {
     "id": "MI",
     "name": "Middletown NJ",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.38978",
+    "lon": "-74.116131"
   },
   {
     "id": "MD",
@@ -600,7 +758,9 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.457488",
+    "lon": "-74.37039"
   },
   {
     "id": "MB",
@@ -608,14 +768,18 @@
     "lines": [
       "Morristown Line",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.725622",
+    "lon": "-74.303755"
   },
   {
     "id": "GO",
     "name": "Millington",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.673513",
+    "lon": "-74.523606"
   },
   {
     "id": "MK",
@@ -629,7 +793,9 @@
     "name": "Montclair Heights",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.857536",
+    "lon": "-74.2025"
   },
   {
     "id": "UV",
@@ -643,21 +809,27 @@
     "name": "Montvale",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.040879",
+    "lon": "-74.029152"
   },
   {
     "id": "MX",
     "name": "Morris Plains",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.828637",
+    "lon": "-74.478197"
   },
   {
     "id": "MR",
     "name": "Morristown",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.797113",
+    "lon": "-74.474086"
   },
   {
     "id": "HV",
@@ -665,7 +837,9 @@
     "lines": [
       "Montclair-Boonton",
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.89659",
+    "lon": "-74.632731"
   },
   {
     "id": "OL",
@@ -673,28 +847,36 @@
     "lines": [
       "Morristown Line",
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.907376",
+    "lon": "-74.730653"
   },
   {
     "id": "TB",
     "name": "Mount Tabor",
     "lines": [
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.875904",
+    "lon": "-74.481915"
   },
   {
     "id": "MS",
     "name": "Mountain Avenue",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.848715",
+    "lon": "-74.205306"
   },
   {
     "id": "ML",
     "name": "Mountain Lakes",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.885947",
+    "lon": "-74.433604"
   },
   {
     "id": "MT",
@@ -702,28 +884,36 @@
     "lines": [
       "Gladstone Branch",
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.755365",
+    "lon": "-74.253024"
   },
   {
     "id": "MV",
     "name": "Mountain View",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.914402",
+    "lon": "-74.268158"
   },
   {
     "id": "MH",
     "name": "Murray Hill",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.695068",
+    "lon": "-74.403134"
   },
   {
     "id": "NN",
     "name": "Nanuet",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.090015",
+    "lon": "-74.014794"
   },
   {
     "id": "NT",
@@ -731,21 +921,27 @@
     "lines": [
       "Morristown Line",
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.897552",
+    "lon": "-74.707317"
   },
   {
     "id": "NE",
     "name": "Netherwood",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.629148",
+    "lon": "-74.403455"
   },
   {
     "id": "NH",
     "name": "New Bridge Landing",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.910856",
+    "lon": "-74.035044"
   },
   {
     "id": "NB",
@@ -753,7 +949,9 @@
     "lines": [
       "Northeast Corrdr",
       "KEYSTONE"
-    ]
+    ],
+    "lat": "40.497278",
+    "lon": "-74.445751"
   },
   {
     "id": "NC",
@@ -769,7 +967,9 @@
     "name": "New Providence",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.712022",
+    "lon": "-74.386501"
   },
   {
     "id": "NY",
@@ -783,7 +983,9 @@
       "REGIONAL",
       "Montclair-Boonton",
       "KEYSTONE"
-    ]
+    ],
+    "lat": "40.750046",
+    "lon": "-73.992358"
   },
   {
     "id": "NA",
@@ -792,7 +994,9 @@
       "No Jersey Coast",
       "Northeast Corrdr",
       "REGIONAL"
-    ]
+    ],
+    "lat": "40.704415",
+    "lon": "-74.190717"
   },
   {
     "id": "ND",
@@ -801,7 +1005,9 @@
       "Morristown Line",
       "Gladstone Branch",
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.747621",
+    "lon": "-74.171943"
   },
   {
     "id": "NP",
@@ -813,14 +1019,18 @@
       "No Jersey Coast",
       "REGIONAL",
       "ACELA EXPRESS"
-    ]
+    ],
+    "lat": "40.734221",
+    "lon": "-74.164554"
   },
   {
     "id": "OR",
     "name": "North Branch",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.59202",
+    "lon": "-74.683802"
   },
   {
     "id": "NZ",
@@ -828,7 +1038,9 @@
     "lines": [
       "No Jersey Coast",
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.680265",
+    "lon": "-74.206165"
   },
   {
     "id": "NF",
@@ -843,7 +1055,9 @@
     "name": "Oradell",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.953478",
+    "lon": "-74.029983"
   },
   {
     "id": "OG",
@@ -851,7 +1065,9 @@
     "lines": [
       "Morristown Line",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.771883",
+    "lon": "-74.233103"
   },
   {
     "id": "OS",
@@ -859,56 +1075,72 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.471784",
+    "lon": "-74.529212"
   },
   {
     "id": "PV",
     "name": "Park Ridge",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.032305",
+    "lon": "-74.036164"
   },
   {
     "id": "PS",
     "name": "Passaic",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.849411",
+    "lon": "-74.133933"
   },
   {
     "id": "RN",
     "name": "Paterson",
     "lines": [
       "Main Line"
-    ]
+    ],
+    "lat": "40.914887",
+    "lon": "-74.16733"
   },
   {
     "id": "PC",
     "name": "Peapack",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.708794",
+    "lon": "-74.658469"
   },
   {
     "id": "PQ",
     "name": "Pearl River",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.058181",
+    "lon": "-74.02232"
   },
   {
     "id": "PN",
     "name": "Pennsauken",
     "lines": [
       "Atl. City Line"
-    ]
+    ],
+    "lat": "39.978276",
+    "lon": "-75.061962"
   },
   {
     "id": "PE",
     "name": "Perth Amboy",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.509398",
+    "lon": "-74.273752"
   },
   {
     "id": "PH",
@@ -919,42 +1151,54 @@
       "AMTRAK",
       "REGIONAL",
       "ACELA EXPRESS"
-    ]
+    ],
+    "lat": "39.956565",
+    "lon": "-75.182327"
   },
   {
     "id": "PF",
     "name": "Plainfield",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.618425",
+    "lon": "-74.420163"
   },
   {
     "id": "PL",
     "name": "Plauderville",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.884916",
+    "lon": "-74.102695"
   },
   {
     "id": "PP",
     "name": "Point Pleasant Beach",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.092718",
+    "lon": "-74.048191"
   },
   {
     "id": "PO",
     "name": "Port Jervis",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "41.374899",
+    "lon": "-74.694622"
   },
   {
     "id": "PR",
     "name": "Princeton",
     "lines": [
       "Princeton Shuttle"
-    ]
+    ],
+    "lat": "40.342088",
+    "lon": "-74.65887"
   },
   {
     "id": "PJ",
@@ -964,14 +1208,18 @@
       "KEYSTONE",
       "Princeton Shuttle",
       "REGIONAL"
-    ]
+    ],
+    "lat": "40.316316",
+    "lon": "-74.623753"
   },
   {
     "id": "FZ",
     "name": "Radburn Fair Lawn",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.939914",
+    "lon": "-74.121617"
   },
   {
     "id": "RH",
@@ -979,7 +1227,9 @@
     "lines": [
       "No Jersey Coast",
       "Northeast Corrdr"
-    ]
+    ],
+    "lat": "40.606338",
+    "lon": "-74.276692"
   },
   {
     "id": "RY",
@@ -987,7 +1237,9 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.056422",
+    "lon": "-74.141877"
   },
   {
     "id": "17",
@@ -995,21 +1247,27 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.07513",
+    "lon": "-74.145485"
   },
   {
     "id": "RA",
     "name": "Raritan",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.571005",
+    "lon": "-74.634364"
   },
   {
     "id": "RB",
     "name": "Red Bank",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.348284",
+    "lon": "-74.074538"
   },
   {
     "id": "RW",
@@ -1017,28 +1275,36 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "40.980629",
+    "lon": "-74.120592"
   },
   {
     "id": "RG",
     "name": "River Edge",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.935146",
+    "lon": "-74.02914"
   },
   {
     "id": "RL",
     "name": "Roselle Park",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.66715",
+    "lon": "-74.266323"
   },
   {
     "id": "RF",
     "name": "Rutherford",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.828248",
+    "lon": "-74.100563"
   },
   {
     "id": "CW",
@@ -1046,14 +1312,18 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.437073",
+    "lon": "-74.101871"
   },
   {
     "id": "SC",
     "name": "Secaucus Concourse",
     "lines": [
       "NJT"
-    ]
+    ],
+    "lat": "40.761188",
+    "lon": "-74.075821"
   },
   {
     "id": "TS",
@@ -1062,7 +1332,9 @@
       "Main Line",
       "Bergen Co. Line ",
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.761188",
+    "lon": "-74.075821"
   },
   {
     "id": "SE",
@@ -1073,7 +1345,9 @@
       "Morristown Line",
       "No Jersey Coast",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.761188",
+    "lon": "-74.075821"
   },
   {
     "id": "RT",
@@ -1081,7 +1355,9 @@
     "lines": [
       "Morristown Line",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.725249",
+    "lon": "-74.323754"
   },
   {
     "id": "XG",
@@ -1089,21 +1365,27 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.157138",
+    "lon": "-74.191307"
   },
   {
     "id": "SM",
     "name": "Somerville",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.566075",
+    "lon": "-74.61397"
   },
   {
     "id": "CH",
     "name": "South Amboy",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.484308",
+    "lon": "-74.28014"
   },
   {
     "id": "SO",
@@ -1111,28 +1393,36 @@
     "lines": [
       "Gladstone Branch",
       "Morristown Line"
-    ]
+    ],
+    "lat": "40.745952",
+    "lon": "-74.260538"
   },
   {
     "id": "LA",
     "name": "Spring Lake",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.150557",
+    "lon": "-74.035481"
   },
   {
     "id": "SV",
     "name": "Spring Valley",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.111978",
+    "lon": "-74.043991"
   },
   {
     "id": "SG",
     "name": "Stirling",
     "lines": [
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.674579",
+    "lon": "-74.493723"
   },
   {
     "id": "SF",
@@ -1140,7 +1430,9 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.11354",
+    "lon": "-74.153442"
   },
   {
     "id": "ST",
@@ -1148,21 +1440,27 @@
     "lines": [
       "Morristown Line",
       "Gladstone Branch"
-    ]
+    ],
+    "lat": "40.716549",
+    "lon": "-74.357807"
   },
   {
     "id": "TE",
     "name": "Teterboro",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.864858",
+    "lon": "-74.062676"
   },
   {
     "id": "TO",
     "name": "Towaco",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.922809",
+    "lon": "-74.343842"
   },
   {
     "id": "TR",
@@ -1173,7 +1471,9 @@
       "Northeast Corrdr",
       "REGIONAL",
       "AMTRAK"
-    ]
+    ],
+    "lat": "40.218515",
+    "lon": "-74.753926"
   },
   {
     "id": "TC",
@@ -1181,21 +1481,27 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.194208",
+    "lon": "-74.18446"
   },
   {
     "id": "US",
     "name": "Union",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.683663",
+    "lon": "-74.238605"
   },
   {
     "id": "UM",
     "name": "Upper Montclair",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.842004",
+    "lon": "-74.209368"
   },
   {
     "id": "WK",
@@ -1203,14 +1509,18 @@
     "lines": [
       "Bergen Co. Line ",
       "Main Line"
-    ]
+    ],
+    "lat": "41.012734",
+    "lon": "-74.123412"
   },
   {
     "id": "WA",
     "name": "Walnut Street",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.817218",
+    "lon": "-74.20963"
   },
   {
     "id": "WS",
@@ -1227,49 +1537,63 @@
     "name": "Watchung Avenue",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.829514",
+    "lon": "-74.206934"
   },
   {
     "id": "WT",
     "name": "Watsessing Avenue",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.782743",
+    "lon": "-74.198451"
   },
   {
     "id": "23",
     "name": "Wayne-Route 23",
     "lines": [
       "Montclair-Boonton"
-    ]
+    ],
+    "lat": "40.914402",
+    "lon": "-74.268158"
   },
   {
     "id": "WM",
     "name": "Wesmont",
     "lines": [
       "Bergen Co. Line "
-    ]
+    ],
+    "lat": "40.854979",
+    "lon": "-74.096951"
   },
   {
     "id": "WF",
     "name": "Westfield",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.649448",
+    "lon": "-74.347629"
   },
   {
     "id": "WW",
     "name": "Westwood",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.990817",
+    "lon": "-74.032696"
   },
   {
     "id": "WH",
     "name": "White House",
     "lines": [
       "Raritan Valley"
-    ]
+    ],
+    "lat": "40.615611",
+    "lon": "-74.77066"
   },
   {
     "id": "WI",
@@ -1286,20 +1610,26 @@
     "name": "Wood Ridge",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "40.843974",
+    "lon": "-74.078719"
   },
   {
     "id": "WB",
     "name": "Woodbridge",
     "lines": [
       "No Jersey Coast"
-    ]
+    ],
+    "lat": "40.55661",
+    "lon": "-74.277751"
   },
   {
     "id": "WL",
     "name": "Woodcliff Lake",
     "lines": [
       "Pascack Valley"
-    ]
+    ],
+    "lat": "41.021078",
+    "lon": "-74.040775"
   }
 ]

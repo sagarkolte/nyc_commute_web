@@ -31,7 +31,7 @@ struct BatchResponse: Codable {
 struct BatchResult: Codable {
     let id: String
     let etas: [String]
-    // let raw: ...
+    let arrivals: [Double]?
 }
 
 // MARK: - Location Manager
@@ -42,17 +42,14 @@ class WidgetLocationManager: NSObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        manager.desiredAccuracy = kCLLocationAccuracyBest // Improved accuracy
     }
     
     func fetchLocation(completion: @escaping (CLLocation?) -> Void) {
         self.handler = completion
-        // Check authorization status
-        // Note: Widgets inherit app's permission but 'requestLocation' works best if already authorized
         if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
             manager.requestLocation()
         } else {
-            // No permission, return nil immediately
             completion(nil)
         }
     }
@@ -74,9 +71,7 @@ struct Provider: TimelineProvider {
     let groupName = "group.com.antigravity.nyccommute"
     let locationManager = WidgetLocationManager()
     
-    // CONFIG: Backend URL
-    // Use localhost for Simulator testing if needed, or PROD URL.
-    // For "Post-Launch Refinement", we use the PROD URL.
+    // PROD URL
     let backendUrl = "https://nyc-commute-web.vercel.app/api/batch-commute"
     
     func placeholder(in context: Context) -> SimpleEntry {
@@ -90,10 +85,8 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        // 1. Load basic items from defaults
         var items = loadItems()
         
-        // 2. Async wrapper to fetch Network & Location
         let dispatchGroup = DispatchGroup()
         
         // Location
@@ -105,37 +98,32 @@ struct Provider: TimelineProvider {
         }
         
         // Network
-        // We update 'items' with new ETAs
-        // Create request body
         var updatedEtas: [String: [String]] = [:]
+        var updatedArrivals: [String: [Double]] = [:] // Store raw timestamps
         
         dispatchGroup.enter()
         loadBatchData(items: items) { results in
             if let results = results {
                 for (id, res) in results {
                     updatedEtas[id] = res.etas
+                    updatedArrivals[id] = res.arrivals
                 }
             }
             dispatchGroup.leave()
         }
         
-        // Timeout/Completion
-        // Widget logic dictates we shouldn't wait too long (limit is tight)
-        // We'll trust DispatchGroup
+        // Timeout lowered to 8s (Widget budget is tight)
+        let _ = dispatchGroup.wait(timeout: .now() + 8.0)
         
-        let waitResult = dispatchGroup.wait(timeout: .now() + 4.0) // 4 sec timeout
-        
-        if waitResult == .timedOut {
-            print("⚠️ Widget: Fetch timed out")
-        }
-        
-        // 3. Merge & Sort
-        var finalItems: [CommuteTuple] = []
+        // Merge Data
+        var mergedItems: [CommuteTuple] = []
         
         for item in items {
-            // Merge ETA
-            let freshEtas = updatedEtas[item.id] ?? item.etas // Fallback to old (or nil)
+            let freshEtas = updatedEtas[item.id] ?? item.etas
+            let freshArrivals = updatedArrivals[item.id] // Might be nil
             
+            // We temporarily store the *fetched* ETAs in the tuple
+            // But for the timeline, we will dynamically recalculate them
             let newItem = CommuteTuple(
                 id: item.id,
                 label: item.label,
@@ -147,36 +135,65 @@ struct Provider: TimelineProvider {
                 destinationStopId: item.destinationStopId,
                 etas: freshEtas,
                 nickname: item.nickname,
-                lat: item.lat,
+                lat: freshArrivals != nil ? (item.lat) : item.lat, // Hack: Tuple struct doesn't have 'arrivals' field. 
+                // We actually need to pass 'arrivals' to the view generation logic OR recalculate 'etas' here.
+                // Since CommuteTuple is Codable and shared, we can't easily add fields without breaking Android/Web (though extra fields are ignored).
+                // But we are in Swift.
+                // ACTUALLY: The Timeline Entry has 'items'. We can generate 15 entries, each with DIFFERENT 'etas' strings!
+                // We don't need to store 'arrivals' in CommuteTuple. We just use them to generate the strings for that specific minute.
                 lon: item.lon
             )
-            finalItems.append(newItem)
+            mergedItems.append(newItem)
         }
         
-        // 4. Auto-Sort
+        // Auto-Sort
         if let loc = currentLocation {
-            print("📍 Widget: Sorting by location: \(loc.coordinate)")
-            finalItems.sort { (a, b) -> Bool in
+            mergedItems.sort { (a, b) -> Bool in
                 guard let latA = a.lat, let lonA = a.lon,
                       let latB = b.lat, let lonB = b.lon else {
-                    // Start of list info vs End of list info? 
-                    // Items with loc go first.
                     if a.lat != nil { return true }
-                    if b.lat != nil { return false }
-                    return false // Keep original order if both missing
+                    return false
                 }
-                
                 let locA = CLLocation(latitude: latA, longitude: lonA)
                 let locB = CLLocation(latitude: latB, longitude: lonB)
-                
                 return loc.distance(from: locA) < loc.distance(from: locB)
             }
         }
         
-        // 5. Create Timeline
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
-        let entry = SimpleEntry(date: Date(), items: finalItems)
-        let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
+        // Generate Timeline (1 Entry per Minute for 15 Minutes)
+        var entries: [SimpleEntry] = []
+        let currentDate = Date()
+        
+        for minuteOffset in 0..<15 {
+            let entryDate = Calendar.current.date(byAdding: .minute, value: minuteOffset, to: currentDate)!
+            
+            // Recalculate ETAs for this minute
+            let dynamicItems = mergedItems.map { item -> CommuteTuple in
+                guard let arrivals = updatedArrivals[item.id], !arrivals.isEmpty else {
+                    return item // No dynamic data, keep static
+                }
+                
+                // Calculate mins remaining from entryDate
+                let etas = arrivals.compactMap { ts -> String? in
+                    let diff = ts - entryDate.timeIntervalSince1970
+                    if diff < -30 { return nil } // remove past trains (>30s ago)
+                    let mins = max(0, Int(floor(diff / 60)))
+                    return "\(mins) min"
+                }
+                
+                // Return copy with new ETAs
+                return CommuteTuple(
+                   id: item.id, label: item.label, mode: item.mode, routeId: item.routeId, stopId: item.stopId,
+                   direction: item.direction, destinationName: item.destinationName, destinationStopId: item.destinationStopId,
+                   etas: etas.isEmpty ? ["--"] : Array(etas.prefix(3)), // show up to 3
+                   nickname: item.nickname, lat: item.lat, lon: item.lon
+               )
+            }
+            
+            entries.append(SimpleEntry(date: entryDate, items: dynamicItems))
+        }
+
+        let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
     }
     

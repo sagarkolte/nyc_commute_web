@@ -18,8 +18,37 @@ export default function Home() {
   const [sorting, setSorting] = useState(false);
 
   useEffect(() => {
-    setTuples(CommuteStorage.getTuples());
+    const loaded = CommuteStorage.getTuples();
+    setTuples(loaded);
     setMounted(true);
+
+    if (CommuteStorage.getAutoSort()) {
+      const doAutoSort = async () => {
+        // Reusing logic but silently (no alerts on denial if possible? Or just reusing handleLocationSort)
+        // Let's implement silent sort
+        try {
+          const perm = await Geolocation.checkPermissions();
+          if (perm.location === 'granted') {
+            setSorting(true);
+            const position = await Geolocation.getCurrentPosition();
+            const { latitude, longitude } = position.coords;
+            const sorted = sortTuplesByLocation(loaded, latitude, longitude);
+            setTuples(sorted); // State update
+            // Note: We don't save sorted order to storage automatically? 
+            // User might get annoyed if it constantly reshuffles permanently?
+            // Actually handleLocationSort DOES save. So we should save.
+            CommuteStorage.saveTuples(sorted);
+          } else {
+            console.log("Auto-Sort skipped: Permission not granted");
+          }
+        } catch (e) {
+          console.error("Auto-Sort failed", e);
+        } finally {
+          setSorting(false);
+        }
+      };
+      doAutoSort();
+    }
   }, []);
 
   const handleReorder = (newOrder: CommuteTuple[]) => {

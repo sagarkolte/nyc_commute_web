@@ -17,6 +17,11 @@ function moveDir(src, dest) {
 const moved = moveDir(apiDir, hiddenApiDir);
 
 try {
+    console.log('Cleaning clean build...');
+    if (fs.existsSync(path.join(__dirname, '../.next'))) {
+        fs.rmSync(path.join(__dirname, '../.next'), { recursive: true, force: true });
+    }
+
     console.log('Starting Next.js static export...');
     execSync('NEXT_PUBLIC_IS_EXPORT=true NEXT_PUBLIC_API_BASE_URL=https://nyc-commute-web.vercel.app next build', { stdio: 'inherit' });
 } catch (error) {

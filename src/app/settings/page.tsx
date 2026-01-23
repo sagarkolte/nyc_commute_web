@@ -38,8 +38,30 @@ export default function SettingsPage() {
                 <h1>Settings</h1>
             </div>
 
-            {/* API Key removed as it is legacy/auto-handled now */}
+            {/* Auto-Sort Toggle */}
+            <div className="card" style={{ marginTop: 24 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <h2>Auto-Sort by Location</h2>
+                        <p className="desc" style={{ marginBottom: 0 }}>
+                            Automatically rearrange cards based on your current location when the app opens.
+                        </p>
+                    </div>
+                    <label className="switch">
+                        <input
+                            type="checkbox"
+                            checked={CommuteStorage.getAutoSort()}
+                            onChange={(e) => {
+                                CommuteStorage.setAutoSort(e.target.checked);
+                                window.location.reload();
+                            }}
+                        />
+                        <span className="slider round"></span>
+                    </label>
+                </div>
+            </div>
 
+            {/* Widget Debug Card */}
             <div className="card" style={{ marginTop: 24 }}>
                 <h2>Widget Debug</h2>
                 <p className="desc">
@@ -50,8 +72,6 @@ export default function SettingsPage() {
                     try {
                         const tuples = CommuteStorage.getTuples();
                         CommuteStorage.saveTuples(tuples);
-                        // We can't await saveTuples because it's void, but it logs to console.
-                        // Let's call the bridge directly to prove connectivity
                         import('../../lib/widget_bridge').then(async m => {
                             try {
                                 await m.default.echo({ value: 'Debug Echo' });
@@ -65,6 +85,55 @@ export default function SettingsPage() {
                     }
                 }} className="save-btn" style={{ backgroundColor: '#444' }}>
                     Force Widget Sync
+                </button>
+            </div>
+
+            {/* Troubleshoot Card */}
+            <div className="card" style={{ marginTop: 24 }}>
+                <h2>Troubleshoot</h2>
+                <p className="desc">
+                    If auto-sort isn't working for older routes, try repairing the data.
+                </p>
+                <button onClick={() => {
+                    import('../../lib/storage').then(async ({ CommuteStorage }) => {
+                        const tuples = CommuteStorage.getTuples();
+                        let updatedCount = 0;
+
+                        try {
+                            const [njt, lirr, mnr] = await Promise.all([
+                                import('../../lib/njt_stations.json').then(m => m.default),
+                                import('../../lib/lirr_stations.json').then(m => m.default),
+                                import('../../lib/mnr_stations.json').then(m => m.default),
+                            ]);
+
+                            const allStations = [...njt, ...lirr, ...mnr] as any[];
+
+                            const fixed = tuples.map(t => {
+                                // If missing lat/lon, try to find it
+                                if (t.lat === undefined || t.lon === undefined || t.lat === null || t.lon === null) {
+                                    // Try find by stopId or name
+                                    const match = allStations.find(s => s.id === t.stopId || s.name === t.label.split('(')[0].trim());
+                                    if (match && match.lat && match.lon) {
+                                        updatedCount++;
+                                        return { ...t, lat: Number(match.lat), lon: Number(match.lon) };
+                                    }
+                                }
+                                return t;
+                            });
+
+                            if (updatedCount > 0) {
+                                CommuteStorage.saveTuples(fixed);
+                                alert(`Repaired ${updatedCount} routes with missing location data!`);
+                                setTimeout(() => window.location.reload(), 500);
+                            } else {
+                                alert('No routes needed repair.');
+                            }
+                        } catch (e: any) {
+                            alert('Repair failed: ' + e.message);
+                        }
+                    });
+                }} className="save-btn" style={{ backgroundColor: '#2C2C2E', marginTop: 8 }}>
+                    Repair Missing Coordinates
                 </button>
             </div>
 
@@ -95,6 +164,40 @@ export default function SettingsPage() {
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 28px;
+          flex-shrink: 0;
+          margin-left: 16px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-color: #555;
+          transition: .4s;
+          border-radius: 28px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 22px;
+          width: 22px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: var(--primary);
+        }
+        input:checked + .slider:before {
+          transform: translateX(22px);
         }
       `}</style>
         </main>

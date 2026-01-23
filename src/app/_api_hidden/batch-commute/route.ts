@@ -71,13 +71,16 @@ async function processItem(item: BatchRequestItem) {
     // --- NJ TRANSIT BUS (V2) ---
     if (mode === 'njt-bus') {
         const arrivals = await NjtBusV2Service.getArrivals(stopId, routeId, direction || '');
-        // Filter by route if provided (though API argument handles it generally)
-        // Convert 'departuretime' (e.g. "in 5 mins") to minutes
+        const now = Date.now();
+        const arrivalsTs: number[] = [];
         const etas = arrivals.map(a => {
             const mins = NjtBusV2Service.parseMinutes(a.departuretime);
+            if (mins >= 0) {
+                arrivalsTs.push(Math.floor(now / 1000) + (mins * 60));
+            }
             return `${mins} min`;
         });
-        return { etas, raw: arrivals.slice(0, 3) };
+        return { etas, arrivals: arrivalsTs.slice(0, 3), raw: arrivals.slice(0, 3) };
     }
 
     // --- NJ TRANSIT RAIL ---
@@ -94,12 +97,15 @@ async function processItem(item: BatchRequestItem) {
         const matches = deps.filter(d => transformNjtLine(d.line) === transformNjtLine(routeId) || d.line.includes(routeId));
 
         const now = Date.now();
+        const arrivalsTs: number[] = [];
         const etas = matches.map(d => {
-            const diff = new Date(d.time).getTime() - now;
+            const timeMs = new Date(d.time).getTime();
+            const diff = timeMs - now;
             const mins = Math.max(0, Math.floor(diff / 60000));
+            arrivalsTs.push(Math.floor(timeMs / 1000));
             return `${mins} min`;
         });
-        return { etas, raw: matches.slice(0, 3) };
+        return { etas, arrivals: arrivalsTs.slice(0, 3), raw: matches.slice(0, 3) };
     }
 
     // --- MTA SUBWAY / LIRR / MNR / PATH / FERRY ---
@@ -128,6 +134,7 @@ async function processItem(item: BatchRequestItem) {
 
     const now = Date.now() / 1000;
     const etas: string[] = [];
+    const arrivalsTs: number[] = [];
     const destinationName = "Unknown"; // TODO: Extract headsign
 
     if (feedResponse.type === 'gtfs') {
@@ -136,36 +143,22 @@ async function processItem(item: BatchRequestItem) {
             feed.entity.forEach((entity: any) => {
                 if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
                     const trip = entity.tripUpdate.trip;
-
-                    // Route Filter
-                    // LIRR/MNR feed contains ALL lines. Must filter by routeId if specific line requested?
-                    // Actually usually we want all trains from that station.
-                    // But if the card is for a specific "Route" (e.g. "Babylon Branch"), we might filter. 
-                    // Current App logic for LIRR just shows "LIRR" station arrivals.
-                    // But for Subway (Say 'N' train), we definitely filter by routeId 'N'.
-
                     const routeMatch = isRail ? true : (trip.routeId === routeId);
 
                     if (routeMatch) {
                         entity.tripUpdate.stopTimeUpdate.forEach((u: any) => {
-                            // Check Stop ID.
-                            // Subway: "101N" (Stop + Direction).
-                            // Input might be "101" and direction "N".
-                            // Or Input "101N".
-
                             let isStopMatch = false;
                             const updateStopId = String(u.stopId);
 
                             if (updateStopId === stopId) isStopMatch = true;
                             if (direction && updateStopId === `${stopId}${direction}`) isStopMatch = true;
 
-                            // LIRR/MNR matching usually exact stop ID
-
                             if (isStopMatch) {
                                 const time = getTime(u.arrival?.time) || getTime(u.departure?.time);
                                 if (time && time > now) {
                                     const mins = Math.max(0, Math.floor((time - now) / 60));
                                     etas.push(`${mins} min`);
+                                    arrivalsTs.push(time);
                                 }
                             }
                         });
@@ -178,20 +171,27 @@ async function processItem(item: BatchRequestItem) {
         const updates = feedResponse.data as any[];
         updates.forEach((u: any) => {
             if (String(u.stopId) === String(stopId)) {
-                // Bus GTFS-RT doesn't always have routeId in the update, but fetchFeed filtered it?
-                // Wait, MtaService.fetchBusGtfs filters by routeId? 
-                // Yes, fetchBusGtfs(routeId) returns updates for that route.
-                // So we just check stop match.
                 const arrivalTime = u.time / 1000;
                 if (arrivalTime > now) {
                     const mins = Math.max(0, Math.floor((arrivalTime - now) / 60));
                     etas.push(`${mins} min`);
+                    arrivalsTs.push(arrivalTime);
                 }
             }
         });
     }
 
-    return { etas: etas.sort((a, b) => parseInt(a) - parseInt(b)).slice(0, 3) };
+    // Sort by timestamp
+    arrivalsTs.sort((a, b) => a - b);
+
+    // Regenerate ETAs to match sorted timestamps
+    const sortedEtas = arrivalsTs.map(ts => {
+        const diff = ts - now;
+        const mins = Math.max(0, Math.floor(diff / 60));
+        return `${mins} min`;
+    });
+
+    return { etas: sortedEtas.slice(0, 3), arrivals: arrivalsTs.slice(0, 3) };
 }
 
 function getTime(t: any): number | null {

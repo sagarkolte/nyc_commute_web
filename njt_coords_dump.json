@@ -1,0 +1,1376 @@
+[
+  {
+    "id": 1,
+    "name": "30TH ST. PHL.",
+    "lat": 39.956565,
+    "lon": -75.182327
+  },
+  {
+    "id": 2,
+    "name": "ABSECON",
+    "lat": 39.424333,
+    "lon": -74.502094
+  },
+  {
+    "id": 3,
+    "name": "ALLENDALE",
+    "lat": 41.030902,
+    "lon": -74.130957
+  },
+  {
+    "id": 4,
+    "name": "ALLENHURST",
+    "lat": 40.237659,
+    "lon": -74.006769
+  },
+  {
+    "id": 5,
+    "name": "ANDERSON STREET",
+    "lat": 40.894458,
+    "lon": -74.043781
+  },
+  {
+    "id": 6,
+    "name": "ANNANDALE",
+    "lat": 40.645173,
+    "lon": -74.878569
+  },
+  {
+    "id": 8,
+    "name": "ASBURY PARK",
+    "lat": 40.215359,
+    "lon": -74.014786
+  },
+  {
+    "id": 9,
+    "name": "ATCO",
+    "lat": 39.783547,
+    "lon": -74.907588
+  },
+  {
+    "id": 10,
+    "name": "ATLANTIC CITY",
+    "lat": 39.363299,
+    "lon": -74.441486
+  },
+  {
+    "id": 11,
+    "name": "AVENEL",
+    "lat": 40.57762,
+    "lon": -74.27753
+  },
+  {
+    "id": 12,
+    "name": "BASKING RIDGE",
+    "lat": 40.711378,
+    "lon": -74.55527
+  },
+  {
+    "id": 13,
+    "name": "BAY HEAD",
+    "lat": 40.077178,
+    "lon": -74.046183
+  },
+  {
+    "id": 14,
+    "name": "BAY STREET",
+    "lat": 40.808178,
+    "lon": -74.208681
+  },
+  {
+    "id": 15,
+    "name": "BELMAR",
+    "lat": 40.18059,
+    "lon": -74.027301
+  },
+  {
+    "id": 17,
+    "name": "BERKELEY HEIGHTS",
+    "lat": 40.682345,
+    "lon": -74.442649
+  },
+  {
+    "id": 18,
+    "name": "BERNARDSVILLE",
+    "lat": 40.716845,
+    "lon": -74.571023
+  },
+  {
+    "id": 19,
+    "name": "BLOOMFIELD",
+    "lat": 40.792709,
+    "lon": -74.200043
+  },
+  {
+    "id": 20,
+    "name": "BOONTON",
+    "lat": 40.903378,
+    "lon": -74.407736
+  },
+  {
+    "id": 21,
+    "name": "BOUND BROOK",
+    "lat": 40.560929,
+    "lon": -74.530617
+  },
+  {
+    "id": 22,
+    "name": "BRADLEY BEACH",
+    "lat": 40.203751,
+    "lon": -74.018891
+  },
+  {
+    "id": 23,
+    "name": "BRICK CHURCH",
+    "lat": 40.765134,
+    "lon": -74.218612
+  },
+  {
+    "id": 24,
+    "name": "BRIDGEWATER",
+    "lat": 40.559904,
+    "lon": -74.551741
+  },
+  {
+    "id": 25,
+    "name": "BROADWAY",
+    "lat": 40.922505,
+    "lon": -74.115236
+  },
+  {
+    "id": 26,
+    "name": "CAMPBELL HALL",
+    "lat": 41.450917,
+    "lon": -74.266554
+  },
+  {
+    "id": 27,
+    "name": "CHATHAM",
+    "lat": 40.740137,
+    "lon": -74.384812
+  },
+  {
+    "id": 28,
+    "name": "CHERRY HILL",
+    "lat": 39.928447,
+    "lon": -75.041661
+  },
+  {
+    "id": 29,
+    "name": "CLIFTON",
+    "lat": 40.867998,
+    "lon": -74.153206
+  },
+  {
+    "id": 30,
+    "name": "CONVENT",
+    "lat": 40.779038,
+    "lon": -74.443435
+  },
+  {
+    "id": 31,
+    "name": "ROSELLE PARK",
+    "lat": 40.66715,
+    "lon": -74.266323
+  },
+  {
+    "id": 32,
+    "name": "CRANFORD",
+    "lat": 40.655523,
+    "lon": -74.303226
+  },
+  {
+    "id": 33,
+    "name": "DELAWANNA",
+    "lat": 40.831369,
+    "lon": -74.131262
+  },
+  {
+    "id": 34,
+    "name": "DENVILLE",
+    "lat": 40.8839,
+    "lon": -74.481513
+  },
+  {
+    "id": 35,
+    "name": "DOVER",
+    "lat": 40.883415,
+    "lon": -74.555887
+  },
+  {
+    "id": 36,
+    "name": "DUNELLEN",
+    "lat": 40.590869,
+    "lon": -74.463043
+  },
+  {
+    "id": 37,
+    "name": "EAST ORANGE",
+    "lat": 40.760977,
+    "lon": -74.210464
+  },
+  {
+    "id": 38,
+    "name": "EDISON STATION",
+    "lat": 40.519148,
+    "lon": -74.410972
+  },
+  {
+    "id": 39,
+    "name": "EGG HARBOR",
+    "lat": 39.526441,
+    "lon": -74.648028
+  },
+  {
+    "id": 40,
+    "name": "ELBERON",
+    "lat": 40.265292,
+    "lon": -73.99762
+  },
+  {
+    "id": 41,
+    "name": "ELIZABETH",
+    "lat": 40.667857,
+    "lon": -74.215174
+  },
+  {
+    "id": 42,
+    "name": "EMERSON",
+    "lat": 40.975036,
+    "lon": -74.027474
+  },
+  {
+    "id": 43,
+    "name": "ESSEX STREET",
+    "lat": 40.878973,
+    "lon": -74.051893
+  },
+  {
+    "id": 44,
+    "name": "FANWOOD",
+    "lat": 40.64106,
+    "lon": -74.385003
+  },
+  {
+    "id": 45,
+    "name": "FAR HILLS",
+    "lat": 40.68571,
+    "lon": -74.633734
+  },
+  {
+    "id": 46,
+    "name": "GARFIELD",
+    "lat": 40.866669,
+    "lon": -74.10556
+  },
+  {
+    "id": 47,
+    "name": "GARWOOD",
+    "lat": 40.652569,
+    "lon": -74.324794
+  },
+  {
+    "id": 48,
+    "name": "GILLETTE",
+    "lat": 40.678251,
+    "lon": -74.468317
+  },
+  {
+    "id": 49,
+    "name": "GLADSTONE",
+    "lat": 40.720284,
+    "lon": -74.666371
+  },
+  {
+    "id": 50,
+    "name": "GLEN RIDGE",
+    "lat": 40.80059,
+    "lon": -74.204655
+  },
+  {
+    "id": 51,
+    "name": "GLEN ROCK BORO HALL",
+    "lat": 40.96137,
+    "lon": -74.1293
+  },
+  {
+    "id": 52,
+    "name": "GLEN ROCK MAIN LINE",
+    "lat": 40.962206,
+    "lon": -74.133485
+  },
+  {
+    "id": 54,
+    "name": "HACKETTSTOWN",
+    "lat": 40.851444,
+    "lon": -74.835352
+  },
+  {
+    "id": 55,
+    "name": "HAMMONTON",
+    "lat": 39.631673,
+    "lon": -74.79946
+  },
+  {
+    "id": 57,
+    "name": "HARRIMAN",
+    "lat": 41.293354,
+    "lon": -74.13987
+  },
+  {
+    "id": 58,
+    "name": "HAWTHORNE",
+    "lat": 40.942539,
+    "lon": -74.152411
+  },
+  {
+    "id": 59,
+    "name": "HAZLET",
+    "lat": 40.415385,
+    "lon": -74.190393
+  },
+  {
+    "id": 60,
+    "name": "HIGH BRIDGE",
+    "lat": 40.666884,
+    "lon": -74.895863
+  },
+  {
+    "id": 61,
+    "name": "HIGHLAND AVENUE",
+    "lat": 40.766863,
+    "lon": -74.243744
+  },
+  {
+    "id": 62,
+    "name": "HILLSDALE",
+    "lat": 41.002414,
+    "lon": -74.041033
+  },
+  {
+    "id": 63,
+    "name": "HOBOKEN",
+    "lat": 40.734843,
+    "lon": -74.028046
+  },
+  {
+    "id": 64,
+    "name": "HOHOKUS",
+    "lat": 40.997369,
+    "lon": -74.113521
+  },
+  {
+    "id": 66,
+    "name": "KINGSLAND",
+    "lat": 40.810121,
+    "lon": -74.117334
+  },
+  {
+    "id": 67,
+    "name": "LAKE HOPATCONG",
+    "lat": 40.904219,
+    "lon": -74.665697
+  },
+  {
+    "id": 68,
+    "name": "LEBANON",
+    "lat": 40.636903,
+    "lon": -74.835766
+  },
+  {
+    "id": 69,
+    "name": "LINCOLN PARK",
+    "lat": 40.924138,
+    "lon": -74.301826
+  },
+  {
+    "id": 70,
+    "name": "LINDEN",
+    "lat": 40.629485,
+    "lon": -74.251772
+  },
+  {
+    "id": 71,
+    "name": "LINDENWOLD",
+    "lat": 39.833809,
+    "lon": -75.000314
+  },
+  {
+    "id": 72,
+    "name": "LITTLE FALLS",
+    "lat": 40.880669,
+    "lon": -74.235372
+  },
+  {
+    "id": 73,
+    "name": "LITTLE SILVER",
+    "lat": 40.326715,
+    "lon": -74.041054
+  },
+  {
+    "id": 74,
+    "name": "LONG BRANCH",
+    "lat": 40.297145,
+    "lon": -73.988331
+  },
+  {
+    "id": 75,
+    "name": "LYNDHURST",
+    "lat": 40.814165,
+    "lon": -74.122696
+  },
+  {
+    "id": 76,
+    "name": "LYONS",
+    "lat": 40.684844,
+    "lon": -74.54947
+  },
+  {
+    "id": 77,
+    "name": "MADISON",
+    "lat": 40.757028,
+    "lon": -74.415105
+  },
+  {
+    "id": 78,
+    "name": "MAHWAH",
+    "lat": 41.094416,
+    "lon": -74.14662
+  },
+  {
+    "id": 79,
+    "name": "MANASQUAN",
+    "lat": 40.120573,
+    "lon": -74.047688
+  },
+  {
+    "id": 81,
+    "name": "MAPLEWOOD",
+    "lat": 40.731149,
+    "lon": -74.275427
+  },
+  {
+    "id": 83,
+    "name": "METROPARK",
+    "lat": 40.56864,
+    "lon": -74.329394
+  },
+  {
+    "id": 84,
+    "name": "METUCHEN",
+    "lat": 40.540736,
+    "lon": -74.360671
+  },
+  {
+    "id": 85,
+    "name": "MIDDLETOWN NJ",
+    "lat": 40.38978,
+    "lon": -74.116131
+  },
+  {
+    "id": 86,
+    "name": "MIDDLETOWN NY",
+    "lat": 41.457488,
+    "lon": -74.37039
+  },
+  {
+    "id": 87,
+    "name": "MILLBURN",
+    "lat": 40.725622,
+    "lon": -74.303755
+  },
+  {
+    "id": 88,
+    "name": "MILLINGTON",
+    "lat": 40.673513,
+    "lon": -74.523606
+  },
+  {
+    "id": 89,
+    "name": "MONTCLAIR HEIGHTS",
+    "lat": 40.857536,
+    "lon": -74.2025
+  },
+  {
+    "id": 90,
+    "name": "MONTVALE",
+    "lat": 41.040879,
+    "lon": -74.029152
+  },
+  {
+    "id": 91,
+    "name": "MORRIS PLAINS",
+    "lat": 40.828637,
+    "lon": -74.478197
+  },
+  {
+    "id": 92,
+    "name": "MORRISTOWN",
+    "lat": 40.797113,
+    "lon": -74.474086
+  },
+  {
+    "id": 93,
+    "name": "MOUNT OLIVE",
+    "lat": 40.907376,
+    "lon": -74.730653
+  },
+  {
+    "id": 94,
+    "name": "MOUNT TABOR",
+    "lat": 40.875904,
+    "lon": -74.481915
+  },
+  {
+    "id": 95,
+    "name": "MOUNTAIN AVENUE",
+    "lat": 40.848715,
+    "lon": -74.205306
+  },
+  {
+    "id": 96,
+    "name": "MOUNTAIN LAKES",
+    "lat": 40.885947,
+    "lon": -74.433604
+  },
+  {
+    "id": 97,
+    "name": "MOUNTAIN STATION",
+    "lat": 40.755365,
+    "lon": -74.253024
+  },
+  {
+    "id": 98,
+    "name": "MOUNTAIN VIEW",
+    "lat": 40.914402,
+    "lon": -74.268158
+  },
+  {
+    "id": 99,
+    "name": "MURRAY HILL",
+    "lat": 40.695068,
+    "lon": -74.403134
+  },
+  {
+    "id": 100,
+    "name": "NANUET",
+    "lat": 41.090015,
+    "lon": -74.014794
+  },
+  {
+    "id": 101,
+    "name": "NETCONG",
+    "lat": 40.897552,
+    "lon": -74.707317
+  },
+  {
+    "id": 102,
+    "name": "NETHERWOOD",
+    "lat": 40.629148,
+    "lon": -74.403455
+  },
+  {
+    "id": 103,
+    "name": "NEW BRUNSWICK",
+    "lat": 40.497278,
+    "lon": -74.445751
+  },
+  {
+    "id": 104,
+    "name": "NEW PROVIDENCE",
+    "lat": 40.712022,
+    "lon": -74.386501
+  },
+  {
+    "id": 105,
+    "name": "NEW YORK PENN STATION",
+    "lat": 40.750046,
+    "lon": -73.992358
+  },
+  {
+    "id": 106,
+    "name": "NEWARK BROAD ST",
+    "lat": 40.747621,
+    "lon": -74.171943
+  },
+  {
+    "id": 107,
+    "name": "NEWARK PENN STATION",
+    "lat": 40.734221,
+    "lon": -74.164554
+  },
+  {
+    "id": 108,
+    "name": "NORTH BRANCH",
+    "lat": 40.59202,
+    "lon": -74.683802
+  },
+  {
+    "id": 109,
+    "name": "NORTH ELIZABETH",
+    "lat": 40.680265,
+    "lon": -74.206165
+  },
+  {
+    "id": 110,
+    "name": "NEW BRIDGE LANDING",
+    "lat": 40.910856,
+    "lon": -74.035044
+  },
+  {
+    "id": 111,
+    "name": "ORADELL",
+    "lat": 40.953478,
+    "lon": -74.029983
+  },
+  {
+    "id": 112,
+    "name": "ORANGE",
+    "lat": 40.771883,
+    "lon": -74.233103
+  },
+  {
+    "id": 113,
+    "name": "OTISVILLE",
+    "lat": 41.471784,
+    "lon": -74.529212
+  },
+  {
+    "id": 114,
+    "name": "PARK RIDGE",
+    "lat": 41.032305,
+    "lon": -74.036164
+  },
+  {
+    "id": 115,
+    "name": "PASSAIC",
+    "lat": 40.849411,
+    "lon": -74.133933
+  },
+  {
+    "id": 116,
+    "name": "PATERSON",
+    "lat": 40.914887,
+    "lon": -74.16733
+  },
+  {
+    "id": 117,
+    "name": "PEAPACK",
+    "lat": 40.708794,
+    "lon": -74.658469
+  },
+  {
+    "id": 118,
+    "name": "PEARL RIVER",
+    "lat": 41.058181,
+    "lon": -74.02232
+  },
+  {
+    "id": 119,
+    "name": "PERTH AMBOY",
+    "lat": 40.509398,
+    "lon": -74.273752
+  },
+  {
+    "id": 120,
+    "name": "PLAINFIELD",
+    "lat": 40.618425,
+    "lon": -74.420163
+  },
+  {
+    "id": 121,
+    "name": "PLAUDERVILLE",
+    "lat": 40.884916,
+    "lon": -74.102695
+  },
+  {
+    "id": 122,
+    "name": "POINT PLEASANT",
+    "lat": 40.092718,
+    "lon": -74.048191
+  },
+  {
+    "id": 123,
+    "name": "PORT JERVIS",
+    "lat": 41.374899,
+    "lon": -74.694622
+  },
+  {
+    "id": 124,
+    "name": "PRINCETON",
+    "lat": 40.342088,
+    "lon": -74.65887
+  },
+  {
+    "id": 125,
+    "name": "PRINCETON JCT.",
+    "lat": 40.316316,
+    "lon": -74.623753
+  },
+  {
+    "id": 126,
+    "name": "RADBURN",
+    "lat": 40.939914,
+    "lon": -74.121617
+  },
+  {
+    "id": 127,
+    "name": "RAHWAY",
+    "lat": 40.606338,
+    "lon": -74.276692
+  },
+  {
+    "id": 128,
+    "name": "RAMSEY",
+    "lat": 41.056422,
+    "lon": -74.141877
+  },
+  {
+    "id": 129,
+    "name": "RARITAN",
+    "lat": 40.571005,
+    "lon": -74.634364
+  },
+  {
+    "id": 130,
+    "name": "RED BANK",
+    "lat": 40.348284,
+    "lon": -74.074538
+  },
+  {
+    "id": 131,
+    "name": "RIDGEWOOD",
+    "lat": 40.980629,
+    "lon": -74.120592
+  },
+  {
+    "id": 132,
+    "name": "RIVER EDGE",
+    "lat": 40.935146,
+    "lon": -74.02914
+  },
+  {
+    "id": 134,
+    "name": "RUTHERFORD",
+    "lat": 40.828248,
+    "lon": -74.100563
+  },
+  {
+    "id": 135,
+    "name": "SALISBURY MILLS-CORNWALL",
+    "lat": 41.437073,
+    "lon": -74.101871
+  },
+  {
+    "id": 136,
+    "name": "SHORT HILLS",
+    "lat": 40.725249,
+    "lon": -74.323754
+  },
+  {
+    "id": 137,
+    "name": "SLOATSBURG",
+    "lat": 41.157138,
+    "lon": -74.191307
+  },
+  {
+    "id": 138,
+    "name": "SOMERVILLE",
+    "lat": 40.566075,
+    "lon": -74.61397
+  },
+  {
+    "id": 139,
+    "name": "SOUTH AMBOY",
+    "lat": 40.484308,
+    "lon": -74.28014
+  },
+  {
+    "id": 140,
+    "name": "SOUTH ORANGE",
+    "lat": 40.745952,
+    "lon": -74.260538
+  },
+  {
+    "id": 141,
+    "name": "SPRING LAKE",
+    "lat": 40.150557,
+    "lon": -74.035481
+  },
+  {
+    "id": 142,
+    "name": "SPRING VALLEY",
+    "lat": 41.111978,
+    "lon": -74.043991
+  },
+  {
+    "id": 143,
+    "name": "STIRLING",
+    "lat": 40.674579,
+    "lon": -74.493723
+  },
+  {
+    "id": 144,
+    "name": "SUFFERN",
+    "lat": 41.11354,
+    "lon": -74.153442
+  },
+  {
+    "id": 145,
+    "name": "SUMMIT",
+    "lat": 40.716549,
+    "lon": -74.357807
+  },
+  {
+    "id": 146,
+    "name": "TETERBORO",
+    "lat": 40.864858,
+    "lon": -74.062676
+  },
+  {
+    "id": 147,
+    "name": "TOWACO",
+    "lat": 40.922809,
+    "lon": -74.343842
+  },
+  {
+    "id": 148,
+    "name": "TRENTON TRANSIT CENTER",
+    "lat": 40.218515,
+    "lon": -74.753926
+  },
+  {
+    "id": 149,
+    "name": "TUXEDO",
+    "lat": 41.194208,
+    "lon": -74.18446
+  },
+  {
+    "id": 150,
+    "name": "UPPER MONTCLAIR",
+    "lat": 40.842004,
+    "lon": -74.209368
+  },
+  {
+    "id": 151,
+    "name": "WALDWICK",
+    "lat": 41.012734,
+    "lon": -74.123412
+  },
+  {
+    "id": 152,
+    "name": "WALNUT STREET",
+    "lat": 40.817218,
+    "lon": -74.20963
+  },
+  {
+    "id": 153,
+    "name": "WATCHUNG AVENUE",
+    "lat": 40.829514,
+    "lon": -74.206934
+  },
+  {
+    "id": 154,
+    "name": "WATSESSING AVENUE",
+    "lat": 40.782743,
+    "lon": -74.198451
+  },
+  {
+    "id": 155,
+    "name": "WESTFIELD",
+    "lat": 40.649448,
+    "lon": -74.347629
+  },
+  {
+    "id": 156,
+    "name": "WESTWOOD",
+    "lat": 40.990817,
+    "lon": -74.032696
+  },
+  {
+    "id": 157,
+    "name": "WHITE HOUSE",
+    "lat": 40.615611,
+    "lon": -74.77066
+  },
+  {
+    "id": 158,
+    "name": "WOODBRIDGE",
+    "lat": 40.55661,
+    "lon": -74.277751
+  },
+  {
+    "id": 159,
+    "name": "WOODCLIFF LAKE",
+    "lat": 41.021078,
+    "lon": -74.040775
+  },
+  {
+    "id": 160,
+    "name": "WOOD-RIDGE",
+    "lat": 40.843974,
+    "lon": -74.078719
+  },
+  {
+    "id": 6900,
+    "name": "MILITARY PARK LIGHT RAIL STATION",
+    "lat": 40.737449,
+    "lon": -74.170883
+  },
+  {
+    "id": 6907,
+    "name": "DAVENPORT AVENUE LIGHT RAIL STATION",
+    "lat": 40.77239,
+    "lon": -74.178272
+  },
+  {
+    "id": 6957,
+    "name": "NORFOLK STREET LIGHT RAIL STATION",
+    "lat": 40.745319,
+    "lon": -74.183033
+  },
+  {
+    "id": 6966,
+    "name": "PARK AVENUE NEWARK LIGHT RAIL STATION",
+    "lat": 40.75856,
+    "lon": -74.184941
+  },
+  {
+    "id": 6995,
+    "name": "WARREN STREET LIGHT RAIL STATION",
+    "lat": 40.742439,
+    "lon": -74.181183
+  },
+  {
+    "id": 6997,
+    "name": "WASHINGTON STREET LIGHT RAIL STATION",
+    "lat": 40.738347,
+    "lon": -74.174081
+  },
+  {
+    "id": 9878,
+    "name": "PORT IMPERIAL HBLR STATION",
+    "lat": 40.775919,
+    "lon": -74.012921
+  },
+  {
+    "id": 14984,
+    "name": "BLOOMFIELD AVENUE LIGHT RAIL STATION",
+    "lat": 40.76546,
+    "lon": -74.179863
+  },
+  {
+    "id": 14986,
+    "name": "ORANGE STREET LIGHT RAIL STATION",
+    "lat": 40.750629,
+    "lon": -74.184951
+  },
+  {
+    "id": 17699,
+    "name": "LINCOLN HARBOR LIGHT RAIL STATION",
+    "lat": 40.761399,
+    "lon": -74.024
+  },
+  {
+    "id": 26316,
+    "name": "BRANCH BROOK PARK LIGHT RAIL STATION",
+    "lat": 40.779638,
+    "lon": -74.174752
+  },
+  {
+    "id": 26326,
+    "name": "PENN STATION LIGHT RAIL DEPARTURE",
+    "lat": 40.73481,
+    "lon": -74.163603
+  },
+  {
+    "id": 32905,
+    "name": "HAMILTON",
+    "lat": 40.255309,
+    "lon": -74.70412
+  },
+  {
+    "id": 32906,
+    "name": "JERSEY AVE.",
+    "lat": 40.476912,
+    "lon": -74.467363
+  },
+  {
+    "id": 36994,
+    "name": "EXCHANGE PLACE LIGHT RAIL STATION",
+    "lat": 40.716009,
+    "lon": -74.034092
+  },
+  {
+    "id": 36995,
+    "name": "ESSEX STREET LIGHT RAIL STATION",
+    "lat": 40.712838,
+    "lon": -74.036082
+  },
+  {
+    "id": 36996,
+    "name": "MARIN BOULEVARD LIGHT RAIL STATION",
+    "lat": 40.714428,
+    "lon": -74.043241
+  },
+  {
+    "id": 36997,
+    "name": "JERSEY AVENUE LIGHT RAIL STATION",
+    "lat": 40.714978,
+    "lon": -74.048491
+  },
+  {
+    "id": 36998,
+    "name": "LIBERTY STATE PARK-RIDE LIGHT RAIL STA",
+    "lat": 40.710378,
+    "lon": -74.055812
+  },
+  {
+    "id": 36999,
+    "name": "GARFIELD AVENUE LIGHT RAIL STATION",
+    "lat": 40.710509,
+    "lon": -74.07112
+  },
+  {
+    "id": 37000,
+    "name": "MLK DRIVE LIGHT RAIL STATION",
+    "lat": 40.712008,
+    "lon": -74.077323
+  },
+  {
+    "id": 37001,
+    "name": "WEST SIDE AVENUE LIGHT RAIL STATION",
+    "lat": 40.714548,
+    "lon": -74.087581
+  },
+  {
+    "id": 37002,
+    "name": "RICHARD STREET LIGHT RAIL STATION",
+    "lat": 40.699118,
+    "lon": -74.078643
+  },
+  {
+    "id": 37003,
+    "name": "DANFORTH AVENUE LIGHT RAIL STATION",
+    "lat": 40.692357,
+    "lon": -74.087262
+  },
+  {
+    "id": 37004,
+    "name": "45TH STREET LIGHT RAIL STATION",
+    "lat": 40.67867,
+    "lon": -74.101673
+  },
+  {
+    "id": 37005,
+    "name": "34TH STREET LIGHT RAIL STATION",
+    "lat": 40.671778,
+    "lon": -74.107493
+  },
+  {
+    "id": 37169,
+    "name": "ABERDEEN-MATAWAN",
+    "lat": 40.420161,
+    "lon": -74.223702
+  },
+  {
+    "id": 37376,
+    "name": "HARBORSIDE LIGHT RAIL STATION",
+    "lat": 40.719519,
+    "lon": -74.034003
+  },
+  {
+    "id": 37377,
+    "name": "HARSIMUS COVE LIGHT RAIL STATION",
+    "lat": 40.722668,
+    "lon": -74.037281
+  },
+  {
+    "id": 37378,
+    "name": "NEWPORT LIGHT RAIL STATION",
+    "lat": 40.726819,
+    "lon": -74.036233
+  },
+  {
+    "id": 37953,
+    "name": "NEWARK AIRPORT RAILROAD STATION",
+    "lat": 40.704415,
+    "lon": -74.190717
+  },
+  {
+    "id": 38064,
+    "name": "SILVER LAKE LIGHT RAIL STATION",
+    "lat": 40.780287,
+    "lon": -74.180343
+  },
+  {
+    "id": 38065,
+    "name": "GROVE STREET LIGHT RAIL STATION",
+    "lat": 40.780317,
+    "lon": -74.187931
+  },
+  {
+    "id": 38081,
+    "name": "MSU",
+    "lat": 40.869782,
+    "lon": -74.197439
+  },
+  {
+    "id": 38105,
+    "name": "UNION",
+    "lat": 40.683663,
+    "lon": -74.238605
+  },
+  {
+    "id": 38174,
+    "name": "FRANK R LAUTENBERG SECAUCUS LOWER LEVEL",
+    "lat": 40.761188,
+    "lon": -74.075821
+  },
+  {
+    "id": 38187,
+    "name": "FRANK R LAUTENBERG SECAUCUS UPPER LEVEL",
+    "lat": 40.761188,
+    "lon": -74.075821
+  },
+  {
+    "id": 38229,
+    "name": "22ND STREET LIGHT RAIL STATION",
+    "lat": 40.661277,
+    "lon": -74.11641
+  },
+  {
+    "id": 38291,
+    "name": "TRENTON TRANSIT CENTER LIGHT RAIL STATION",
+    "lat": 40.218348,
+    "lon": -74.755194
+  },
+  {
+    "id": 38292,
+    "name": "HAMILTON AVENUE LIGHT RAIL STATION",
+    "lat": 40.211928,
+    "lon": -74.755882
+  },
+  {
+    "id": 38293,
+    "name": "CASS STREET LIGHT RAIL STATION",
+    "lat": 40.205409,
+    "lon": -74.754313
+  },
+  {
+    "id": 38294,
+    "name": "BORDENTOWN LIGHT RAIL STATION",
+    "lat": 40.14811,
+    "lon": -74.716271
+  },
+  {
+    "id": 38295,
+    "name": "ROEBLING LIGHT RAIL STATION",
+    "lat": 40.116909,
+    "lon": -74.770202
+  },
+  {
+    "id": 38296,
+    "name": "FLORENCE LIGHT RAIL STATION",
+    "lat": 40.100048,
+    "lon": -74.805112
+  },
+  {
+    "id": 38297,
+    "name": "BURLINGTON TOWNE CTR LIGHT RAIL STATION",
+    "lat": 40.077358,
+    "lon": -74.859421
+  },
+  {
+    "id": 38298,
+    "name": "BURLINGTON SOUTH LIGHT RAIL STATION",
+    "lat": 40.074558,
+    "lon": -74.868981
+  },
+  {
+    "id": 38299,
+    "name": "BEVERLY/EDGEWATER PARK LIGHT RAIL STA",
+    "lat": 40.06112,
+    "lon": -74.915131
+  },
+  {
+    "id": 38300,
+    "name": "DELANCO LIGHT RAIL STATION",
+    "lat": 40.048068,
+    "lon": -74.95028
+  },
+  {
+    "id": 38301,
+    "name": "RIVERSIDE LIGHT RAIL STATION",
+    "lat": 40.039219,
+    "lon": -74.958842
+  },
+  {
+    "id": 38302,
+    "name": "CINNAMINSON LIGHT RAIL STATION",
+    "lat": 40.016557,
+    "lon": -74.999942
+  },
+  {
+    "id": 38303,
+    "name": "RIVERTON LIGHT RAIL STATION",
+    "lat": 40.008939,
+    "lon": -75.013082
+  },
+  {
+    "id": 38304,
+    "name": "PALMYRA LIGHT RAIL STATION",
+    "lat": 40.004659,
+    "lon": -75.020391
+  },
+  {
+    "id": 38305,
+    "name": "ROUTE 73/PENNSAUKEN LIGHT RAIL STATION",
+    "lat": 39.993109,
+    "lon": -75.03961
+  },
+  {
+    "id": 38306,
+    "name": "36TH STREET LIGHT RAIL STATION",
+    "lat": 39.96096,
+    "lon": -75.079622
+  },
+  {
+    "id": 38307,
+    "name": "WALTER RAND TRANSPORTATION CTR",
+    "lat": 39.943258,
+    "lon": -75.12021
+  },
+  {
+    "id": 38308,
+    "name": "COOPER STREET/RUTGERS LIGHT RAIL STATION",
+    "lat": 39.947598,
+    "lon": -75.12407
+  },
+  {
+    "id": 38309,
+    "name": "AQUARIUM LIGHT RAIL STATION",
+    "lat": 39.945658,
+    "lon": -75.128682
+  },
+  {
+    "id": 38310,
+    "name": "ENTERTAINMENT CENTER LIGHT RAIL STATION",
+    "lat": 39.94094,
+    "lon": -75.128473
+  },
+  {
+    "id": 38417,
+    "name": "RAMSEY ROUTE 17 STATION",
+    "lat": 41.07513,
+    "lon": -74.145485
+  },
+  {
+    "id": 38441,
+    "name": "2ND STREET LIGHT RAIL STATION",
+    "lat": 40.74174,
+    "lon": -74.042821
+  },
+  {
+    "id": 38442,
+    "name": "9TH STREET LIGHT RAIL STATION",
+    "lat": 40.748867,
+    "lon": -74.038522
+  },
+  {
+    "id": 38578,
+    "name": "BERGENLINE AVE",
+    "lat": 40.782225,
+    "lon": -74.022271
+  },
+  {
+    "id": 38579,
+    "name": "TONNELLE AVENUE LIGHT RAIL STATION",
+    "lat": 40.78733,
+    "lon": -74.031263
+  },
+  {
+    "id": 39130,
+    "name": "BROAD STREET LIGHT RAIL STATION",
+    "lat": 40.747209,
+    "lon": -74.17151
+  },
+  {
+    "id": 39131,
+    "name": "RIVERFRONT STADIUM LIGHT RAIL STATION",
+    "lat": 40.74559,
+    "lon": -74.169202
+  },
+  {
+    "id": 39132,
+    "name": "HARRIET TUBMAN SQUARE LIGHT RAIL STATION",
+    "lat": 40.743938,
+    "lon": -74.169853
+  },
+  {
+    "id": 39133,
+    "name": "ATLANTIC STREET LIGHT RAIL STATION",
+    "lat": 40.74416,
+    "lon": -74.168491
+  },
+  {
+    "id": 39134,
+    "name": "NJPAC/CENTRE STREET LIGHT RAIL STATION",
+    "lat": 40.739498,
+    "lon": -74.16558
+  },
+  {
+    "id": 39348,
+    "name": "HOBOKEN TERMINAL LIGHT RAIL STATION",
+    "lat": 40.734059,
+    "lon": -74.029192
+  },
+  {
+    "id": 39472,
+    "name": "MOUNT ARLINGTON",
+    "lat": 40.89659,
+    "lon": -74.632731
+  },
+  {
+    "id": 39635,
+    "name": "WAYNE/ROUTE 23 TRANSIT CENTER [RR]",
+    "lat": 40.900254,
+    "lon": -74.256971
+  },
+  {
+    "id": 40570,
+    "name": "MEADOWLANDS SPORTS COMPLEX STATION",
+    "lat": 40.813053,
+    "lon": -74.072114
+  },
+  {
+    "id": 42545,
+    "name": "PENN STATION LIGHT RAIL ARRIVAL",
+    "lat": 40.73481,
+    "lon": -74.163603
+  },
+  {
+    "id": 42673,
+    "name": "8TH STREET LIGHT RAIL STATION",
+    "lat": 40.654298,
+    "lon": -74.129142
+  },
+  {
+    "id": 43288,
+    "name": "PENNSAUKEN TRANSIT CENTER LIGHT RAIL STA",
+    "lat": 39.978276,
+    "lon": -75.061962
+  },
+  {
+    "id": 43298,
+    "name": "PENNSAUKEN TRANSIT CENTER",
+    "lat": 39.977769,
+    "lon": -75.061796
+  },
+  {
+    "id": 43599,
+    "name": "WESMONT",
+    "lat": 40.854979,
+    "lon": -74.096951
+  }
+]

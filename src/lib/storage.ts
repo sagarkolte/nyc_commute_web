@@ -97,5 +97,14 @@ export const CommuteStorage = {
             // Only reload timeline if we actually have data (throttling could be added here)
             m.default.reloadTimeline();
         });
+    },
+    // Auto-Sort Preference
+    getAutoSort: (): boolean => {
+        if (typeof window === 'undefined') return false;
+        return localStorage.getItem('auto-sort') === 'true';
+    },
+
+    setAutoSort: (enabled: boolean) => {
+        localStorage.setItem('auto-sort', String(enabled));
     }
 };
