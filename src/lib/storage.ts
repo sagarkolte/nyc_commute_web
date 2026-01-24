@@ -71,32 +71,45 @@ export const CommuteStorage = {
 
     // Runtime Cache for Widget ETAs (not persisted in localStorage, just memory)
     _widgetCache: {} as Record<string, string[]>,
+    _debounceTimer: null as any,
 
     updateTupleETAs: (id: string, etas: string[]) => {
         if (typeof window === 'undefined') return;
 
-        // Update the runtime cache
+        // Update the runtime cache immediately
         CommuteStorage._widgetCache[id] = etas;
+        console.log(`🟦 [JS] Cached ETAs for ${id}:`, etas);
 
-        // Get the static configuration
-        const tuples = CommuteStorage.getTuples();
+        // Clear existing timer (Debounce)
+        if (CommuteStorage._debounceTimer) {
+            clearTimeout(CommuteStorage._debounceTimer);
+        }
 
-        // Merge Config + Realtime Data
-        const widgetData = tuples.map(t => ({
-            ...t,
-            etas: CommuteStorage._widgetCache[t.id] || []
-        }));
+        // Set pending write
+        CommuteStorage._debounceTimer = setTimeout(() => {
+            console.log("🟦 [JS] Debounce timer fired. Syncing Widget Data...");
 
-        console.log(`🟦 [JS] Syncing Widget Data with ETAs for ${id}:`, etas);
+            // Get the static configuration
+            const tuples = CommuteStorage.getTuples();
 
-        // Send to Native
-        import('./widget_bridge').then(m => {
-            m.default.updateData({ json: JSON.stringify(widgetData) })
-                .catch(e => console.error("🟥 [JS] Widget Sync Failed:", e));
+            // Merge Config + Realtime Data
+            const widgetData = tuples.map(t => ({
+                ...t,
+                etas: CommuteStorage._widgetCache[t.id] || []
+            }));
 
-            // Only reload timeline if we actually have data (throttling could be added here)
-            m.default.reloadTimeline();
-        });
+            // Send to Native
+            import('./widget_bridge').then(m => {
+                m.default.updateData({ json: JSON.stringify(widgetData) })
+                    .then(() => console.log("🟦 [JS] Widget Sync Success"))
+                    .catch(e => console.error("🟥 [JS] Widget Sync Failed:", e));
+
+                // Only reload timeline if we actually have data (throttling could be added here)
+                m.default.reloadTimeline();
+            }).catch(err => console.error("🟥 [JS] Import Error:", err));
+
+            CommuteStorage._debounceTimer = null;
+        }, 2000); // 2 second debounce (Wait for all cards to finish fetching)
     },
     // Auto-Sort Preference
     getAutoSort: (): boolean => {
