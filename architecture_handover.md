@@ -59,3 +59,12 @@
 *   **Capabilities**:
     *   **App Groups**: `group.com.antigravity.nyccommute` (Required for data sharing).
     *   **Location**: `NSWidgetWantsLocation` (Info.plist) + `NSLocationWhenInUseUsageDescription`.
+
+## Troubleshooting: "Missing CapApp-SPM" Error
+If the build fails with "Missing package product 'CapApp-SPM'", it is because `npx cap sync` sometimes reverts the `Package.swift` platform version to an incompatible default (e.g., `.v26`).
+
+**The Fix**:
+1. Open `ios/App/CapApp-SPM/Package.swift`.
+2. Locate the line: `platforms: [.iOS(.v26)],`.
+3. Change it to: `platforms: [.iOS(.v13)],`.
+4. Clean Build Folder in Xcode and Rebuild.
