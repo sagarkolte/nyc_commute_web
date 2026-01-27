@@ -13,6 +13,8 @@
 		4797617F2F1BD20200D7E439 /* CommuteWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4797616B2F1BD1FF00D7E439 /* CommuteWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4797618B2F1BEB0500D7E439 /* WidgetData.m in Sources */ = {isa = PBXBuildFile; fileRef = 479761892F1BEB0500D7E439 /* WidgetData.m */; };
 		4797618C2F1BEB0500D7E439 /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4797618A2F1BEB0500D7E439 /* WidgetData.swift */; };
+		47AD31AC2F266CB9002ABFC4 /* CommuteWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 47AD31AB2F266CB9002ABFC4 /* CommuteWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		47AD31C62F2673F3002ABFC4 /* WatchConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AD31C52F2673F3002ABFC4 /* WatchConnector.swift */; };
 		4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 4D22ABE82AF431CB00220026 /* CapApp-SPM */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
@@ -30,6 +32,13 @@
 			remoteGlobalIDString = 4797616A2F1BD1FF00D7E439;
 			remoteInfo = CommuteWidgetExtension;
 		};
+		47AD31AD2F266CB9002ABFC4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 47AD31AA2F266CB9002ABFC4;
+			remoteInfo = "CommuteWatch Watch App";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +53,26 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		47AD31B82F266CBB002ABFC4 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				47AD31AC2F266CB9002ABFC4 /* CommuteWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		47AD31C92F26D060002ABFC4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Watch;
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +85,9 @@
 		479761892F1BEB0500D7E439 /* WidgetData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetData.m; sourceTree = "<group>"; };
 		4797618A2F1BEB0500D7E439 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		4797618D2F1BEB5300D7E439 /* App-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "App-Bridging-Header.h"; sourceTree = "<group>"; };
+		47AD31A62F266CB9002ABFC4 /* CommuteWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CommuteWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		47AD31AB2F266CB9002ABFC4 /* CommuteWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CommuteWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		47AD31C52F2673F3002ABFC4 /* WatchConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnector.swift; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -75,10 +107,18 @@
 			);
 			target = 4797616A2F1BD1FF00D7E439 /* CommuteWidgetExtension */;
 		};
+		47AD31C02F266F1E002ABFC4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SharedWidgetCode.swift,
+			);
+			target = 47AD31AA2F266CB9002ABFC4 /* CommuteWatch Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		479761712F1BD1FF00D7E439 /* CommuteWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (479761802F1BD20200D7E439 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CommuteWidget; sourceTree = "<group>"; };
+		479761712F1BD1FF00D7E439 /* CommuteWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (479761802F1BD20200D7E439 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 47AD31C02F266F1E002ABFC4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CommuteWidget; sourceTree = "<group>"; };
+		47AD31AF2F266CB9002ABFC4 /* CommuteWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "CommuteWatch Watch App"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +128,13 @@
 			files = (
 				479761702F1BD1FF00D7E439 /* SwiftUI.framework in Frameworks */,
 				4797616E2F1BD1FF00D7E439 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		47AD31A82F266CB9002ABFC4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +165,7 @@
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
 				504EC3061FED79650016851F /* App */,
 				479761712F1BD1FF00D7E439 /* CommuteWidget */,
+				47AD31AF2F266CB9002ABFC4 /* CommuteWatch Watch App */,
 				4797616C2F1BD1FF00D7E439 /* Frameworks */,
 				504EC3051FED79650016851F /* Products */,
 			);
@@ -128,6 +176,8 @@
 			children = (
 				504EC3041FED79650016851F /* App.app */,
 				4797616B2F1BD1FF00D7E439 /* CommuteWidgetExtension.appex */,
+				47AD31A62F266CB9002ABFC4 /* CommuteWatch.app */,
+				47AD31AB2F266CB9002ABFC4 /* CommuteWatch Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,6 +188,7 @@
 				479761892F1BEB0500D7E439 /* WidgetData.m */,
 				4797618A2F1BEB0500D7E439 /* WidgetData.swift */,
 				479761852F1BD24300D7E439 /* App.entitlements */,
+				47AD31C52F2673F3002ABFC4 /* WatchConnector.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -176,6 +227,47 @@
 			productReference = 4797616B2F1BD1FF00D7E439 /* CommuteWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		47AD31A52F266CB9002ABFC4 /* CommuteWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 47AD31BC2F266CBB002ABFC4 /* Build configuration list for PBXNativeTarget "CommuteWatch" */;
+			buildPhases = (
+				47AD31A42F266CB9002ABFC4 /* Resources */,
+				47AD31B82F266CBB002ABFC4 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				47AD31AE2F266CB9002ABFC4 /* PBXTargetDependency */,
+			);
+			name = CommuteWatch;
+			packageProductDependencies = (
+			);
+			productName = CommuteWatch;
+			productReference = 47AD31A62F266CB9002ABFC4 /* CommuteWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		47AD31AA2F266CB9002ABFC4 /* CommuteWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 47AD31BB2F266CBB002ABFC4 /* Build configuration list for PBXNativeTarget "CommuteWatch Watch App" */;
+			buildPhases = (
+				47AD31A72F266CB9002ABFC4 /* Sources */,
+				47AD31A82F266CB9002ABFC4 /* Frameworks */,
+				47AD31A92F266CB9002ABFC4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				47AD31AF2F266CB9002ABFC4 /* CommuteWatch Watch App */,
+			);
+			name = "CommuteWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "CommuteWatch Watch App";
+			productReference = 47AD31AB2F266CB9002ABFC4 /* CommuteWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		504EC3031FED79650016851F /* App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
@@ -184,6 +276,7 @@
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
 				479761842F1BD20200D7E439 /* Embed Foundation Extensions */,
+				47AD31C92F26D060002ABFC4 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -208,6 +301,12 @@
 				LastUpgradeCheck = 0920;
 				TargetAttributes = {
 					4797616A2F1BD1FF00D7E439 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					47AD31A52F266CB9002ABFC4 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					47AD31AA2F266CB9002ABFC4 = {
 						CreatedOnToolsVersion = 26.2;
 					};
 					504EC3031FED79650016851F = {
@@ -235,12 +334,28 @@
 			targets = (
 				504EC3031FED79650016851F /* App */,
 				4797616A2F1BD1FF00D7E439 /* CommuteWidgetExtension */,
+				47AD31A52F266CB9002ABFC4 /* CommuteWatch */,
+				47AD31AA2F266CB9002ABFC4 /* CommuteWatch Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		479761692F1BD1FF00D7E439 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		47AD31A42F266CB9002ABFC4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		47AD31A92F266CB9002ABFC4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -270,11 +385,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		47AD31A72F266CB9002ABFC4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3001FED79650016851F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				4797618B2F1BEB0500D7E439 /* WidgetData.m in Sources */,
+				47AD31C62F2673F3002ABFC4 /* WatchConnector.swift in Sources */,
 				4797618C2F1BEB0500D7E439 /* WidgetData.swift in Sources */,
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 			);
@@ -287,6 +410,11 @@
 			isa = PBXTargetDependency;
 			target = 4797616A2F1BD1FF00D7E439 /* CommuteWidgetExtension */;
 			targetProxy = 4797617D2F1BD20200D7E439 /* PBXContainerItemProxy */;
+		};
+		47AD31AE2F266CB9002ABFC4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 47AD31AA2F266CB9002ABFC4 /* CommuteWatch Watch App */;
+			targetProxy = 47AD31AD2F266CB9002ABFC4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -393,6 +521,152 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		47AD31B62F266CBB002ABFC4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9S47N7ZTD;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_KEY_CFBundleDisplayName = CommuteWatch;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sagarkolte.CommuteWatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		47AD31B72F266CBB002ABFC4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9S47N7ZTD;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_KEY_CFBundleDisplayName = CommuteWatch;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sagarkolte.CommuteWatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		47AD31B92F266CBB002ABFC4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = "CommuteWatch Watch App/CommuteWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9S47N7ZTD;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CommuteWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.sagarkolte.nyccommuteweb;
+				INFOPLIST_KEY_WKWatchOnly = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sagarkolte.nyccommuteweb.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10;
+			};
+			name = Debug;
+		};
+		47AD31BA2F266CBB002ABFC4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = "CommuteWatch Watch App/CommuteWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9S47N7ZTD;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CommuteWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.sagarkolte.nyccommuteweb;
+				INFOPLIST_KEY_WKWatchOnly = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sagarkolte.nyccommuteweb.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10;
 			};
 			name = Release;
 		};
@@ -568,6 +842,24 @@
 			buildConfigurations = (
 				479761822F1BD20200D7E439 /* Debug */,
 				479761832F1BD20200D7E439 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		47AD31BB2F266CBB002ABFC4 /* Build configuration list for PBXNativeTarget "CommuteWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				47AD31B92F266CBB002ABFC4 /* Debug */,
+				47AD31BA2F266CBB002ABFC4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		47AD31BC2F266CBB002ABFC4 /* Build configuration list for PBXNativeTarget "CommuteWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				47AD31B62F266CBB002ABFC4 /* Debug */,
+				47AD31B72F266CBB002ABFC4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

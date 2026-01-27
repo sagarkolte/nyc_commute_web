@@ -12,6 +12,7 @@ public class NYCBridgeImpl: CAPPlugin {
 
     public override func load() {
         print("⚡️ NYCBridgeImpl [NATIVE]: LOADED via Capacitor!")
+        _ = WatchConnector.shared // Init session early
     }
 
     @objc dynamic public func echo(_ call: CAPPluginCall) {
@@ -38,6 +39,9 @@ public class NYCBridgeImpl: CAPPlugin {
             print("⚡️ WidgetData [NATIVE]: Verified write. Data preview: \(String(readBack?.prefix(50) ?? ""))...")
             
             call.resolve()
+            
+            // Sync to Watch
+            WatchConnector.shared.sendData(json: json)
         } else {
             print("❌ WidgetData [NATIVE]: FAILED to access App Group \(groupName). Check Entitlements!")
             call.reject("Could not access App Group")
