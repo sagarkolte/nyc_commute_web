@@ -10,4 +10,5 @@ __attribute__((constructor)) static void widgetDataConstructor(void) {
 CAP_PLUGIN(NYCBridgeImpl, "CommuteWidget",
            CAP_PLUGIN_METHOD(updateData, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(reloadTimeline, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(updateEtas, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(echo, CAPPluginReturnPromise);)

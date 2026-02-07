@@ -1,6 +1,6 @@
 {
-    "name": "Transit Pulse",
-    "short_name": "Transit Pulse",
+    "name": "NYC Commute",
+    "short_name": "NYC Commute",
     "description": "Real-time NYC transit beat.",
     "start_url": "/",
     "display": "standalone",

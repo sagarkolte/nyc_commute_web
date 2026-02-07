@@ -315,7 +315,7 @@ function getStaticFallback(stationCode: string, destStopId?: string | null): Njt
     return [
         {
             train_id: 'STATIC-1',
-            line: 'Transit Pulse Fallback',
+            line: 'NJT Scheduler',
             destination: 'Check NJT Schedule',
             track: '-',
             time: new Date(now.getTime() + 15 * 60000).toISOString(),

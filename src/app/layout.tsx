@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Transit Pulse",
+  title: "NYC Commute",
   description: "Real-time NYC transit beat.",
   manifest: "/manifest.json",
   icons: {

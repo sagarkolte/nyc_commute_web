@@ -123,6 +123,14 @@ export default function AddPage() {
                 newTuple.destinationName = destName;
                 newTuple.stopId = dir === 'N' ? 'st-george' : 'whitehall';
                 newTuple.destinationStopId = dir === 'N' ? 'whitehall' : 'st-george';
+                // Hardcode coordinates for Sorting
+                if (dir === 'N') { // From St. George
+                    newTuple.lat = 40.6437;
+                    newTuple.lon = -74.0736;
+                } else { // From Whitehall
+                    newTuple.lat = 40.7014;
+                    newTuple.lon = -74.0132;
+                }
             } else {
                 newTuple.label = `${s.name} - ${dir === 'N' ? 'NYC Bound' : 'NJ/Outbound'}`;
                 if (mode === 'lirr' || mode === 'mnr') {
@@ -272,13 +280,13 @@ export default function AddPage() {
                         />
                     )}
 
-                    {step === 'direction' && station && (
+                    {step === 'direction' && (station || mode === 'si-ferry') && (
                         <div className="direction-list">
                             <button className="direction-btn" onClick={() => handleDirectionSelect('N')}>
-                                {mode === 'si-ferry' ? 'To Manhattan' : (station.north_label || 'Northbound')}
+                                {mode === 'si-ferry' ? 'To Manhattan' : (station?.north_label || 'Northbound')}
                             </button>
                             <button className="direction-btn" onClick={() => handleDirectionSelect('S')}>
-                                {mode === 'si-ferry' ? 'To St. George' : (station.south_label || 'Southbound')}
+                                {mode === 'si-ferry' ? 'To St. George' : (station?.south_label || 'Southbound')}
                             </button>
                         </div>
                     )}

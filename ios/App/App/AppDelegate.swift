@@ -1,15 +1,36 @@
 import UIKit
 import Capacitor
+import CoreLocation
+import WidgetKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
 
     var window: UIWindow?
+    let locationManager = CLLocationManager()
+    let groupName = "group.com.antigravity.nyccommute"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Force the Class to be linked
-        print("⚡️⚡️⚡️ Force Link: \(NYCBridgeImpl.self) ⚡️⚡️⚡️")
+        // Setup Location Manager for Background Updates
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters // Balanced
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.pausesLocationUpdatesAutomatically = false
         
+        // Request Permissions
+        // We really need Always for significant changes to be reliable in background,
+        // but significant changes API often works with WhenInUse IF app is in background.
+        // However, for best "wake up" reliability, requestAlways is standard for this pattern.
+        locationManager.requestAlwaysAuthorization()
+        
+        // Start Monitoring (This wakes the app up)
+        // Start Monitoring
+        // Significant changes is too coarse for transfers (500m+).
+        // switching to Standard + Visits for better granularity.
+        locationManager.startUpdatingLocation()
+        locationManager.startMonitoringVisits()
+        print("✅ [AppDelegate] Started monitoring Standard Location + Visits")
+
         // Manual Registration Workaround
         DispatchQueue.main.async {
             if let rootVC = self.window?.rootViewController as? CAPBridgeViewController {
@@ -22,6 +43,78 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return true
+    }
+    
+    // MARK: - Location Delegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let latest = locations.last else { return }
+        // Filter out old cached locations
+        if latest.timestamp.timeIntervalSinceNow < -60 { return }
+        
+        print("📍 [AppDelegate] Background Location Update: \(latest.coordinate)")
+        reorderWidgetData(location: latest)
+    }
+    
+    // Visit monitoring is very power efficient and wakes the app on arrival/departure
+    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
+        let location = CLLocation(latitude: visit.coordinate.latitude, longitude: visit.coordinate.longitude)
+        print("📍 [AppDelegate] Visit Detected: \(visit.coordinate)")
+        reorderWidgetData(location: location)
+    }
+    
+    func reorderWidgetData(location: CLLocation) {
+        // 1. Read
+        guard let userDefaults = UserDefaults(suiteName: groupName) else { return }
+        guard let jsonString = userDefaults.string(forKey: "widgetData") else { return }
+        guard let data = jsonString.data(using: .utf8) else { return }
+        
+        // 2. Decode & Sort
+        struct CommuteTuple: Codable {
+            let id: String
+            let label: String
+            let mode: String
+            let routeId: String?
+            let stopId: String?
+            let direction: String?
+            let destinationName: String?
+            let destinationStopId: String?
+            let etas: [String]?
+            let nickname: String?
+            let lat: Double?
+            let lon: Double?
+        }
+        
+        do {
+            var items = try JSONDecoder().decode([CommuteTuple].self, from: data)
+            
+            items.sort { (a, b) -> Bool in
+                // Debug missing coords
+                if a.lat == nil || a.lon == nil { print("⚠️ [AppDelegate] Item \(a.id) ('\(a.label)') is missing coordinates!") }
+                if b.lat == nil || b.lon == nil { print("⚠️ [AppDelegate] Item \(b.id) ('\(b.label)') is missing coordinates!") }
+
+                guard let latA = a.lat, let lonA = a.lon,
+                      let latB = b.lat, let lonB = b.lon else {
+                    return a.lat != nil // Prioritize items with location
+                }
+                let locA = CLLocation(latitude: latA, longitude: lonA)
+                let locB = CLLocation(latitude: latB, longitude: lonB)
+                return location.distance(from: locA) < location.distance(from: locB)
+            }
+            
+            // 3. Save
+            let newData = try JSONEncoder().encode(items)
+            if let newJson = String(data: newData, encoding: .utf8) {
+                userDefaults.set(newJson, forKey: "widgetData")
+                // userDefaults.synchronize() // Not needed usually
+                print("✅ [AppDelegate] Re-sorted widget data for new location!")
+                
+                // 4. Reload Widget
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+            
+        } catch {
+            print("❌ [AppDelegate] Failed to process widget data: \(error)")
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

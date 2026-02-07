@@ -122,7 +122,7 @@ const NicknameModal = ({ initialValue, onSave, onCancel }: { initialValue: strin
     );
 };
 
-export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: CommuteTuple, onDelete: () => void, dragControls?: DragControls }) => {
+export const CountdownCard = ({ tuple, onDelete, onUpdate, dragControls }: { tuple: CommuteTuple, onDelete: () => void, onUpdate: (updates: Partial<CommuteTuple>) => void, dragControls?: DragControls }) => {
     const [arrivals, setArrivals] = useState<Arrival[]>([]);
     const [loading, setLoading] = useState(true);
     const [hasAlert, setHasAlert] = useState(false);
@@ -133,7 +133,8 @@ export const CountdownCard = ({ tuple, onDelete, dragControls }: { tuple: Commut
     const [isEditingNickname, setIsEditingNickname] = useState(false);
 
     const saveNickname = (newNickname: string) => {
-        CommuteStorage.updateTuple(tuple.id, { nickname: newNickname });
+        // Use parent update function to ensure state triggers re-render
+        onUpdate({ nickname: newNickname });
         setIsEditingNickname(false);
     };
 

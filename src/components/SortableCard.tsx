@@ -5,9 +5,10 @@ import { CommuteTuple } from "@/types";
 interface Props {
     item: CommuteTuple;
     onDelete: () => void;
+    onUpdate: (updates: Partial<CommuteTuple>) => void;
 }
 
-export const SortableCard = ({ item, onDelete }: Props) => {
+export const SortableCard = ({ item, onDelete, onUpdate }: Props) => {
     const dragControls = useDragControls();
 
     return (
@@ -26,7 +27,7 @@ export const SortableCard = ({ item, onDelete }: Props) => {
             }}
             style={{ position: 'relative' }} // ensure context
         >
-            <CountdownCard tuple={item} onDelete={onDelete} dragControls={dragControls} />
+            <CountdownCard tuple={item} onDelete={onDelete} onUpdate={onUpdate} dragControls={dragControls} />
         </Reorder.Item>
     );
 };

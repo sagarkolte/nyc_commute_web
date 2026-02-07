@@ -108,6 +108,23 @@ async function processItem(item: BatchRequestItem) {
         return { etas, arrivals: arrivalsTs.slice(0, 3), raw: matches.slice(0, 3) };
     }
 
+    // --- SI FERRY ---
+    if (mode === 'si-ferry') {
+        const { getNextSiFerryDepartures } = await import('@/lib/si_ferry');
+        // direction 'N' (Manhattan) -> stopId should be st-george (going TO whitehall)?
+        // Wait, the Add Page logic:
+        // Dir N -> stopId 'st-george', dest 'whitehall' (Manhattan)
+        // Dir S -> stopId 'whitehall', dest 'st-george' (Staten Island)
+        // So stopId passed here IS the origin. Perfect.
+
+        const departures = getNextSiFerryDepartures(stopId);
+
+        const etas = departures.map(d => `${d.minutesUntil} min`);
+        const arrivals = departures.map(d => Math.floor(d.time.getTime() / 1000));
+
+        return { etas, arrivals, raw: departures };
+    }
+
     // --- MTA SUBWAY / LIRR / MNR / PATH / FERRY ---
     // Mapping Logic derived from mta/route.ts
     const isRail = mode === 'lirr' || mode === 'mnr' || mode === 'nyc-ferry' || mode === 'path';

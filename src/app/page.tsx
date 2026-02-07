@@ -24,25 +24,31 @@ export default function Home() {
 
     if (CommuteStorage.getAutoSort()) {
       const doAutoSort = async () => {
-        // Reusing logic but silently (no alerts on denial if possible? Or just reusing handleLocationSort)
-        // Let's implement silent sort
+        console.log("📍 [AutoSort] Starting...");
         try {
           const perm = await Geolocation.checkPermissions();
-          if (perm.location === 'granted') {
+          console.log("📍 [AutoSort] Permission Status:", perm.location);
+
+          if (perm.location === 'granted' || perm.location === 'prompt') {
             setSorting(true);
             const position = await Geolocation.getCurrentPosition();
+            console.log("📍 [AutoSort] Position:", position.coords.latitude, position.coords.longitude);
+
             const { latitude, longitude } = position.coords;
+            // Feed location to storage so subsequent ETA updates respect this sort
+            CommuteStorage.updateLocation(latitude, longitude);
             const sorted = sortTuplesByLocation(loaded, latitude, longitude);
-            setTuples(sorted); // State update
-            // Note: We don't save sorted order to storage automatically? 
-            // User might get annoyed if it constantly reshuffles permanently?
-            // Actually handleLocationSort DOES save. So we should save.
+
+            // Log the ID order to verify sort
+            console.log("📍 [AutoSort] Sorted Order:", sorted.map(t => t.id));
+
+            setTuples(sorted);
             CommuteStorage.saveTuples(sorted);
           } else {
-            console.log("Auto-Sort skipped: Permission not granted");
+            console.warn("📍 [AutoSort] Skipped. Permission:", perm.location);
           }
         } catch (e) {
-          console.error("Auto-Sort failed", e);
+          console.error("📍 [AutoSort] Failed:", e);
         } finally {
           setSorting(false);
         }
@@ -59,6 +65,18 @@ export default function Home() {
   const handleDelete = (id: string) => {
     CommuteStorage.removeTuple(id);
     setTuples(CommuteStorage.getTuples());
+  };
+
+  const handleUpdateTuple = (id: string, updates: Partial<CommuteTuple>) => {
+    console.log("📝 [Page] Updating tuple state:", id, updates);
+
+    // 1. Update Storage
+    CommuteStorage.updateTuple(id, updates);
+
+    // 2. Update Local State (Immediate UI Refresh)
+    setTuples(prev => prev.map(t =>
+      t.id === id ? { ...t, ...updates } : t
+    ));
   };
 
 
@@ -98,23 +116,11 @@ export default function Home() {
       <header style={{
         marginBottom: 24,
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end', // Align buttons to right since logo is gone
         alignItems: 'center',
         padding: '8px 0'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 36,
-            height: 36,
-            position: 'relative',
-            borderRadius: 8,
-            overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-          }}>
-            <Image src="/logo.png" fill alt="Transit Pulse" style={{ objectFit: 'cover' }} />
-          </div>
-          <h1 style={{ fontSize: 22, fontWeight: '700', letterSpacing: '-0.02em', margin: 0 }}>Transit Pulse</h1>
-        </div>
+        {/* Branding Removed per User Request */}
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button
             onClick={handleLocationSort}
@@ -164,7 +170,11 @@ export default function Home() {
 
             return (
               <div key={t.id} style={{ position: 'relative' }}>
-                <SortableCard item={t} onDelete={() => handleDelete(t.id)} />
+                <SortableCard
+                  item={t}
+                  onDelete={() => handleDelete(t.id)}
+                  onUpdate={(updates) => handleUpdateTuple(t.id, updates)}
+                />
               </div>
             );
           })}

@@ -17,32 +17,53 @@ export const CommuteStorage = {
 
     saveTuples: (tuples: CommuteTuple[]) => {
         if (typeof window === 'undefined') return;
+
+        // Hydrate coordinates for Native Sorting
+        // Native AppDelegate doesn't have the station database, so we must bake coords into the JSON.
+        // We import dynamically to avoid potential circular dep issues during init, although statically might work.
+        // Actually, let's try synchronous logic if possible? 
+        // We can't use 'import' inside sync function easily without promise.
+        // Let's assume we can lazily load or imports are fine.
+        // But saveTuples is sync? No, it returns void.
+
+        // ISSUE: getStationCoordinates is in 'location.ts'. 
+        // We should move saveTuples logic to be async OR assume hydration happened elsewhere.
+        // BUT we need to guarantee it for Native.
+        // Let's use the dynamic import pattern but properly.
+
+        // Actually, we can just do a best-effort sync save for localStorage, 
+        // AND an async hydration for the Widget bridge/JSON.
+
+        // Step 1: Save to LocalStorage immediately (UI speed)
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tuples));
 
-        console.log("🟦 [JS] CommuteStorage.saveTuples called. Attempting Widget Sync...");
-
-        // Sync to Native Widget (Best Effort)
-        try {
-            import('./widget_bridge').then(async m => {
-                console.log("🟦 [JS] Loaded widget_bridge. Plugins Available:", Object.keys((window as any).Capacitor?.Plugins || {}));
-                console.log("🟦 [JS] Testing Echo...");
-                try {
-                    await m.default.echo({ value: 'Hello Native!' });
-                    console.log("🟩 [JS] Echo Success!");
-                } catch (e) {
-                    console.error("🟥 [JS] Echo Failed:", e);
+        // Step 2: Hydrate & Sync to Native
+        import('./location').then(({ getStationCoordinates }) => {
+            const hydrated = tuples.map(t => {
+                if (t.lat && t.lon) return t;
+                const coords = getStationCoordinates(t.mode, t.stopId || '');
+                if (coords) {
+                    return { ...t, lat: coords.lat, lon: coords.lon };
                 }
+                return t;
+            });
 
-                console.log("🟦 [JS] Calling updateData...");
-                m.default.updateData({ json: JSON.stringify(tuples) })
+            // Re-save to LocalStorage with coords? 
+            // Better to keep localStorage clean? No, keeping coords is good cache.
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(hydrated));
+
+            console.log("🟦 [JS] CommuteStorage.saveTuples called. Attempting Widget Sync...");
+
+            // Sync to Native Widget
+            import('./widget_bridge').then(async m => {
+                console.log("🟦 [JS] Calling updateData with Hydrated Tuples...");
+                m.default.updateData({ json: JSON.stringify(hydrated) })
                     .then(() => console.log("🟦 [JS] UpdateData resolved successfully"))
                     .catch(e => console.error("🟥 [JS] UpdateData rejected:", e));
-
                 m.default.reloadTimeline();
             }).catch(err => console.error("🟥 [JS] Widget Bridge Import Error:", err));
-        } catch (e) {
-            console.warn("🟥 [JS] Failed to sync widget", e);
-        }
+
+        });
     },
 
     removeTuple: (id: string) => {
@@ -69,9 +90,14 @@ export const CommuteStorage = {
         localStorage.setItem('mta-api-key', key);
     },
 
-    // Runtime Cache for Widget ETAs (not persisted in localStorage, just memory)
+    // Runtime Cache for Widget ETAs and Location
     _widgetCache: {} as Record<string, string[]>,
     _debounceTimer: null as any,
+    _lastLocation: null as { lat: number, lon: number } | null,
+
+    updateLocation: (lat: number, lon: number) => {
+        CommuteStorage._lastLocation = { lat, lon };
+    },
 
     updateTupleETAs: (id: string, etas: string[]) => {
         if (typeof window === 'undefined') return;
@@ -89,22 +115,19 @@ export const CommuteStorage = {
         CommuteStorage._debounceTimer = setTimeout(() => {
             console.log("🟦 [JS] Debounce timer fired. Syncing Widget Data...");
 
-            // Get the static configuration
-            const tuples = CommuteStorage.getTuples();
-
-            // Merge Config + Realtime Data
-            const widgetData = tuples.map(t => ({
-                ...t,
-                etas: CommuteStorage._widgetCache[t.id] || []
+            // Construct Payload for Native Merge (Just IDs and ETAs)
+            const updates = Object.entries(CommuteStorage._widgetCache).map(([id, etas]) => ({
+                id,
+                etas
             }));
 
-            // Send to Native
+            // Send to Native (using updateEtas to preserve Native Sort Order)
             import('./widget_bridge').then(m => {
-                m.default.updateData({ json: JSON.stringify(widgetData) })
-                    .then(() => console.log("🟦 [JS] Widget Sync Success"))
-                    .catch(e => console.error("🟥 [JS] Widget Sync Failed:", e));
+                m.default.updateEtas({ json: JSON.stringify(updates) })
+                    .then(() => console.log("🟦 [JS] Widget ETA Sync Success (Merge)"))
+                    .catch(e => console.error("🟥 [JS] Widget ETA Sync Failed:", e));
 
-                // Only reload timeline if we actually have data (throttling could be added here)
+                // Always reload timeline to reflect new times
                 m.default.reloadTimeline();
             }).catch(err => console.error("🟥 [JS] Import Error:", err));
 
@@ -113,8 +136,10 @@ export const CommuteStorage = {
     },
     // Auto-Sort Preference
     getAutoSort: (): boolean => {
-        if (typeof window === 'undefined') return false;
-        return localStorage.getItem('auto-sort') === 'true';
+        if (typeof window === 'undefined') return true; // Default to true if SSR
+        const val = localStorage.getItem('auto-sort');
+        if (val === null) return true; // Default to true if not set
+        return val === 'true';
     },
 
     setAutoSort: (enabled: boolean) => {
