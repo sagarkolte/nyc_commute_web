@@ -254,14 +254,18 @@ struct CommuteWidgetEntryView : View {
     @Environment(\.widgetFamily) var family
 
     var body: some View {
-        switch family {
-        case .accessoryCircular:
-            CircularView(item: entry.items.first)
-        case .accessoryRectangular:
-            RectangularView(item: entry.items.first)
-        case .accessoryInline:
-            InlineView(item: entry.items.first)
-        default:
+        if #available(iOS 16.0, *) {
+            switch family {
+            case .accessoryCircular:
+                CircularView(item: entry.items.first)
+            case .accessoryRectangular:
+                RectangularView(item: entry.items.first)
+            case .accessoryInline:
+                InlineView(item: entry.items.first)
+            default:
+                SystemView(entry: entry)
+            }
+        } else {
             SystemView(entry: entry)
         }
     }

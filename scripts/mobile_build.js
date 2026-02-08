@@ -14,22 +14,37 @@ function moveDir(src, dest) {
     return false;
 }
 
-const moved = moveDir(apiDir, hiddenApiDir);
-
+let moved = false;
 try {
+    // 1. Rename API folder to hide it from static export
+    moved = moveDir(apiDir, hiddenApiDir);
+
     console.log('Cleaning clean build...');
-    if (fs.existsSync(path.join(__dirname, '../.next'))) {
-        fs.rmSync(path.join(__dirname, '../.next'), { recursive: true, force: true });
-    }
+    const nextDir = path.join(__dirname, '../.next');
+    const outDir = path.join(__dirname, '../out');
+    if (fs.existsSync(nextDir)) fs.rmSync(nextDir, { recursive: true, force: true });
+    if (fs.existsSync(outDir)) fs.rmSync(outDir, { recursive: true, force: true });
 
     console.log('Starting Next.js static export...');
-    execSync('NEXT_PUBLIC_IS_EXPORT=true NEXT_PUBLIC_API_BASE_URL=https://nyc-commute-web.vercel.app next build', { stdio: 'inherit' });
-} catch (error) {
-    console.error('Build failed!');
-    process.exit(1);
-} finally {
+    // IMPORTANT: Inject the Production API URL so the static app can talk to the backend.
+    execSync('export NEXT_PUBLIC_IS_EXPORT=true && export NEXT_PUBLIC_API_BASE_URL=https://nyc-commute-web.vercel.app && npm run build', { stdio: 'inherit' });
+
+    // 2. Restore API folder immediately after successful build
     if (moved) {
         moveDir(hiddenApiDir, apiDir);
-        console.log('Restored API directory');
+        moved = false; // Prevent finally from renaming again
     }
+
+    console.log('Syncing to Capacitor...');
+    execSync('npx cap sync', { stdio: 'inherit' });
+
+    console.log('✅ Mobile Build Complete!');
+
+} catch (error) {
+    console.error('❌ Build failed!');
+    // Restore if needed before exiting
+    if (moved) {
+        moveDir(hiddenApiDir, apiDir);
+    }
+    process.exit(1);
 }

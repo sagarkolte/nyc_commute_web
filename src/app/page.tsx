@@ -11,6 +11,7 @@ import { SortableCard } from '@/components/SortableCard';
 import { Reorder, motion } from 'framer-motion';
 import { sortTuplesByLocation } from '@/lib/location';
 import { Geolocation } from '@capacitor/geolocation';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 export default function Home() {
   const [tuples, setTuples] = useState<CommuteTuple[]>([]);
@@ -21,6 +22,11 @@ export default function Home() {
     const loaded = CommuteStorage.getTuples();
     setTuples(loaded);
     setMounted(true);
+
+    // Manual Splash Screen Hide (Better Persistence)
+    setTimeout(async () => {
+      await SplashScreen.hide();
+    }, 2000);
 
     if (CommuteStorage.getAutoSort()) {
       const doAutoSort = async () => {
