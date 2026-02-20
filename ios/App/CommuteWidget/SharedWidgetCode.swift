@@ -45,19 +45,27 @@ class WidgetLocationManager: NSObject, CLLocationManagerDelegate {
         manager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
-    func fetchLocation() async -> CLLocation? {
-        // Ensure we are on main thread for CoreLocation safety if needed, 
-        // though requestLocation is thread-safe, the delegate callbacks happen on run loop.
-        // We wrap in continuation to await the result.
-        return await withCheckedContinuation { continuation in
-            // Handle edge case: if already executing? We assume serial widget usage.
-            self.continuation = continuation
-            
-            if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
-                manager.requestLocation()
-            } else {
-                resume(with: nil)
+    func fetchLocation(timeout: TimeInterval = 2.0) async -> CLLocation? {
+        return await withTaskGroup(of: CLLocation?.self) { group in
+            group.addTask {
+                return await withCheckedContinuation { continuation in
+                    self.continuation = continuation
+                    if self.manager.authorizationStatus == .authorizedWhenInUse || self.manager.authorizationStatus == .authorizedAlways {
+                        self.manager.requestLocation()
+                    } else {
+                        self.resume(with: nil)
+                    }
+                }
             }
+            
+            group.addTask {
+                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                return nil
+            }
+            
+            let result = await group.next() ?? nil
+            self.continuation = nil
+            return result
         }
     }
     
@@ -100,110 +108,104 @@ struct Provider: TimelineProvider {
         Task {
             let items = loadItems()
             
-            // Parallel Fetch using Async/Await
-            async let locationFetch = locationManager.fetchLocation()
-            async let networkFetch = fetchBatchData(items: items)
+            // Fetch Data
+            let results = await fetchBatchData(items: items)
             
-            // Wait for both (non-blocking to the thread)
-            let (currentLocation, networkResults) = await (locationFetch, networkFetch)
-            
-            var updatedEtas: [String: [String]] = [:]
-            var updatedArrivals: [String: [Double]] = [:]
-            
-            if let results = networkResults {
-                for (id, res) in results {
-                    updatedEtas[id] = res.etas
-                    updatedArrivals[id] = res.arrivals
-                }
-            }
-            
-            // Merge Data
-            var mergedItems: [CommuteTuple] = []
-            
-            for item in items {
-                let freshEtas = updatedEtas[item.id] ?? item.etas
-                let freshArrivals = updatedArrivals[item.id]
-                
-                let newItem = CommuteTuple(
-                    id: item.id,
-                    label: item.label,
-                    mode: item.mode,
-                    routeId: item.routeId,
-                    stopId: item.stopId,
-                    direction: item.direction,
-                    destinationName: item.destinationName,
-                    destinationStopId: item.destinationStopId,
-                    etas: freshEtas,
-                    nickname: item.nickname,
-                    lat: freshArrivals != nil ? (item.lat) : item.lat,
-                    lon: item.lon
-                )
-                mergedItems.append(newItem)
-            }
-            
-            // Auto-Sort
-            if let loc = currentLocation {
-                mergedItems.sort { (a, b) -> Bool in
-                    guard let latA = a.lat, let lonA = a.lon,
-                          let latB = b.lat, let lonB = b.lon else {
-                        if a.lat != nil { return true }
-                        return false
-                    }
-                    let locA = CLLocation(latitude: latA, longitude: lonA)
-                    let locB = CLLocation(latitude: latB, longitude: lonB)
-                    return loc.distance(from: locA) < loc.distance(from: locB)
-                }
-            }
-            
-            // Generate Timeline
-            var entries: [SimpleEntry] = []
-            let currentDate = Date()
-            
-            for minuteOffset in 0..<15 {
-                let entryDate = Calendar.current.date(byAdding: .minute, value: minuteOffset, to: currentDate)!
-                
-                // Recalculate ETAs
-                let dynamicItems = mergedItems.map { item -> CommuteTuple in
-                    guard let arrivals = updatedArrivals[item.id], !arrivals.isEmpty else {
-                        return item
-                    }
-                    
-                    let etas = arrivals.compactMap { ts -> String? in
-                        let diff = ts - entryDate.timeIntervalSince1970
-                        if diff < -30 { return nil }
-                        let mins = max(0, Int(floor(diff / 60)))
-                        return "\(mins) min"
-                    }
-                    
+            // Map Results
+            let updatedItems = items.map { item -> CommuteTuple in
+                if let res = results?[item.id] {
                     return CommuteTuple(
-                        id: item.id, label: item.label, mode: item.mode, routeId: item.routeId, stopId: item.stopId,
-                        direction: item.direction, destinationName: item.destinationName, destinationStopId: item.destinationStopId,
-                        etas: etas.isEmpty ? ["--"] : Array(etas.prefix(3)),
-                        nickname: item.nickname, lat: item.lat, lon: item.lon
+                        id: item.id,
+                        label: item.label,
+                        mode: item.mode,
+                        routeId: item.routeId,
+                        stopId: item.stopId,
+                        direction: item.direction,
+                        destinationName: item.destinationName,
+                        destinationStopId: item.destinationStopId,
+                        etas: res.etas,
+                        nickname: item.nickname,
+                        lat: item.lat,
+                        lon: item.lon
                     )
                 }
-                
-                entries.append(SimpleEntry(date: entryDate, items: dynamicItems, lastFetchDate: currentDate))
+                return item
             }
             
-            let timeline = Timeline(entries: entries, policy: .atEnd)
+            let entry = SimpleEntry(date: Date(), items: updatedItems, lastFetchDate: Date())
+            let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
+    }
+
+
+    
+    // MARK: - Location Caching Helpers
+    func saveLastLocation(_ loc: CLLocation) {
+        guard let userDefaults = UserDefaults(suiteName: groupName) else { return }
+        userDefaults.set(loc.coordinate.latitude, forKey: "lastLat")
+        userDefaults.set(loc.coordinate.longitude, forKey: "lastLon")
+    }
+    
+    func loadLastLocation() -> CLLocation? {
+        guard let userDefaults = UserDefaults(suiteName: groupName) else { return nil }
+        let lat = userDefaults.double(forKey: "lastLat")
+        let lon = userDefaults.double(forKey: "lastLon")
+        
+        // Basic check for uninitialized defaults (0,0 is technically valid but unlikely for NYC)
+        if lat == 0 && lon == 0 { return nil }
+        
+        return CLLocation(latitude: lat, longitude: lon)
     }
     
     func fetchBatchData(items: [CommuteTuple]) async -> [String: BatchResult]? {
         guard !items.isEmpty else { return nil }
         guard let url = URL(string: backendUrl) else { return nil }
         
-        let requests = items.map { item -> [String: Any] in
-            return [
+        var requests: [[String: Any]] = []
+        var altIds: [String: String] = [:] // Map ALT_ID -> Original_ID
+        
+        for item in items {
+            // Fix Mode Mapping
+            var mode = item.mode
+            if let r = item.routeId {
+                if r.hasPrefix("MNR") { mode = "mnr" }
+                if r == "LIRR" { mode = "lirr" }
+                if r == "PATH" || r == "Path" { mode = "path" }
+                
+                // NYC Ferry: Check generic ID and specific route names (handling legacy data)
+                let ferryRoutes = ["NYC Ferry", "East River", "Astoria", "South Brooklyn", "Rockaway East", "Rockaway West", "Rockaway-Soundview", "St. George", "Soundview"]
+                if r == "nyc-ferry" || ferryRoutes.contains(r) { mode = "nyc-ferry" }
+                
+                if r == "SI Ferry" { mode = "si-ferry" }
+                if r == "NJT" { mode = "njt" }
+            }
+            
+            // Base Request (matches stored direction, usually 'N')
+            let req: [String: Any] = [
                 "id": item.id,
-                "mode": item.mode,
+                "mode": mode,
                 "routeId": item.routeId ?? "",
                 "stopId": item.stopId ?? "",
                 "direction": item.direction ?? "",
                 "destination": item.destinationStopId ?? ""
             ]
+            requests.append(req)
+            
+            // NYC Ferry Dual-Direction Hack
+            // The widget often forces 'N', but the GTFS feed might use 'S' or vice versa.
+            // Since we can't be sure, we request BOTH directions and merge.
+            if mode == "nyc-ferry" {
+                let altId = item.id + "_ALT"
+                altIds[altId] = item.id
+                
+                let altDir = (item.direction == "N") ? "S" : "N"
+                var altReq = req
+                altReq["id"] = altId
+                altReq["direction"] = altDir
+                requests.append(altReq)
+            }
         }
         
         let body: [String: Any] = ["requests": requests]
@@ -217,8 +219,38 @@ struct Provider: TimelineProvider {
             
             let (data, _) = try await URLSession.shared.data(for: request)
             let decoded = try JSONDecoder().decode(BatchResponse.self, from: data)
-            print("✅ Widget: Fetched Batch Data: \(decoded.results.count) items")
-            return decoded.results
+            
+            // Post-Process: Merge ALT results into Main results
+            var finalResults = decoded.results
+            
+            for (altId, originalId) in altIds {
+                if let altResult = finalResults[altId], let originalResult = finalResults[originalId] {
+                    // Both have data. Merge ETAs.
+                    let combinedEtas = originalResult.etas + altResult.etas
+                    let uniqueEtas = Array(Set(combinedEtas)).sorted { a, b in
+                         // Basic sort: "2 min" < "10 min"
+                         let valA = Int(a.components(separatedBy: " ").first ?? "999") ?? 999
+                         let valB = Int(b.components(separatedBy: " ").first ?? "999") ?? 999
+                         return valA < valB
+                    }
+                    
+                    // Merge arrivals if present
+                    var combinedArrivals: [Double] = []
+                    if let a1 = originalResult.arrivals { combinedArrivals.append(contentsOf: a1) }
+                    if let a2 = altResult.arrivals { combinedArrivals.append(contentsOf: a2) }
+                    combinedArrivals.sort()
+                    
+                    finalResults[originalId] = BatchResult(id: originalId, etas: uniqueEtas, arrivals: combinedArrivals.isEmpty ? nil : combinedArrivals)
+                } else if let altResult = finalResults[altId] {
+                    // Only Alt has result. Move it to Main, but update ID.
+                    finalResults[originalId] = BatchResult(id: originalId, etas: altResult.etas, arrivals: altResult.arrivals)
+                }
+                // Remove the temp/alt entry
+                finalResults.removeValue(forKey: altId)
+            }
+            
+            print("✅ Widget: Fetched Batch Data: \(finalResults.count) items (Merged)")
+            return finalResults
         } catch {
             print("❌ Widget: Network/Decode Error: \(error)")
             return nil
@@ -226,17 +258,32 @@ struct Provider: TimelineProvider {
     }
     
     func loadItems() -> [CommuteTuple] {
-        guard let userDefaults = UserDefaults(suiteName: groupName) else { return [] }
-        guard let jsonString = userDefaults.string(forKey: "widgetData") else { return [] }
-        guard let data = jsonString.data(using: .utf8) else { return [] }
-        
-        do {
-            let items = try JSONDecoder().decode([CommuteTuple].self, from: data)
-            return items
-        } catch {
-            print("❌ Widget: Load Error: \(error)")
+        guard let userDefaults = UserDefaults(suiteName: groupName) else {
+             return [CommuteTuple(id: "err", label: "No App Group", mode: "subway", routeId: "X", stopId: "", direction: "", destinationName: "Check Entitlements", destinationStopId: "", etas: ["--"], nickname: "Config Error", lat: 0, lon: 0)]
+        }
+        guard let jsonString = userDefaults.string(forKey: "widgetData") else {
+            return [CommuteTuple(id: "err", label: "No Data", mode: "subway", routeId: "X", stopId: "", direction: "", destinationName: "Open App to Add", destinationStopId: "", etas: ["--"], nickname: "No Routes", lat: 0, lon: 0)]
+        }
+        guard let data = jsonString.data(using: .utf8) else {
             return []
         }
+        
+        do {
+        let items = try JSONDecoder().decode([CommuteTuple].self, from: data)
+        return items
+    } catch let DecodingError.keyNotFound(key, context) {
+        print("❌ Widget: Missing Key: \(key.stringValue) - \(context.debugDescription)")
+        return [CommuteTuple(id: "err", label: "Missing Key", mode: "subway", routeId: "X", stopId: "", direction: "", destinationName: key.stringValue, destinationStopId: "", etas: ["--"], nickname: "Key: \(key.stringValue)", lat: 0, lon: 0)]
+    } catch let DecodingError.typeMismatch(type, context) {
+        print("❌ Widget: Type Mismatch: \(type) - \(context.debugDescription)")
+        return [CommuteTuple(id: "err", label: "Type Error", mode: "subway", routeId: "X", stopId: "", direction: "", destinationName: "\(type)", destinationStopId: "", etas: ["--"], nickname: "Type: \(type)", lat: 0, lon: 0)]
+    } catch let DecodingError.valueNotFound(value, context) {
+        print("❌ Widget: Value Null: \(value) - \(context.debugDescription)")
+        return [CommuteTuple(id: "err", label: "Null Value", mode: "subway", routeId: "X", stopId: "", direction: "", destinationName: "\(value)", destinationStopId: "", etas: ["--"], nickname: "Null: \(value)", lat: 0, lon: 0)]
+    } catch {
+        print("❌ Widget: Load Error: \(error)")
+        return [CommuteTuple(id: "err", label: "Decode Error", mode: "subway", routeId: "X", stopId: "", direction: "", destinationName: error.localizedDescription, destinationStopId: "", etas: ["--"], nickname: "Data Corrupt", lat: 0, lon: 0)]
+    }
     }
 }
 
@@ -246,11 +293,24 @@ struct SimpleEntry: TimelineEntry {
     let lastFetchDate: Date // Added for "Updated x mins ago"
 }
 
+// MARK: - Extensions
+extension View {
+    @ViewBuilder
+    func widgetBackground(_ color: Color) -> some View {
+        if #available(iOS 17.0, *) {
+            containerBackground(color, for: .widget)
+        } else {
+            background(color.edgesIgnoringSafeArea(.all))
+        }
+    }
+}
+
 // MARK: - Views
 // (Views remain largely unchanged, but we can remove formatting logic if we trust backend)
 
 struct CommuteWidgetEntryView : View {
     var entry: SimpleEntry
+    var showsWidgetPadding: Bool // Controls manual padding (True for Modern, False for Legacy)
     @Environment(\.widgetFamily) var family
 
     var body: some View {
@@ -258,15 +318,20 @@ struct CommuteWidgetEntryView : View {
             switch family {
             case .accessoryCircular:
                 CircularView(item: entry.items.first)
+                    .widgetBackground(.clear)
             case .accessoryRectangular:
                 RectangularView(item: entry.items.first)
+                    .widgetBackground(.clear)
             case .accessoryInline:
                 InlineView(item: entry.items.first)
+                    .widgetBackground(.clear)
             default:
-                SystemView(entry: entry)
+                SystemView(entry: entry, showsWidgetPadding: showsWidgetPadding)
+                    .widgetBackground(.black)
             }
         } else {
-            SystemView(entry: entry)
+            SystemView(entry: entry, showsWidgetPadding: showsWidgetPadding)
+                .widgetBackground(.black)
         }
     }
     
@@ -311,6 +376,7 @@ struct CommuteWidgetEntryView : View {
 struct HeroCardView: View {
     let item: CommuteTuple
     let lastFetchDate: Date
+    var showsWidgetPadding: Bool
     
     func colorForRoute(_ routeId: String, mode: String) -> Color {
         let r = routeId.replacingOccurrences(of: "MTA NYCT_", with: "")
@@ -352,19 +418,19 @@ struct HeroCardView: View {
                 Circle()
                     .fill(colorForRoute(item.routeId ?? "", mode: item.mode))
                 Text(formatRouteId(item.routeId ?? "?"))
-                    .font(.system(size: 18, weight: .bold)) // Reduced from 20
+                    .font(.system(size: 20, weight: .bold)) 
                     .minimumScaleFactor(0.4)
                     .lineLimit(1)
                     .foregroundColor(.white)
                     .padding(.horizontal, 4)
             }
-            .frame(width: 48, height: 48) // Reduced from 56
+            .frame(width: 56, height: 56)
             .padding(.top, 4)
-            .padding(.bottom, 8) // Reduced from 12
+            .padding(.bottom, 14)
             
             // Route Label
             Text(item.nickname ?? item.label)
-                .font(.system(size: 14, weight: .semibold)) // Reduced from 16
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .padding(.bottom, 2)
@@ -372,13 +438,13 @@ struct HeroCardView: View {
             // ETAs
             if let etas = item.etas, !etas.isEmpty {
                 Text(etas.prefix(3).map { $0.replacingOccurrences(of: " min", with: "") }.joined(separator: ", ") + " Min")
-                    .font(.system(size: 18, weight: .bold)) // Reduced from 20
+                    .font(.system(size: 24, weight: .bold))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .foregroundColor(etas.first == "--" ? .gray : .white)
             } else {
                 Text("--")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.gray)
             }
             
@@ -393,13 +459,14 @@ struct HeroCardView: View {
                 .font(.system(size: 10, weight: .medium))
                 .foregroundColor(.gray.opacity(0.6))
         }
-        .padding(16)
+        .padding(showsWidgetPadding ? 16 : 0)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 struct SystemView: View {
     var entry: SimpleEntry
+    var showsWidgetPadding: Bool
     @Environment(\.widgetFamily) var family
     
     // Shared Helpers for List Layout
@@ -437,13 +504,10 @@ struct SystemView: View {
     }
 
     var body: some View {
-        ZStack {
-            // Background
-            Color(hex: "1C1C1E").edgesIgnoringSafeArea(.all)
-            
+        Group {
             if family == .systemSmall {
                 if let item = entry.items.first {
-                    HeroCardView(item: item, lastFetchDate: entry.lastFetchDate)
+                    HeroCardView(item: item, lastFetchDate: entry.lastFetchDate, showsWidgetPadding: showsWidgetPadding)
                 } else {
                     EmptyStateView()
                 }
@@ -454,13 +518,15 @@ struct SystemView: View {
                 } else {
                     HStack(spacing: 0) {
                         if let first = entry.items.first {
-                            HeroCardView(item: first, lastFetchDate: entry.lastFetchDate)
+                            HeroCardView(item: first, lastFetchDate: entry.lastFetchDate, showsWidgetPadding: showsWidgetPadding)
+                                .padding(.trailing, 4)
                         }
                         
                         Divider().background(Color.white.opacity(0.1))
                         
                         if entry.items.count > 1 {
-                            HeroCardView(item: entry.items[1], lastFetchDate: entry.lastFetchDate)
+                            HeroCardView(item: entry.items[1], lastFetchDate: entry.lastFetchDate, showsWidgetPadding: showsWidgetPadding)
+                                .padding(.leading, 12)
                         } else {
                             // Placeholder for 2nd slot balance
                             Spacer().frame(maxWidth: .infinity)
@@ -537,7 +603,7 @@ struct SystemView: View {
                     }
                     Spacer()
                 }
-                .padding(12)
+                .padding(showsWidgetPadding ? 12 : 0)
             }
         }
     }

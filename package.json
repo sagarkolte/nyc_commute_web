@@ -1,6 +1,6 @@
 {
   "name": "nyc_commute_web",
-  "version": "0.1.0",
+  "version": "1.1.25",
   "private": true,
   "scripts": {
     "dev": "next dev",

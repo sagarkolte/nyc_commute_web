@@ -23,6 +23,9 @@ export default function Home() {
     setTuples(loaded);
     setMounted(true);
 
+    // Force save to heal any legacy data types (e.g. string coords) and sync to widget
+    CommuteStorage.saveTuples(loaded);
+
     // Manual Splash Screen Hide (Better Persistence)
     setTimeout(async () => {
       await SplashScreen.hide();

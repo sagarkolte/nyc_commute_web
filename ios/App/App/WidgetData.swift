@@ -31,7 +31,9 @@ public class NYCBridgeImpl: CAPPlugin {
         
         if let userDefaults = UserDefaults(suiteName: groupName) {
             userDefaults.set(json, forKey: "widgetData")
-            // userDefaults.synchronize() is deprecated but harmless for debugging reassurance
+            // Force flush to disk
+            userDefaults.synchronize() 
+            
             print("⚡️ WidgetData [NATIVE]: Successfully wrote to App Group: \(groupName)")
             
             // Allow checking what was written
@@ -115,6 +117,7 @@ public class NYCBridgeImpl: CAPPlugin {
                 let newData = try JSONEncoder().encode(existingItems)
                 if let newJson = String(data: newData, encoding: .utf8) {
                     userDefaults.set(newJson, forKey: "widgetData")
+                    userDefaults.synchronize() // Force flush
                     print("⚡️ WidgetData [NATIVE]: Merged ETAs into \(existingItems.count) items (Preserved Sort).")
                     
                     // Sync to Watch (as full payload)

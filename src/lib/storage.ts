@@ -40,7 +40,21 @@ export const CommuteStorage = {
         // Step 2: Hydrate & Sync to Native
         import('./location').then(({ getStationCoordinates }) => {
             const hydrated = tuples.map(t => {
-                if (t.lat && t.lon) return t;
+                // strict check for valid existing numbers
+                if (typeof t.lat === 'number' && typeof t.lon === 'number' && !isNaN(t.lat) && !isNaN(t.lon)) {
+                    return t;
+                }
+
+                // If they exist but might be strings, try to convert
+                if (t.lat !== undefined && t.lon !== undefined) {
+                    const nLat = Number(t.lat);
+                    const nLon = Number(t.lon);
+                    if (!isNaN(nLat) && !isNaN(nLon)) {
+                        return { ...t, lat: nLat, lon: nLon };
+                    }
+                }
+
+                // Fallback to lookup
                 const coords = getStationCoordinates(t.mode, t.stopId || '');
                 if (coords) {
                     return { ...t, lat: coords.lat, lon: coords.lon };
@@ -55,12 +69,16 @@ export const CommuteStorage = {
             console.log("🟦 [JS] CommuteStorage.saveTuples called. Attempting Widget Sync...");
 
             // Sync to Native Widget
+            // Sync to Native Widget
             import('./widget_bridge').then(async m => {
                 console.log("🟦 [JS] Calling updateData with Hydrated Tuples...");
                 m.default.updateData({ json: JSON.stringify(hydrated) })
-                    .then(() => console.log("🟦 [JS] UpdateData resolved successfully"))
+                    .then(() => {
+                        console.log("🟦 [JS] UpdateData resolved successfully");
+                        // Only reload AFTER write is confirmed
+                        m.default.reloadTimeline();
+                    })
                     .catch(e => console.error("🟥 [JS] UpdateData rejected:", e));
-                m.default.reloadTimeline();
             }).catch(err => console.error("🟥 [JS] Widget Bridge Import Error:", err));
 
         });
@@ -122,13 +140,16 @@ export const CommuteStorage = {
             }));
 
             // Send to Native (using updateEtas to preserve Native Sort Order)
+            // Send to Native (using updateEtas to preserve Native Sort Order)
             import('./widget_bridge').then(m => {
                 m.default.updateEtas({ json: JSON.stringify(updates) })
-                    .then(() => console.log("🟦 [JS] Widget ETA Sync Success (Merge)"))
+                    .then(() => {
+                        console.log("🟦 [JS] Widget ETA Sync Success (Merge)");
+                        // Always reload timeline to reflect new times AFTER merge
+                        m.default.reloadTimeline();
+                    })
                     .catch(e => console.error("🟥 [JS] Widget ETA Sync Failed:", e));
 
-                // Always reload timeline to reflect new times
-                m.default.reloadTimeline();
             }).catch(err => console.error("🟥 [JS] Import Error:", err));
 
             CommuteStorage._debounceTimer = null;

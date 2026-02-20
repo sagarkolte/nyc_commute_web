@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { MtaService } from '@/lib/mta';
 import { getNjtDepartures, NjtDeparture } from '@/lib/njt';
 import { NjtBusV2Service, NjtBusV2Departure } from '@/lib/njt_bus_v2';
+import { getNextFerryTripsByDirection } from '@/lib/ferry_sql';
 import * as protobuf from 'protobufjs';
 import path from 'path';
 
@@ -198,6 +199,14 @@ async function processItem(item: BatchRequestItem) {
         });
     }
 
+    // Fallback: If Ferry and no realtime data, check schedule
+    if (mode === 'nyc-ferry' && arrivalsTs.length === 0) {
+        const scheduled = getScheduledFerryArrivals(routeId, stopId, now, direction);
+        scheduled.forEach((s: any) => {
+            arrivalsTs.push(s.time);
+        });
+    }
+
     // Sort by timestamp
     arrivalsTs.sort((a, b) => a - b);
 
@@ -221,4 +230,47 @@ function getTime(t: any): number | null {
 
 function transformNjtLine(line: string) {
     return line.replace('Line ', '').toLowerCase().trim();
+}
+
+// --- Helpers ---
+
+// Helper for Hybrid Ferry Schedule (SQL)
+function getScheduledFerryArrivals(routeId: string, stopId: string, now: number, direction: string | undefined): any[] {
+    let dirId = 0; // Default S
+    if (direction === 'N') dirId = 1;
+    else if (direction === 'S') dirId = 0;
+
+    // SQL Query
+    const trips = getNextFerryTripsByDirection(stopId, dirId, 5);
+
+    return trips.map(t => {
+        const time = getNycTimestamp(now, t.origin_time);
+
+        // Filter out past trips (grace period 5 mins)
+        if (time < now - 300) return null;
+
+        return {
+            time: time,
+            minutesUntil: Math.floor((time - now) / 60)
+        };
+    }).filter(Boolean);
+}
+
+// Timezone Helper
+function getNycTimestamp(nowSeconds: number, targetMins: number): number {
+    const serverNow = new Date(nowSeconds * 1000);
+    const nycStr = serverNow.toLocaleString('en-US', { timeZone: 'America/New_York' });
+    const nycDateAsLocal = new Date(nycStr);
+
+    // Offset = True UTC - Local Interpretation
+    const tzOffsetMs = serverNow.getTime() - nycDateAsLocal.getTime();
+
+    const h = Math.floor(targetMins / 60);
+    const m = targetMins % 60;
+
+    const targetLocal = new Date(nowSeconds * 1000); // Start with Today
+    targetLocal.setHours(h, m, 0, 0); // Set wall clock
+
+    // Apply offset
+    return (targetLocal.getTime() + tzOffsetMs) / 1000;
 }
